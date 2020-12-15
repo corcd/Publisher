@@ -1,0 +1,19 @@
+@media (prefers-color-scheme: dark) {
+
+  html,
+  body {
+    // background: #333;
+    // color: white;
+    background: #fff;
+    color: black;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+
+  html,
+  body {
+    background: #fff;
+    color: black;
+  }
+}

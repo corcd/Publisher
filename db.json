@@ -1,0 +1,56 @@
+{
+  "records": [
+    {
+      "id": "WQJ8tT7kS",
+      "name": "make",
+      "jobName": "Lcps-Make-Pre",
+      "branchInfo": {
+        "SHA1": "acc242b3134a6b844be038143688dcb945d1d507",
+        "name": "refs/remotes/origin/dev"
+      },
+      "remoteUrl": "https://github.com/corcd/Lcps",
+      "workflow": [
+        {
+          "action": "Publish",
+          "params": {}
+        },
+        {
+          "action": "Establish",
+          "params": {
+            "jobName": "Lcps-Make-Test"
+          }
+        }
+      ],
+      "updateTime": 1607928757
+    },
+    {
+      "id": "_RxR_2HlU",
+      "name": "lcps",
+      "jobName": "Lcps-Test",
+      "branchInfo": {
+        "SHA1": "d7ecd60815aa046171091f676e41342949f395bc",
+        "name": "refs/remotes/origin/test"
+      },
+      "remoteUrl": "http://gitlab.aodianyun.com/xiawei/project_lcps.git",
+      "workflow": [
+        {
+          "action": "Publish",
+          "params": {}
+        }
+      ],
+      "updateTime": 1607930625
+    }
+  ],
+  "user": {
+    "name": "www",
+    "contact": "13",
+    "workmail": "wanghanze@aodia65453532"
+  },
+  "mail": {
+    "auth": {
+      "pass": "4Td643S7743535523",
+      "user": "63y6445e666664353535"
+    },
+    "addressee": "guan@aodi"
+  }
+}
