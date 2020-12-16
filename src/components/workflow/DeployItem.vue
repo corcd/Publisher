@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-13 21:38:42
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-15 02:05:26
+ * @LastEditTime: 2020-12-16 10:15:50
  * @Description: file content
 -->
 <template>
@@ -23,9 +23,6 @@
       </div>
       <div class="workflow-item-footer">
         <span>部 署</span>
-      </div>
-      <div class="workflow-item-item">
-        <i class="el-icon-circle-plus-outline"></i>
       </div>
     </div>
     <div class="workflow-item-item" @click="insert">

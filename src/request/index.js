@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-05 16:19:23
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-06 20:24:03
+ * @LastEditTime: 2020-12-16 16:47:53
  * @Description: file content
  */
 /*
@@ -12,21 +12,47 @@
  * @LastEditTime: 2020-12-05 16:18:57
  * @Description: file content
  */
-
 import axios from 'axios'
+
+const toType = obj => {
+  return {}.toString
+    .call(obj)
+    .match(/\s([a-zA-Z]+)/)[1]
+    .toLowerCase()
+}
+
+const filterNull = obj => {
+  for (const key in obj) {
+    if (obj[key] === null) {
+      delete obj[key]
+    } else {
+      if (toType(obj[key]) === 'string') {
+        obj[key] = obj[key].trim()
+      } else if (toType(obj[key]) === 'object') {
+        obj[key] = filterNull(obj[key])
+      } else if (toType(obj[key]) === 'array') {
+        obj[key] = filterNull(obj[key])
+      }
+    }
+  }
+  return obj
+}
 
 const _config = {
   headers: {
     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
   },
-  timeout: 10 * 1000 // Timeout
+  timeout: 5 * 1000 // Timeout
 }
 
 const _axios = axios.create(_config)
 
 _axios.interceptors.request.use(
   config => {
-    // Do something before request is sent
+    if (config.method === 'get') {
+      const data = filterNull(config.data)
+      config.params = data
+    }
     return config
   },
   error => {
@@ -38,30 +64,27 @@ _axios.interceptors.request.use(
 // Add a response interceptor
 _axios.interceptors.response.use(
   response => {
-    // Do something with response data
-    return response
+    if (response.status === 200 || response.status === 201) {
+      return Promise.resolve(response)
+    } else {
+      // 请求已发出，在 2xx 的范围，但不等于 200/201
+      return Promise.reject(response)
+    }
   },
   error => {
-    // Do something with response error
-    return Promise.reject(error)
+    const { err } = error
+    if (err) {
+      // 请求已发出，但是不在 2xx 的范围
+      return Promise.reject(err)
+    } else {
+      if (!window.navigator.onLine) {
+        // 处理断网的情况
+        return Promise.reject(error)
+      } else {
+        return Promise.reject(error)
+      }
+    }
   }
 )
-
-// Plugin.install = (vue, options) => {
-//   vue.axios = _axios
-//   window.axios = _axios
-//   Object.defineProperties(vue.prototype, {
-//     axios: {
-//       get() {
-//         return _axios
-//       }
-//     },
-//     $axios: {
-//       get() {
-//         return _axios
-//       }
-//     }
-//   })
-// }
 
 export default _axios

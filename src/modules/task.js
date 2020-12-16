@@ -2,23 +2,31 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-06 22:06:34
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-15 10:05:35
+ * @LastEditTime: 2020-12-16 16:54:49
  * @Description: file content
  */
 import { showNotification } from '*/notification'
 import { build } from '@/plugins/jenkins'
 import { sendWechatNotification, sendEmailNotification } from '@/plugins/notify'
 
+// TODO 工作流原始配置统一
+// const originalTasksType = ['Update', 'Publish', 'Establish', 'Notify', 'Deploy']
+
 const customTasksQueue = []
 
 const tasks = {
+  runUpdateTask: async () => {
+    console.log('update')
+    // TODO 更新工作流
+    return Promise.resolve('ok')
+  },
   runPublishTask: async () => {
     console.log('publish')
-    // TODO
+    // TODO 发布工作流
     return Promise.resolve('ok')
   },
   runEstablishTask: async ({ jobName }) => {
-    if (!jobName) return Promise.reject(new Error('jobName 不能为空'))
+    if (!jobName) return Promise.reject(new Error('参数 jobName 不能为空'))
 
     console.log('establish')
     try {
@@ -38,15 +46,20 @@ const tasks = {
     return Promise.resolve('ok')
   },
   runNotifyTask: async ({ name, jobName, environment, updatedContent }) => {
+    if (!name || !jobName || !environment) {
+      return Promise.reject(new Error('除更新内容外其他参数不能为空'))
+    }
+
     console.log('notify')
-    sendWechatNotification({
+    await sendWechatNotification({
       name,
       jobName,
       environment,
-      updatedContent
+      updatedContent,
+      onlyDeveloper: environment !== 'production'
     })
 
-    sendEmailNotification({
+    await sendEmailNotification({
       name,
       jobName,
       environment,
@@ -56,7 +69,7 @@ const tasks = {
   },
   runDeployTask: async () => {
     console.log('deploy')
-    // TODO
+    // TODO 部署工作流
     return Promise.resolve('ok')
   }
 }

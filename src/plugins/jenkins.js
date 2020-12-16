@@ -2,10 +2,10 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:22:13
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-11 11:10:53
+ * @LastEditTime: 2020-12-16 16:48:33
  * @Description: file content
  */
-import axios from 'axios'
+import _axios from '@/request'
 import qs from 'qs'
 
 // 11719195c806e2c85599e7f86052431a95
@@ -18,7 +18,7 @@ const baseUrl = 'http://47.99.79.15:8081/job'
 
 const request = (jobName, actionUrl, method, params = {}) => {
   return method === 'POST'
-    ? axios({
+    ? _axios({
         method,
         url: `${baseUrl}/${jobName}/${actionUrl}`,
         headers: {
@@ -29,7 +29,7 @@ const request = (jobName, actionUrl, method, params = {}) => {
         },
         data: params ? qs.stringify(params) : {}
       })
-    : axios({
+    : _axios({
         method,
         url: `${baseUrl}/${jobName}/${actionUrl}`,
         headers: {

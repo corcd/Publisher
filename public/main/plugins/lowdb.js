@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-06 20:06:23
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-15 11:01:36
+ * @LastEditTime: 2020-12-16 10:08:12
  * @Description: file content
  */
 import { app, remote } from 'electron'
@@ -127,11 +127,11 @@ export const setMailAddressee = ({ addressee }) => {
   db.set('mail.addressee', addressee).write()
 }
 
-export const unshiftWorkflow = ({ id, action, params = {} }) => {
+export const unshiftWorkflow = ({ id, newAction, params = {} }) => {
   db.get('records')
     .find({ id })
     .get('workflow')
-    .unshift({ action, params })
+    .unshift({ action: newAction, params })
     .write()
 }
 

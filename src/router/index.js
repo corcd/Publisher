@@ -2,18 +2,18 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:01:15
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-14 14:06:09
+ * @LastEditTime: 2020-12-16 13:58:51
  * @Description: file content
  */
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import Log from '@/views/Log.vue'
-import Home from '@/views/Home.vue'
-import Profile from '@/views/Profile.vue'
-import New from '@/views/New.vue'
-import Settings from '@/views/Settings.vue'
-import Workflow from '@/views/Workflow.vue'
+import Log from '@/views/Log'
+import Home from '@/views/Home'
+import Profile from '@/views/Profile'
+import New from '@/views/New'
+import Settings from '@/views/Settings'
+import Workflow from '@/views/Workflow'
 
 Vue.use(VueRouter)
 

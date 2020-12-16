@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-12 21:37:09
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-15 11:31:50
+ * @LastEditTime: 2020-12-16 16:32:42
  * @Description: file content
 -->
 <template>
@@ -58,6 +58,9 @@
           <el-button type="default" size="mini" @click="reset">
             重 置
           </el-button>
+          <el-button type="danger" size="mini" @click="quit">
+            退 出
+          </el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -65,6 +68,7 @@
 </template>
 
 <script>
+import { Message } from 'element-ui'
 import {
   getUser,
   getMail,
@@ -72,7 +76,7 @@ import {
   setMailAuth,
   setMailAddressee
 } from '#/plugins/lowdb'
-import { Message } from 'element-ui'
+import { logout } from '@/modules/auth'
 import Topbar from '@/common/topbar'
 import StatusBar from '@/common/statusbar'
 
@@ -124,6 +128,10 @@ export default {
     },
     reset() {
       this.freshData()
+    },
+    quit() {
+      logout()
+      this.$router.push('/')
     }
   }
 }

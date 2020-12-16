@@ -11,17 +11,14 @@
       "remoteUrl": "https://github.com/corcd/Lcps",
       "workflow": [
         {
-          "action": "Publish",
-          "params": {}
-        },
-        {
           "action": "Establish",
           "params": {
             "jobName": "Lcps-Make-Test"
           }
         }
       ],
-      "updateTime": 1607928757
+      "updateTime": 1607928757,
+      "status": ""
     },
     {
       "id": "_RxR_2HlU",
@@ -34,11 +31,40 @@
       "remoteUrl": "http://gitlab.aodianyun.com/xiawei/project_lcps.git",
       "workflow": [
         {
+          "action": "Establish",
+          "params": {
+            "jobName": "Lcps-Test"
+          }
+        },
+        {
+          "action": "Notify",
+          "params": {
+            "name": "4r41242142",
+            "jobName": "Lcps-Test",
+            "updatedContent": "test",
+            "environment": "测试环境"
+          }
+        }
+      ],
+      "updateTime": 1607930625,
+      "status": "completed"
+    },
+    {
+      "id": "riA9ljmvl",
+      "name": "make",
+      "jobName": "Lcps-Make-Test",
+      "branchInfo": {
+        "SHA1": "a8a7c6e4f7f1542bf1f538692282e58c5d931e64",
+        "name": "refs/remotes/origin/test"
+      },
+      "remoteUrl": "http://gitlab.aodianyun.com/lcps/Lcps-Make.git",
+      "workflow": [
+        {
           "action": "Publish",
           "params": {}
         }
       ],
-      "updateTime": 1607930625
+      "updateTime": 1608087823
     }
   ],
   "user": {
