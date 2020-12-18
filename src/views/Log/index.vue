@@ -2,12 +2,12 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-08 13:23:42
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-18 16:34:06
+ * @LastEditTime: 2020-12-19 00:58:48
  * @Description: file content
 -->
 <template>
   <div class="log">
-    <Topbar subtitle="成员校验" :extra="`v${pConfig.version}`"></Topbar>
+    <Topbar subtitle="成员校验" :extra="`v${pConfig.version}`" update></Topbar>
     <div class="log-content">
       <section class="log-loginbox">
         <header>

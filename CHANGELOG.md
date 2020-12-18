@@ -2,9 +2,17 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-15 14:43:54
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-18 16:26:59
+ * @LastEditTime: 2020-12-19 01:06:50
  * @Description: file content
 -->
+# :tada: 0.4.3-rc4 (2020-12-19)
+
+### :sparkles: Features
+
+* 优化自动更新功能，增加手动触发能力
+
+
+
 # :tada: 0.4.1-rc4 (2020-12-18)
 
 ### :sparkles: Features

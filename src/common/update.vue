@@ -2,43 +2,86 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-18 15:43:07
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-18 15:43:18
+ * @LastEditTime: 2020-12-19 01:04:57
  * @Description: file content
 -->
 <template>
   <transition name="fade">
-    <div v-if="show">
-      <div class="modal"></div>
-      <div class="update">
-        <div class="header">
-          <h2>应用更新</h2>
-          <i class="close" @click="close"></i>
-        </div>
-        <div class="body">
-          <p>更新进度</p>
-          <p class="percentage">10%</p>
-          <div class="progress">
-            <div class="length"></div>
-          </div>
-        </div>
-      </div>
+    <div class="update" :style="`text-align: ${align}`">
+      <span v-if="visible && percent !== 100">更新进度: {{ percent }}%</span>
+      <span v-else-if="visible && percent === 100">
+        更新完成，请关闭重进
+      </span>
+      <span v-else @click="updateApp">检查更新</span>
     </div>
   </transition>
 </template>
 
 <script>
+import { ipcRenderer } from 'electron'
+import { showNotification } from '@/app/notification'
+
 export default {
   name: 'Update',
-  methods: {
-    close() {
-      this.$emit('update:show', false)
+  props: {
+    align: {
+      type: String,
+      default: 'center'
     }
   },
-  props: {
-    show: {
-      type: Boolean,
-      required: true,
-      default: false
+  data() {
+    return {
+      visible: false,
+      percent: 0
+    }
+  },
+  mounted() {
+    // 更新进度
+    ipcRenderer.on('downloadProgress', (event, data) => {
+      this.percent = data.percent.toFixed(2)
+      if (data.percent >= 100) {
+        // this.show = false;
+      }
+    })
+
+    // 更新检测状态
+    ipcRenderer.on('message', (event, data) => {
+      const title = '自动更新'
+      switch (data.status) {
+        case -1:
+          showNotification({
+            title,
+            body: data.msg
+          })
+          break
+        case 0:
+          showNotification({
+            title,
+            body: data.msg
+          })
+          break
+        case 1:
+          showNotification({
+            title,
+            body: data.msg
+          })
+          this.visible = true
+          break
+        case 2:
+          showNotification({
+            title,
+            body: data.msg
+          })
+          this.visible = false
+          break
+        default:
+          break
+      }
+    })
+  },
+  methods: {
+    updateApp() {
+      ipcRenderer.send('checkForUpdate')
     }
   }
 }
@@ -52,74 +95,19 @@ export default {
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
 }
-.modal {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0.4;
-  background: #000;
-}
 
 .update {
-  width: 400px;
-  height: 180px;
-  background-color: #ffffff;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  position: absolute;
-  top: 40%;
-  margin-top: -90px;
-  left: 50%;
-  margin-left: -200px;
-  box-shadow: #ffffff 0 0 10px;
-}
+  width: 200px;
+  height: 60px;
+  padding: 0 20px;
 
-.update .header i.close {
-  display: inline-block;
-  position: absolute;
-  top: 11px;
-  right: 12px;
-  width: 20px;
-  height: 20px;
-  background-image: url('../assets/img/close.png');
-  background-size: 100%;
-  cursor: pointer;
-}
-
-.update .header {
-  border-bottom: 1px solid #ccc;
-  height: 40px;
-  line-height: 40px;
-}
-
-.update .header h2 {
-  text-align: center;
-  font-size: 20px;
-}
-
-.update .body {
-  padding-top: 20px;
-  text-align: center;
-}
-
-.update .body .percentage {
-  margin-top: 20px;
-}
-
-.update .body .progress {
-  width: 350px;
-  height: 30px;
-  border: 1px solid #cccccc;
-  border-radius: 8px;
-  margin: 10px auto;
-}
-
-.update .body .progress .length {
-  background-color: #e4393c;
-  border-radius: 8px;
-  width: 10px;
-  height: 30px;
+  span {
+    color: #999;
+    font: {
+      size: 12px;
+    }
+    line-height: 60px;
+    cursor: pointer;
+  }
 }
 </style>

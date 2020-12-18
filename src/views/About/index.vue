@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-18 14:22:57
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-18 15:57:14
+ * @LastEditTime: 2020-12-19 01:00:13
  * @Description: file content
 -->
 <template>
@@ -15,6 +15,7 @@
         <p class="about-content__title">Publisher</p>
         <span class="about-content__subtitle">云平台前端发布工具</span>
         <span class="about-content__version">v{{ pConfig.version }}</span>
+        <Update></Update>
       </div>
       <div class="about-content__footer">
         <span class="about-content__subtitle">Copyright © 2020 Whzcorcd</span>
@@ -28,10 +29,11 @@ import { ipcRenderer } from 'electron'
 import pConfig from '../../../package.json'
 import Topbar from '@/common/topbar'
 import StatusBar from '@/common/statusbar'
+import Update from '@/common/update'
 
 export default {
   name: 'About',
-  components: { Topbar, StatusBar },
+  components: { Topbar, StatusBar, Update },
   data() {
     return {
       pConfig,

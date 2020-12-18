@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-18 15:51:49
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-18 16:09:08
+ * @LastEditTime: 2020-12-19 00:56:13
  * @Description: file content
  */
 import { autoUpdater } from 'electron-updater'
@@ -18,7 +18,7 @@ export const checkUpdate = win => {
   const returnData = {
     error: {
       status: -1,
-      msg: '更新时发生意外，无法进行正常更新！'
+      msg: '更新时发生意外，无法进行正常更新'
     },
     checking: {
       status: 0,
@@ -26,11 +26,11 @@ export const checkUpdate = win => {
     },
     updateAva: {
       status: 1,
-      msg: '正在更新'
+      msg: '正在更新中，请稍等'
     },
     updateNotAva: {
       status: 2,
-      msg: '开始加载程序'
+      msg: '当前已是最新版本，无需更新'
     }
   }
 

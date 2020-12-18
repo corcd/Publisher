@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-10 21:04:23
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-18 16:14:01
+ * @LastEditTime: 2020-12-19 01:04:05
  * @Description: file content
 -->
 <template>
@@ -12,14 +12,20 @@
       <div class="topbar-subtitle">
         <span>{{ subtitle }}</span>
       </div>
+      <Update align="right" v-if="update"></Update>
       <span class="topbar-copyright"> {{ extra }} 云平台前端团队 </span>
     </section>
   </div>
 </template>
 
 <script>
+import Update from './update'
+
 export default {
   name: 'Topbar',
+  components: {
+    Update
+  },
   props: {
     subtitle: {
       type: String,
@@ -28,6 +34,10 @@ export default {
     extra: {
       type: String,
       default: ''
+    },
+    update: {
+      type: Boolean,
+      default: false
     }
   }
 }

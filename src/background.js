@@ -2,12 +2,12 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:03:31
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-18 16:08:29
+ * @LastEditTime: 2020-12-19 00:48:17
  * @Description: file content
  */
 /* global __static */
 import path from 'path'
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import { addDefaultNavigation } from '../public/main/navigation'
 import { checkUpdate } from './app/update'
@@ -46,8 +46,11 @@ const createWindow = async () => {
     // Load the index.html when not in development
     await win.loadURL('app://./index.html')
     // Auto update
-    // autoUpdater.checkForUpdatesAndNotify()
     checkUpdate(win)
+
+    ipcMain.on('checkForUpdate', () => {
+      checkUpdate(win)
+    })
   }
 
   win.once('ready-to-show', () => {
