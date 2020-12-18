@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-10 21:04:23
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-11 12:28:37
+ * @LastEditTime: 2020-12-18 16:14:01
  * @Description: file content
 -->
 <template>
@@ -12,7 +12,7 @@
       <div class="topbar-subtitle">
         <span>{{ subtitle }}</span>
       </div>
-      <span class="topbar-copyright">云平台前端团队</span>
+      <span class="topbar-copyright"> {{ extra }} 云平台前端团队 </span>
     </section>
   </div>
 </template>
@@ -24,6 +24,10 @@ export default {
     subtitle: {
       type: String,
       default: '前端发布系统'
+    },
+    extra: {
+      type: String,
+      default: ''
     }
   }
 }

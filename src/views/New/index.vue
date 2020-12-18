@@ -2,14 +2,14 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-14 12:48:23
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-14 14:35:55
+ * @LastEditTime: 2020-12-18 16:31:04
  * @Description: file content
 -->
 <template>
   <div class="new">
     <Topbar subtitle="新增项目"></Topbar>
     <StatusBar content=""></StatusBar>
-    <div class="new-content">
+    <section class="new-content">
       <el-form
         class="new-form"
         label-position="top"
@@ -31,12 +31,13 @@
           </el-button>
         </el-form-item>
       </el-form>
-    </div>
+    </section>
   </div>
 </template>
 
 <script>
 import { addRecord } from '#/plugins/lowdb'
+import { showNotification } from '@/app/notification'
 import { getLastBuildNumber, getBuildInfo } from '@/plugins/jenkins'
 import Topbar from '@/common/topbar'
 import StatusBar from '@/common/statusbar'
@@ -54,29 +55,35 @@ export default {
   },
   methods: {
     async add() {
-      const res = await getLastBuildNumber(
-        this.newProjectData.jobName
-      ).catch(err => console.error(err))
+      try {
+        const res = await getLastBuildNumber(this.newProjectData.jobName)
 
-      const buildInfo = await getBuildInfo(
-        this.newProjectData.jobName,
-        res.data
-      ).catch(err => console.error(err))
+        const buildInfo = await getBuildInfo(
+          this.newProjectData.jobName,
+          res.data
+        )
 
-      const { actions } = buildInfo.data
-      const buildData = actions.filter(
-        item => item._class === 'hudson.plugins.git.util.BuildData'
-      )
-      const remoteUrl = buildData ? buildData[0].remoteUrls[0] : ''
-      const branchInfo = buildData
-        ? buildData[0].lastBuiltRevision.branch[0]
-        : { name: '( 无 )', SHA1: '( 无 )' }
+        const { actions } = buildInfo.data
+        const buildData = actions.filter(
+          item => item._class === 'hudson.plugins.git.util.BuildData'
+        )
+        const remoteUrl = buildData ? buildData[0].remoteUrls[0] : ''
+        const branchInfo = buildData
+          ? buildData[0].lastBuiltRevision.branch[0]
+          : { name: '( 无 )', SHA1: '( 无 )' }
 
-      await addRecord(
-        Object.assign({}, this.newProjectData, { branchInfo }, { remoteUrl })
-      ).catch(err => console.error(err))
+        await addRecord(
+          Object.assign({}, this.newProjectData, { branchInfo }, { remoteUrl })
+        )
 
-      this.$router.push({ name: 'Home' })
+        this.$router.push({ name: 'Home' })
+      } catch (err) {
+        console.log(err)
+        showNotification({
+          title: '新增项目失败',
+          body: `项目 ${this.newProjectData.name} 新增失败，请检查项目是否存在或合法`
+        })
+      }
     },
     reset() {
       this.newProjectData = { name: '', jobName: '' }

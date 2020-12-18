@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-16 15:10:13
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-16 15:42:35
+ * @LastEditTime: 2020-12-18 14:20:53
  * @Description: file content
 -->
 <template>
@@ -20,7 +20,7 @@
       label-position="top"
       label-width="80px"
       size="mini"
-      :model="tempData"
+      :model="tempData.params"
     >
       <el-form-item>
         <p class="workflow-form__topic">参数设置</p>
@@ -29,6 +29,8 @@
         v-for="item in Object.keys(tempData.params)"
         :key="item"
         :label="item"
+        :prop="item"
+        :required="isRequired(item)"
       >
         <el-input
           type="text"
@@ -55,6 +57,7 @@
 
 <script>
 import { getOneRecord } from '#/plugins/lowdb'
+import { originalTasksTypes } from '@/modules/task'
 
 export default {
   name: 'ConfigDialog',
@@ -70,6 +73,18 @@ export default {
       tempData: {
         currentAction: '',
         params: {}
+      }
+    }
+  },
+  computed: {
+    isRequired() {
+      return key => {
+        const item = originalTasksTypes.find(
+          element => element.value === this.tempData.currentAction
+        )
+        const target = item.params.find(element => element.name === key)
+
+        return target ? target.required : false
       }
     }
   },

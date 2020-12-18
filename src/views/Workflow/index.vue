@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-13 19:42:43
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-16 15:41:36
+ * @LastEditTime: 2020-12-18 14:05:04
  * @Description: file content
 -->
 <template>
@@ -50,8 +50,10 @@ import {
 } from '#/plugins/lowdb'
 import Topbar from '@/common/topbar'
 import StatusBar from '@/common/statusbar'
+import UpdateWorkflowItem from '@/components/workflow/UpdateItem'
 import PublishWorkflowItem from '@/components/workflow/PublishItem'
 import EstablishWorkflowItem from '@/components/workflow/EstablishItem'
+import ParametricBuildWorkflowItem from '@/components/workflow/ParametricBuildItem'
 import NotifyWorkflowItem from '@/components/workflow/NotifyItem'
 import DeployWorkflowItem from '@/components/workflow/DeployItem'
 import AddDialog from './dialogs/addDialog'
@@ -62,9 +64,11 @@ export default {
   components: {
     Topbar,
     StatusBar,
+    UpdateWorkflowItem,
     PublishWorkflowItem,
     NotifyWorkflowItem,
     EstablishWorkflowItem,
+    ParametricBuildWorkflowItem,
     DeployWorkflowItem,
     AddDialog,
     ConfigDialog

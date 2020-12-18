@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:22:13
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-16 16:48:33
+ * @LastEditTime: 2020-12-18 09:13:36
  * @Description: file content
  */
 import _axios from '@/request'
@@ -59,6 +59,10 @@ export const getLastBuildNumber = jobName => {
 
 export const build = jobName => {
   return request(jobName, 'build', 'POST')
+}
+
+export const buildWithParams = (jobName, preload) => {
+  return request(jobName, 'buildWithParameters', 'POST', preload)
 }
 
 // TODO 合并所有 jenkins 相关操作

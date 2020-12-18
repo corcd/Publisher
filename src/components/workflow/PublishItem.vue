@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-13 21:38:15
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-15 02:05:38
+ * @LastEditTime: 2020-12-18 10:42:54
  * @Description: file content
 -->
 <template>
@@ -11,8 +11,9 @@
       <div class="workflow-item-content">
         <div class="workflow-item-content__information">
           <ul>
-            <li><i class="el-icon-time"></i>Gitlab 仓库同步</li>
-            <li><i class="el-icon-time"></i>版本号更新</li>
+            <li v-for="item in workflowItemInfo.pointerList" :key="item">
+              <i class="el-icon-time"></i>{{ item }}
+            </li>
           </ul>
         </div>
         <div class="workflow-item-content__controls">
@@ -22,7 +23,7 @@
         </div>
       </div>
       <div class="workflow-item-footer">
-        <span>发 布</span>
+        <span>{{ workflowItemInfo.title }}</span>
       </div>
     </div>
     <div class="workflow-item-item" @click="insert">
@@ -32,42 +33,23 @@
 </template>
 
 <script>
-import { deleteWorkflowItem } from '#/plugins/lowdb'
-import { runOneItem } from '@/modules/task'
+import methods from './mixin/methods'
+
+const NAME = 'Publish'
+const INFO = {
+  title: '发 布',
+  pointerList: ['Gitlab 仓库同步', '版本更新']
+}
 
 export default {
   name: 'PublishWorkflowItem',
-  props: {
-    id: {
-      type: String,
-      default: ''
-    },
-    params: {
-      type: Object,
-      default: null
-    }
-  },
   data() {
-    return {}
-  },
-  methods: {
-    runAction() {
-      runOneItem({ action: 'Publish', params: this.params })
-    },
-    setWorkflowItem() {
-      // TODO
-    },
-    deleteWorkflowItem() {
-      deleteWorkflowItem({ id: this.id, action: 'Publish' })
-      this.$emit('refresh')
-    },
-    setParams() {
-      this.$emit('set', 'Publish')
-    },
-    insert() {
-      this.$emit('insert', 'Publish')
+    return {
+      workflowItemName: NAME,
+      workflowItemInfo: Object.freeze(INFO)
     }
-  }
+  },
+  mixins: [methods]
 }
 </script>
 

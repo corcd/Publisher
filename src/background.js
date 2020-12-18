@@ -2,15 +2,15 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:03:31
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-15 14:27:29
+ * @LastEditTime: 2020-12-18 16:08:29
  * @Description: file content
  */
 /* global __static */
 import path from 'path'
 import { app, protocol, BrowserWindow } from 'electron'
-import { autoUpdater } from 'electron-updater'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import { addDefaultNavigation } from '../public/main/navigation'
+import { checkUpdate } from './app/update'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -46,7 +46,8 @@ const createWindow = async () => {
     // Load the index.html when not in development
     await win.loadURL('app://./index.html')
     // Auto update
-    autoUpdater.checkForUpdatesAndNotify()
+    // autoUpdater.checkForUpdatesAndNotify()
+    checkUpdate(win)
   }
 
   win.once('ready-to-show', () => {

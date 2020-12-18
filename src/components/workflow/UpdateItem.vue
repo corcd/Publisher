@@ -1,8 +1,8 @@
 <!--
  * @Author: Whzcorcd
- * @Date: 2020-12-13 21:38:42
+ * @Date: 2020-12-18 10:15:40
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-18 10:39:18
+ * @LastEditTime: 2020-12-18 10:43:37
  * @Description: file content
 -->
 <template>
@@ -35,14 +35,14 @@
 <script>
 import methods from './mixin/methods'
 
-const NAME = 'Deploy'
+const NAME = 'Update'
 const INFO = {
-  title: '部 署',
-  pointerList: ['连接服务器', '热更替部署项目']
+  title: '配置更新',
+  pointerList: ['获取任务数据', '增量更新数据']
 }
 
 export default {
-  name: 'DeployWorkflowItem',
+  name: 'UpdateWorkflowItem',
   data() {
     return {
       workflowItemName: NAME,

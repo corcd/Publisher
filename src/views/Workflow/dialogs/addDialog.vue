@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-16 15:09:54
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-16 15:26:25
+ * @LastEditTime: 2020-12-18 14:07:43
  * @Description: file content
 -->
 <template>
@@ -20,7 +20,7 @@
       label-position="top"
       label-width="80px"
       size="mini"
-      :model="tempData"
+      :model="tempData.params"
     >
       <el-form-item>
         <p class="workflow-form__topic">工作流选择</p>
@@ -46,14 +46,16 @@
       </el-form-item>
       <el-form-item
         v-for="item in paramsList(tempData.newAction)"
-        :key="item"
-        :label="item"
+        :key="item.name"
+        :label="item.name"
+        :prop="item.name"
+        :required="item.required"
       >
         <el-input
           type="text"
           size="mini"
-          :placeholder="item"
-          v-model="tempData.params[item]"
+          :placeholder="item.name"
+          v-model="tempData.params[item.name]"
         ></el-input>
       </el-form-item>
     </el-form>
@@ -70,6 +72,7 @@
 
 <script>
 import { getOneRecord } from '#/plugins/lowdb'
+import { originalTasksTypes } from '@/modules/task'
 
 export default {
   name: 'AddDialog',
@@ -82,28 +85,7 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      original: [
-        {
-          value: 'Publish',
-          label: '发布',
-          params: []
-        },
-        {
-          value: 'Establish',
-          label: '构建',
-          params: ['jobName']
-        },
-        {
-          value: 'Notify',
-          label: '通知',
-          params: ['name', 'jobName', 'environment', 'updatedContent']
-        },
-        {
-          value: 'Deploy',
-          label: '部署',
-          params: []
-        }
-      ],
+      original: Object.freeze(originalTasksTypes),
       tempData: {
         currentAction: '',
         newAction: '',
@@ -116,24 +98,36 @@ export default {
       return id => {
         const workflow = getOneRecord(id).workflow
         const workflowActions = workflow.map(item => item.action)
+        const selectOptions = JSON.parse(JSON.stringify(this.original))
 
-        const original = new Set(this.original)
-
-        original.forEach((item, index) => {
+        selectOptions.forEach((item, index) => {
           if (workflowActions.includes(item.value)) {
-            original.delete(item)
+            selectOptions.splice(index, 1)
           }
         })
 
-        console.log(original)
-        return original
+        return selectOptions
       }
     },
     paramsList() {
       return action => {
-        return action
-          ? this.original.filter(item => item.value === action)[0].params
-          : []
+        if (!action) return []
+
+        const temp = this.original.filter(item => item.value === action)
+        const res = temp.length > 0 ? temp[0].params : []
+
+        // res.forEach(item => {
+        //   console.log(item)
+        //   this.$set(this.rules, item.name, [
+        //     {
+        //       required: item.required,
+        //       message: `请填写 ${item.name}`,
+        //       trigger: 'blur'
+        //     }
+        //   ])
+        // })
+
+        return res
       }
     }
   },

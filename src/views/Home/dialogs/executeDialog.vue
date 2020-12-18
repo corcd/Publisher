@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-16 12:33:40
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-16 14:24:53
+ * @LastEditTime: 2020-12-18 15:05:44
  * @Description: file content
 -->
 <template>
@@ -15,26 +15,37 @@
     :show-close="false"
     center
   >
-    <el-input
-      type="textarea"
-      :rows="3"
-      placeholder="请输入更新内容，一个条目单独一行"
-      v-model="postTempData.text"
-    >
-    </el-input>
-    <el-select
-      v-model="postTempData.environment"
+    <el-form
+      class="home-form"
+      label-position="top"
+      label-width="80px"
       size="mini"
-      placeholder="请选择"
     >
-      <el-option
-        v-for="item in selectOptions"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value"
-      >
-      </el-option>
-    </el-select>
+      <el-form-item label="更新内容" v-if="hasNotifyWorkflowItem(id)">
+        <el-input
+          type="textarea"
+          :rows="3"
+          placeholder="请输入更新内容，一个条目单独一行"
+          v-model="prevExecuteData.text"
+        >
+        </el-input>
+      </el-form-item>
+      <el-form-item label="发布环境">
+        <el-select
+          v-model="prevExecuteData.environment"
+          size="mini"
+          placeholder="请选择"
+        >
+          <el-option
+            v-for="item in selectOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          >
+          </el-option>
+        </el-select>
+      </el-form-item>
+    </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button type="default" size="mini" @click="cancel">
         取 消
@@ -47,38 +58,41 @@
 </template>
 
 <script>
+import { getOneRecord } from '#/plugins/lowdb'
+import { originalEnvTypes } from '@/modules/task'
+
 export default {
   name: 'ExecuteDialog',
   data() {
     return {
       dialogVisible: false,
-      selectOptions: [
-        {
-          value: 'development',
-          label: '测试环境'
-        },
-        {
-          value: 'preview',
-          label: '预发环境'
-        },
-        {
-          value: 'production',
-          label: '生产环境'
-        }
-      ],
-      postTempData: {
+      selectOptions: Object.freeze(originalEnvTypes),
+      id: '',
+      prevExecuteData: {
         text: '',
         environment: 'development'
       }
     }
   },
+  computed: {
+    hasNotifyWorkflowItem() {
+      return id => {
+        if (!id) return false
+
+        const { workflow } = getOneRecord(id)
+        const chosenList = workflow.filter(item => item.action === 'Notify')
+        return chosenList.length > 0
+      }
+    }
+  },
   methods: {
-    open() {
+    open(id) {
+      this.id = id
       this.dialogVisible = true
     },
     close() {
       this.dialogVisible = false
-      this.postTempData = {
+      this.prevExecuteData = {
         text: '',
         environment: 'development'
       }
@@ -87,16 +101,46 @@ export default {
       this.$emit('cancel')
     },
     confirm() {
-      this.$emit('confirm', this.postTempData)
+      this.$emit('confirm', this.prevExecuteData)
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.el-dialog {
-  .el-select {
-    margin-top: 10px;
+.home {
+  &-form {
+    width: 100%;
+
+    &::v-deep .workflow-form__topic {
+      width: 100%;
+      text-align: left;
+      font: {
+        size: 14px;
+        weight: 500;
+      }
+    }
+
+    &::v-deep .el-divider--horizontal {
+      margin: 12px 0;
+    }
+
+    &::v-deep .el-form-item {
+      margin-bottom: 0px;
+      padding-bottom: 10px;
+      text-align: left;
+    }
+
+    &::v-deep .el-form-item__label {
+      width: 100%;
+      height: 24px;
+      padding: 0;
+      font: {
+        size: 12px;
+        weight: 500;
+      }
+      line-height: 24px;
+    }
   }
 }
 </style>

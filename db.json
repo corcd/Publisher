@@ -1,26 +1,6 @@
 {
   "records": [
     {
-      "id": "WQJ8tT7kS",
-      "name": "make",
-      "jobName": "Lcps-Make-Pre",
-      "branchInfo": {
-        "SHA1": "acc242b3134a6b844be038143688dcb945d1d507",
-        "name": "refs/remotes/origin/dev"
-      },
-      "remoteUrl": "https://github.com/corcd/Lcps",
-      "workflow": [
-        {
-          "action": "Establish",
-          "params": {
-            "jobName": "Lcps-Make-Test"
-          }
-        }
-      ],
-      "updateTime": 1607928757,
-      "status": ""
-    },
-    {
       "id": "_RxR_2HlU",
       "name": "lcps",
       "jobName": "Lcps-Test",
@@ -31,18 +11,19 @@
       "remoteUrl": "http://gitlab.aodianyun.com/xiawei/project_lcps.git",
       "workflow": [
         {
-          "action": "Establish",
-          "params": {
-            "jobName": "Lcps-Test"
-          }
+          "action": "Publish",
+          "params": {}
+        },
+        {
+          "action": "Deploy",
+          "params": {}
         },
         {
           "action": "Notify",
           "params": {
-            "name": "4r41242142",
-            "jobName": "Lcps-Test",
-            "updatedContent": "test",
-            "environment": "测试环境"
+            "name": "313",
+            "jobName": "123123",
+            "environment": "development"
           }
         }
       ],
@@ -50,21 +31,28 @@
       "status": "completed"
     },
     {
-      "id": "riA9ljmvl",
-      "name": "make",
-      "jobName": "Lcps-Make-Test",
+      "id": "dqwily2xJ",
+      "name": "delay",
+      "jobName": "Lcps-Delay",
       "branchInfo": {
-        "SHA1": "a8a7c6e4f7f1542bf1f538692282e58c5d931e64",
-        "name": "refs/remotes/origin/test"
+        "SHA1": "f5a2d7caa2b5054b1ad83bd9079c1e6537e0432d",
+        "name": "refs/remotes/origin/dev"
       },
-      "remoteUrl": "http://gitlab.aodianyun.com/lcps/Lcps-Make.git",
+      "remoteUrl": "http://gitlab.aodianyun.com/lcps/Lcps-Delay.git",
       "workflow": [
         {
           "action": "Publish",
           "params": {}
+        },
+        {
+          "action": "ParametricBuild",
+          "params": {
+            "jobName": "Lcps-Delay",
+            "environment": "development"
+          }
         }
       ],
-      "updateTime": 1608087823
+      "updateTime": 1608271262
     }
   ],
   "user": {

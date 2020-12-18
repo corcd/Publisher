@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-13 19:48:09
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-15 01:53:08
+ * @LastEditTime: 2020-12-18 10:42:02
  * @Description: file content
 -->
 <template>
@@ -11,8 +11,9 @@
       <div class="workflow-item-content">
         <div class="workflow-item-content__information">
           <ul>
-            <li><i class="el-icon-time"></i>发送至企业微信</li>
-            <li><i class="el-icon-time"></i>发送至企业邮箱</li>
+            <li v-for="item in workflowItemInfo.pointerList" :key="item">
+              <i class="el-icon-time"></i>{{ item }}
+            </li>
           </ul>
         </div>
         <div class="workflow-item-content__controls">
@@ -22,7 +23,7 @@
         </div>
       </div>
       <div class="workflow-item-footer">
-        <span>通 知</span>
+        <span>{{ workflowItemInfo.title }}</span>
       </div>
     </div>
     <div class="workflow-item-item" @click="insert">
@@ -32,39 +33,23 @@
 </template>
 
 <script>
-import { deleteWorkflowItem } from '#/plugins/lowdb'
-import { runOneItem } from '@/modules/task'
+import methods from './mixin/methods'
+
+const NAME = 'Notify'
+const INFO = {
+  title: '通 知',
+  pointerList: ['发送至企业微信', '发送至企业邮箱']
+}
 
 export default {
   name: 'NotifyWorkflowItem',
-  props: {
-    id: {
-      type: String,
-      default: ''
-    },
-    params: {
-      type: Object,
-      default: null
-    }
-  },
   data() {
-    return {}
-  },
-  methods: {
-    runAction() {
-      runOneItem({ action: 'Notify', params: this.params })
-    },
-    deleteWorkflowItem() {
-      deleteWorkflowItem({ id: this.id, action: 'Notify' })
-      this.$emit('refresh')
-    },
-    setParams() {
-      this.$emit('set', 'Notify')
-    },
-    insert() {
-      this.$emit('insert', 'Notify')
+    return {
+      workflowItemName: NAME,
+      workflowItemInfo: Object.freeze(INFO)
     }
-  }
+  },
+  mixins: [methods]
 }
 </script>
 

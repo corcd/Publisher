@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:01:15
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-16 17:13:03
+ * @LastEditTime: 2020-12-18 14:59:47
  * @Description: file content
 -->
 <template>
@@ -84,10 +84,11 @@ import {
   getRecords,
   getOneRecord,
   delRecord,
-  updateNotifyWorkflowParams
+  updateNotifyWorkflowParams,
+  updateParametricBuildWorkflowParams
 } from '#/plugins/lowdb'
 import { setText } from '@/app/clipboard'
-import { runWorkflow } from '@/modules/task'
+import { originalEnvTypes, runWorkflow } from '@/modules/task'
 import Topbar from '@/components/home/topbar'
 import Searchbar from '@/components/home/searchbar'
 import ExecuteDialog from './dialogs/executeDialog'
@@ -100,20 +101,7 @@ export default {
       defaultMapChangeTracker: 0,
       activeName: '',
       activeId: '',
-      selectOptions: [
-        {
-          value: 'development',
-          label: '测试环境'
-        },
-        {
-          value: 'preview',
-          label: '预发环境'
-        },
-        {
-          value: 'production',
-          label: '生产环境'
-        }
-      ],
+      selectOptions: Object.freeze(originalEnvTypes),
       recordsData: [],
       recordsStatusData: null
     }
@@ -137,6 +125,15 @@ export default {
       return id => {
         const { workflow } = getOneRecord(id)
         const chosenList = workflow.filter(item => item.action === 'Notify')
+        return chosenList.length > 0
+      }
+    },
+    hasParametricBuildWorkflowItem() {
+      return id => {
+        const { workflow } = getOneRecord(id)
+        const chosenList = workflow.filter(
+          item => item.action === 'ParametricBuild'
+        )
         return chosenList.length > 0
       }
     }
@@ -174,14 +171,18 @@ export default {
     },
     preExecute(id) {
       this.activeId = id
-      if (this.hasNotifyWorkflowItem(this.activeId)) {
-        this.$refs.dialog.open()
+      if (
+        this.hasNotifyWorkflowItem(this.activeId) ||
+        this.hasParametricBuildWorkflowItem(this.activeId)
+      ) {
+        this.$refs.dialog.open(this.activeId)
         return
       }
       return this.execute()
     },
-    async execute(postTempData) {
-      console.log(postTempData)
+    async execute(prevExecuteData = {}) {
+      // prevExecuteData 构建前填写的参数
+      console.log(prevExecuteData)
 
       if (!this.activeId) {
         console.error('工作流执行 id 错误')
@@ -190,15 +191,28 @@ export default {
 
       const { workflow } = getOneRecord(this.activeId)
 
+      // TODO 功能抽离
+      // 通知模块参数录入
       if (this.hasNotifyWorkflowItem(this.activeId)) {
         const environment = this.selectOptions.filter(
-          item => item.value === postTempData.environment
+          item => item.value === prevExecuteData.environment
         )[0].label
 
         updateNotifyWorkflowParams({
           id: this.activeId,
           environment,
-          updatedContent: postTempData.text
+          updatedContent: prevExecuteData.text
+        })
+      }
+      // 参数化构建模块参数录入
+      if (this.hasParametricBuildWorkflowItem(this.activeId)) {
+        const environment = this.selectOptions.filter(
+          item => item.value === prevExecuteData.environment
+        )[0].label
+
+        updateParametricBuildWorkflowParams({
+          id: this.activeId,
+          environment
         })
       }
 

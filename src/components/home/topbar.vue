@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-09 01:17:07
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-14 14:21:50
+ * @LastEditTime: 2020-12-18 15:09:48
  * @Description: file content
 -->
 <template>
@@ -10,6 +10,12 @@
     <section>
       <span>Publisher</span>
       <div>
+        <el-button
+          icon="el-icon-warning-outline"
+          size="mini"
+          circle
+          @click="lead2AboutPage"
+        ></el-button>
         <el-button
           icon="el-icon-refresh"
           size="mini"
@@ -20,13 +26,13 @@
           icon="el-icon-plus"
           size="mini"
           circle
-          @click="leadToNewPage"
+          @click="lead2NewPage"
         ></el-button>
         <el-button
           icon="el-icon-setting"
           size="mini"
           circle
-          @click="leadToSettingsPage"
+          @click="lead2SettingsPage"
         ></el-button>
       </div>
     </section>
@@ -47,10 +53,13 @@ export default {
     fresh() {
       this.$emit('change')
     },
-    leadToNewPage() {
+    lead2AboutPage() {
+      this.$router.push({ name: 'About' })
+    },
+    lead2NewPage() {
       this.$router.push({ name: 'New' })
     },
-    leadToSettingsPage() {
+    lead2SettingsPage() {
       this.$router.push({ name: 'Settings' })
     }
   }

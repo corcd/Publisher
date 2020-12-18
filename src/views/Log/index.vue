@@ -2,12 +2,12 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-08 13:23:42
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-14 09:39:47
+ * @LastEditTime: 2020-12-18 16:34:06
  * @Description: file content
 -->
 <template>
   <div class="log">
-    <Topbar subtitle="成员校验"></Topbar>
+    <Topbar subtitle="成员校验" :extra="`v${pConfig.version}`"></Topbar>
     <div class="log-content">
       <section class="log-loginbox">
         <header>
@@ -44,6 +44,8 @@
 </template>
 
 <script>
+import pConfig from '../../../package.json'
+
 import { getUser } from '#/plugins/lowdb'
 import { login } from '@/modules/auth'
 import Topbar from '@/common/topbar'
@@ -53,12 +55,27 @@ export default {
   components: { Topbar },
   data() {
     return {
+      pConfig,
       btnLoading: false,
       authInfo: {
         username: '',
         password: ''
       }
     }
+  },
+  mounted() {
+    window.addEventListener(
+      'keyup',
+      e => {
+        if (e.key === 'Enter') this.submit()
+      },
+      true
+    )
+  },
+  beforeDestroy() {
+    window.removeEventListener('keyup', e => {
+      if (e.key === 'Enter') this.submit()
+    })
   },
   methods: {
     submit() {

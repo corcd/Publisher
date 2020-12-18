@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-06 20:06:23
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-16 10:08:12
+ * @LastEditTime: 2020-12-18 14:39:59
  * @Description: file content
  */
 import { app, remote } from 'electron'
@@ -180,6 +180,7 @@ export const updateWorkflowParams = ({ id, action, newParams }) => {
     .write()
 }
 
+// TODO 功能合并
 export const updateNotifyWorkflowParams = ({
   id,
   environment,
@@ -201,6 +202,24 @@ export const updateNotifyWorkflowParams = ({
     .find({ action })
     .set('params.environment', environment)
     .set('params.updatedContent', updatedContent)
+    .write()
+}
+
+export const updateParametricBuildWorkflowParams = ({ id, environment }) => {
+  const action = 'ParametricBuild'
+
+  db.get('records')
+    .find({ id })
+    .get('workflow')
+    .find({ action })
+    .unset('params.environment')
+    .write()
+
+  db.get('records')
+    .find({ id })
+    .get('workflow')
+    .find({ action })
+    .set('params.environment', environment)
     .write()
 }
 

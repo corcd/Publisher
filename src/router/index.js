@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:01:15
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-16 13:58:51
+ * @LastEditTime: 2020-12-18 15:16:24
  * @Description: file content
  */
 import Vue from 'vue'
@@ -10,6 +10,7 @@ import VueRouter from 'vue-router'
 
 import Log from '@/views/Log'
 import Home from '@/views/Home'
+import About from '@/views/About'
 import Profile from '@/views/Profile'
 import New from '@/views/New'
 import Settings from '@/views/Settings'
@@ -32,6 +33,14 @@ const routes = [
     component: Profile,
     meta: {
       title: 'Publisher'
+    }
+  },
+  {
+    path: '/about',
+    name: 'About',
+    component: About,
+    meta: {
+      title: '前端发布工具'
     }
   },
   {

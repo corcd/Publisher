@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:01:15
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-11 18:05:45
+ * @LastEditTime: 2020-12-18 15:56:08
  * @Description: file content
 -->
 <template>
@@ -12,8 +12,17 @@
 </template>
 
 <script>
+import { ipcRenderer } from 'electron'
+
 export default {
-  name: 'app'
+  name: 'app',
+  created() {
+    ipcRenderer.on('router', (event, message) => {
+      if (!this.$route.path.includes(message)) {
+        this.$router.push(message)
+      }
+    })
+  }
 }
 </script>
 
