@@ -2,19 +2,13 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:01:15
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-18 15:16:24
+ * @LastEditTime: 2020-12-19 09:50:47
  * @Description: file content
  */
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import Log from '@/views/Log'
-import Home from '@/views/Home'
-import About from '@/views/About'
-import Profile from '@/views/Profile'
-import New from '@/views/New'
-import Settings from '@/views/Settings'
-import Workflow from '@/views/Workflow'
 
 Vue.use(VueRouter)
 
@@ -30,7 +24,8 @@ const routes = [
   {
     path: '/profile',
     name: 'Profile',
-    component: Profile,
+    component: () =>
+      import(/* webpackChunkName: "chunk-profile" */ '@/views/Profile'),
     meta: {
       title: 'Publisher'
     }
@@ -38,7 +33,8 @@ const routes = [
   {
     path: '/about',
     name: 'About',
-    component: About,
+    component: () =>
+      import(/* webpackChunkName: "chunk-about" */ '@/views/About'),
     meta: {
       title: '前端发布工具'
     }
@@ -46,7 +42,8 @@ const routes = [
   {
     path: '/home',
     name: 'Home',
-    component: Home,
+    component: () =>
+      import(/* webpackChunkName: "chunk-home" */ '@/views/Home'),
     meta: {
       title: '前端发布工具'
     }
@@ -54,7 +51,7 @@ const routes = [
   {
     path: '/new',
     name: 'New',
-    component: New,
+    component: () => import(/* webpackChunkName: "chunk-new" */ '@/views/New'),
     meta: {
       title: '前端发布工具'
     }
@@ -62,7 +59,8 @@ const routes = [
   {
     path: '/settings',
     name: 'Settings',
-    component: Settings,
+    component: () =>
+      import(/* webpackChunkName: "chunk-settings" */ '@/views/Settings'),
     meta: {
       title: '前端发布工具'
     }
@@ -70,7 +68,8 @@ const routes = [
   {
     path: '/workflow/:id',
     name: 'Workflow',
-    component: Workflow,
+    component: () =>
+      import(/* webpackChunkName: "chunk-workflow" */ '@/views/Workflow'),
     meta: {
       title: '前端发布工具'
     }

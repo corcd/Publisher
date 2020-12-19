@@ -2,19 +2,14 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:22:13
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-18 09:13:36
+ * @LastEditTime: 2020-12-19 14:34:21
  * @Description: file content
  */
 import _axios from '@/request'
+import { jenkins } from '@/config'
 import qs from 'qs'
 
-// 11719195c806e2c85599e7f86052431a95
-const authorization = {
-  username: 'bot',
-  password: 'whz18267590821'
-}
-
-const baseUrl = 'http://47.99.79.15:8081/job'
+const { baseUrl, authorization } = jenkins
 
 const request = (jobName, actionUrl, method, params = {}) => {
   return method === 'POST'

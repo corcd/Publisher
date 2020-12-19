@@ -2,10 +2,11 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-06 22:06:34
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-18 13:51:20
+ * @LastEditTime: 2020-12-19 14:24:26
  * @Description: file content
  */
 import { showNotification } from '*/notification'
+import { listRepositoryTree } from '@/plugins/gitlab'
 import { build, buildWithParams } from '@/plugins/jenkins'
 import { sendWechatNotification, sendEmailNotification } from '@/plugins/notify'
 
@@ -33,7 +34,7 @@ export const originalTasksTypes = [
   {
     value: 'Publish',
     label: '发布',
-    params: []
+    params: [{ name: 'id', required: true }]
   },
   {
     value: 'Establish',
@@ -76,6 +77,7 @@ const tasks = {
   runPublishTask: async () => {
     console.log('publish')
     // TODO 发布工作流
+    await listRepositoryTree(72)
     return Promise.resolve('ok')
   },
   runEstablishTask: async ({ jobName }) => {

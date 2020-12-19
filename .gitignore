@@ -1,5 +1,6 @@
 .DS_Store
 node_modules
+db.json
 /dist
 
 
@@ -25,5 +26,5 @@ pnpm-debug.log*
 #Electron-builder output
 /dist_electron
 
-#Auth module
-/src/modules/auth.js
+#Config module
+/src/config
