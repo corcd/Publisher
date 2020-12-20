@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:22:13
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-19 14:34:21
+ * @LastEditTime: 2020-12-19 23:36:08
  * @Description: file content
  */
 import _axios from '@/request'
@@ -36,26 +36,32 @@ const request = (jobName, actionUrl, method, params = {}) => {
       })
 }
 
+// 获取任务详情
 export const getJobInfo = jobName => {
   return request(jobName, 'api/json', 'GET')
 }
 
+// 获取构建详情
 export const getBuildInfo = (jobName, buildNumber) => {
   return request(jobName, `${buildNumber}/api/json`, 'GET')
 }
 
+// 获取控制台输出
 export const console = jobName => {
   return request(jobName, 'lastBuild/logText/progressiveText', 'GET')
 }
 
+// 获取最后一次构建数据
 export const getLastBuildNumber = jobName => {
   return request(jobName, 'lastBuild/buildNumber', 'GET')
 }
 
+// 任务普通构建
 export const build = jobName => {
   return request(jobName, 'build', 'POST')
 }
 
+// 任务参数化构建
 export const buildWithParams = (jobName, preload) => {
   return request(jobName, 'buildWithParameters', 'POST', preload)
 }

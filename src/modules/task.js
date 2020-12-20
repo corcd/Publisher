@@ -2,26 +2,35 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-06 22:06:34
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-19 14:24:26
+ * @LastEditTime: 2020-12-20 20:01:28
  * @Description: file content
  */
+// TODO 替换为 nanoid
+import shortid from 'shortid'
 import { showNotification } from '*/notification'
-import { listRepositoryTree } from '@/plugins/gitlab'
+import {
+  getProjectId,
+  compareBranches,
+  createsNewMergeRequest
+} from '@/plugins/gitlab'
 import { build, buildWithParams } from '@/plugins/jenkins'
 import { sendWechatNotification, sendEmailNotification } from '@/plugins/notify'
 
 export const originalEnvTypes = [
   {
     value: 'development',
-    label: '测试环境'
+    label: '测试环境',
+    branchName: 'test'
   },
   {
     value: 'preview',
-    label: '预发环境'
+    label: '预发环境',
+    branchName: 'dev'
   },
   {
     value: 'production',
-    label: '生产环境'
+    label: '生产环境',
+    branchName: 'master'
   }
 ]
 
@@ -34,7 +43,10 @@ export const originalTasksTypes = [
   {
     value: 'Publish',
     label: '发布',
-    params: [{ name: 'id', required: true }]
+    params: [
+      { name: 'projectName', required: true },
+      { name: 'environment', required: true }
+    ]
   },
   {
     value: 'Establish',
@@ -74,10 +86,58 @@ const tasks = {
     // TODO 更新工作流
     return Promise.resolve('ok')
   },
-  runPublishTask: async () => {
+  runPublishTask: async ({ projectName, environment }) => {
+    if (!projectName || !environment) {
+      return Promise.reject(new Error('参数不能为空'))
+    }
+
     console.log('publish')
-    // TODO 发布工作流
-    await listRepositoryTree(72)
+    try {
+      const { data } = await getProjectId(projectName)
+      console.log(data)
+
+      if (data.length !== 1) {
+        return Promise.reject(new Error('请填写正确的项目仓库名'))
+      }
+
+      const { id } = data[0]
+      const includedType = originalEnvTypes.find(
+        item => item.value === environment
+      )
+      const index = originalEnvTypes.indexOf(includedType)
+      const currentBranch = includedType ? includedType.branchName : 'test'
+      const nextBranch = originalEnvTypes[index + 1]
+        ? originalEnvTypes[index + 1].branchName
+        : 'master'
+
+      console.log(index, currentBranch, nextBranch)
+
+      const res = await compareBranches(id, {
+        from: nextBranch,
+        to: currentBranch
+      })
+
+      console.log(
+        `当前环境分支<${currentBranch}>共有${res.data.commits.length}次提交未合并到<${nextBranch}>`
+      )
+      // TODO 总线通讯开启确认弹窗
+
+      await createsNewMergeRequest(id, {
+        sourceBranch: currentBranch,
+        targetBranch: nextBranch,
+        title: `Publisher 自动合并请求 [${shortid.generate()}]`,
+        description: res.data.commits.reduce((acc, cur) => {
+          // markdown
+          return acc.concat(`## ${cur.message}\n\n------\n\n`)
+        }, '')
+      })
+
+      // TODO 自动合并
+    } catch (err) {
+      // TODO 错误时优化
+      return Promise.reject(err)
+    }
+
     return Promise.resolve('ok')
   },
   runEstablishTask: async ({ jobName }) => {
@@ -202,6 +262,8 @@ export const runWorkflow = async workflow => {
 
   // TODO 任务队列去重
   console.log(finalTasksQueue)
+
+  // TODO 总线通讯调起全局变量输入弹窗
 
   return Promise.allSettled(
     finalTasksQueue.map(item => {

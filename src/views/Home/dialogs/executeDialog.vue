@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-16 12:33:40
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-18 15:05:44
+ * @LastEditTime: 2020-12-20 13:56:08
  * @Description: file content
 -->
 <template>
@@ -21,7 +21,7 @@
       label-width="80px"
       size="mini"
     >
-      <el-form-item label="更新内容" v-if="hasNotifyWorkflowItem(id)">
+      <el-form-item label="更新内容" v-if="hasWorkflowItem(id, 'Notify')">
         <el-input
           type="textarea"
           :rows="3"
@@ -75,12 +75,12 @@ export default {
     }
   },
   computed: {
-    hasNotifyWorkflowItem() {
-      return id => {
-        if (!id) return false
+    hasWorkflowItem() {
+      return (id, action) => {
+        if (!id || !action) return false
 
         const { workflow } = getOneRecord(id)
-        const chosenList = workflow.filter(item => item.action === 'Notify')
+        const chosenList = workflow.filter(item => item.action === action)
         return chosenList.length > 0
       }
     }

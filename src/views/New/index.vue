@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-14 12:48:23
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-18 16:31:04
+ * @LastEditTime: 2020-12-20 13:57:44
  * @Description: file content
 -->
 <template>
@@ -20,6 +20,9 @@
         <el-form-item><p class="new-form__topic">项目资料</p></el-form-item>
         <el-form-item label="项目名">
           <el-input v-model="newProjectData.name"></el-input>
+        </el-form-item>
+        <el-form-item label="项目仓库名">
+          <el-input v-model="newProjectData.projectName"></el-input>
         </el-form-item>
         <el-form-item label="工作任务名">
           <el-input v-model="newProjectData.jobName"></el-input>
@@ -47,7 +50,7 @@ export default {
   components: { Topbar, StatusBar },
   data() {
     return {
-      newProjectData: { name: '', jobName: '' }
+      newProjectData: { name: '', projectName: '', jobName: '' }
     }
   },
   beforeDestroy() {
@@ -86,7 +89,7 @@ export default {
       }
     },
     reset() {
-      this.newProjectData = { name: '', jobName: '' }
+      this.newProjectData = { name: '', projectName: '', jobName: '' }
     }
   }
 }

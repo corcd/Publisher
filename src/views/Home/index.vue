@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:01:15
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-18 14:59:47
+ * @LastEditTime: 2020-12-20 19:51:20
  * @Description: file content
 -->
 <template>
@@ -18,6 +18,10 @@
         >
           <template slot="title">
             {{ getTitle({ name: item.name, jobName: item.jobName }) }}
+            <i
+              class="home-collapse__headericon el-icon-loading"
+              v-if="getRecordStatus(item.id) === 'loading'"
+            ></i>
             <i
               class="home-collapse__headericon home-collapse__headericon--completed el-icon-circle-check"
               v-if="getRecordStatus(item.id) === 'completed'"
@@ -84,6 +88,7 @@ import {
   getRecords,
   getOneRecord,
   delRecord,
+  updatePublishWorkflowParams,
   updateNotifyWorkflowParams,
   updateParametricBuildWorkflowParams
 } from '#/plugins/lowdb'
@@ -121,19 +126,12 @@ export default {
           : ''
       }
     },
-    hasNotifyWorkflowItem() {
-      return id => {
+    hasWorkflowItem() {
+      return (id, action) => {
+        if (!id || !action) return false
+
         const { workflow } = getOneRecord(id)
-        const chosenList = workflow.filter(item => item.action === 'Notify')
-        return chosenList.length > 0
-      }
-    },
-    hasParametricBuildWorkflowItem() {
-      return id => {
-        const { workflow } = getOneRecord(id)
-        const chosenList = workflow.filter(
-          item => item.action === 'ParametricBuild'
-        )
+        const chosenList = workflow.filter(item => item.action === action)
         return chosenList.length > 0
       }
     }
@@ -152,7 +150,7 @@ export default {
           ...records.map(item => {
             return [
               String(item.id), // key -> id
-              '' // value -> status
+              'standby' // value -> status
             ]
           })
         ])
@@ -169,13 +167,43 @@ export default {
     copyDocument(text) {
       setText(text)
     },
+    updateProjectStatus(id, status) {
+      if (status) {
+        if (
+          this.recordsStatusData.has(String(id)) &&
+          this.recordsStatusData.get(String(id)) === 'loading'
+        ) {
+          console.log('项目任务已在运行')
+          return
+        }
+        this.recordsStatusData.set(String(id), 'loading')
+        this.defaultMapChangeTracker++
+        console.log(this.recordsStatusData)
+        return
+      }
+
+      if (this.recordsStatusData.size < 1) {
+        console.error('任务队列为空')
+        return
+      }
+
+      if (this.recordsStatusData.has(String(id))) {
+        this.recordsStatusData.set(String(id), 'standby')
+        this.defaultMapChangeTracker++
+        console.log(this.recordsStatusData)
+        return
+      }
+      console.error('项目任务不存在')
+    },
     preExecute(id) {
+      // TODO 判断优化
       this.activeId = id
       if (
-        this.hasNotifyWorkflowItem(this.activeId) ||
-        this.hasParametricBuildWorkflowItem(this.activeId)
+        this.hasWorkflowItem(id, 'Publish') ||
+        this.hasWorkflowItem(id, 'Notify') ||
+        this.hasWorkflowItem(id, 'ParametricBuild')
       ) {
-        this.$refs.dialog.open(this.activeId)
+        this.$refs.dialog.open(id)
         return
       }
       return this.execute()
@@ -183,63 +211,75 @@ export default {
     async execute(prevExecuteData = {}) {
       // prevExecuteData 构建前填写的参数
       console.log(prevExecuteData)
+      const currentId = this.activeId
+      this.updateProjectStatus(currentId, true)
 
-      if (!this.activeId) {
+      if (!currentId) {
         console.error('工作流执行 id 错误')
         return
       }
 
-      const { workflow } = getOneRecord(this.activeId)
+      const { workflow } = getOneRecord(currentId)
 
       // TODO 功能抽离
+      // 发布模块参数录入
+      if (this.hasWorkflowItem(currentId, 'Publish')) {
+        updatePublishWorkflowParams({
+          id: currentId,
+          environment: prevExecuteData.environment
+        })
+      }
+
       // 通知模块参数录入
-      if (this.hasNotifyWorkflowItem(this.activeId)) {
+      if (this.hasWorkflowItem(currentId, 'Notify')) {
         const environment = this.selectOptions.filter(
           item => item.value === prevExecuteData.environment
         )[0].label
 
         updateNotifyWorkflowParams({
-          id: this.activeId,
+          id: currentId,
           environment,
           updatedContent: prevExecuteData.text
         })
       }
       // 参数化构建模块参数录入
-      if (this.hasParametricBuildWorkflowItem(this.activeId)) {
+      if (this.hasWorkflowItem(currentId, 'ParametricBuild')) {
         const environment = this.selectOptions.filter(
           item => item.value === prevExecuteData.environment
         )[0].label
 
         updateParametricBuildWorkflowParams({
-          id: this.activeId,
+          id: currentId,
           environment
         })
       }
+      this.$refs.dialog.close()
 
       try {
         const res = await runWorkflow(workflow)
         console.log(res)
-        this.$refs.dialog.close()
 
         // TODO 可以优化复用 recordsStatusData 更新策略
         if (res.every(item => item.status === 'fulfilled')) {
-          if (this.recordsStatusData.has(String(this.activeId))) {
-            this.recordsStatusData.set(String(this.activeId), 'completed')
+          if (this.recordsStatusData.has(String(currentId))) {
+            this.recordsStatusData.set(String(currentId), 'completed')
           }
         } else {
-          if (this.recordsStatusData.has(String(this.activeId))) {
-            this.recordsStatusData.set(String(this.activeId), 'error')
+          if (this.recordsStatusData.has(String(currentId))) {
+            // TODO 错误信息可以支持录入
+            this.recordsStatusData.set(String(currentId), 'error')
           }
         }
 
         this.clearTempData()
       } catch (err) {
         console.error(err)
-        if (this.recordsStatusData.has(String(this.activeId))) {
-          this.recordsStatusData.set(String(this.activeId), 'error')
+        if (this.recordsStatusData.has(String(currentId))) {
+          this.recordsStatusData.set(String(currentId), 'error')
         }
       }
       this.defaultMapChangeTracker++
+      // this.updateProjectStatus(currentId, false)
       console.log(this.recordsStatusData)
     },
     cancel() {

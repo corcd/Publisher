@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-06 20:06:23
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-18 14:39:59
+ * @LastEditTime: 2020-12-20 14:10:43
  * @Description: file content
  */
 import { app, remote } from 'electron'
@@ -70,8 +70,16 @@ export const clearUser = () => {
     .write()
 }
 
-export const addRecord = ({ name, jobName, remoteUrl, branchInfo }) => {
-  if (!name || !jobName) return Promise.reject(new Error('任一参数均不能为空'))
+export const addRecord = ({
+  name,
+  projectName,
+  jobName,
+  remoteUrl,
+  branchInfo
+}) => {
+  if (!name || !projectName || !jobName) {
+    return Promise.reject(new Error('任一参数均不能为空'))
+  }
 
   db.get('records')
     .push({
@@ -81,9 +89,10 @@ export const addRecord = ({ name, jobName, remoteUrl, branchInfo }) => {
       branchInfo,
       remoteUrl,
       workflow: [
+        // TODO 之后开放导入时直接配置
         {
           action: 'Publish',
-          params: {}
+          params: { projectName, environment: '' }
         },
         {
           action: 'Establish',
@@ -181,6 +190,24 @@ export const updateWorkflowParams = ({ id, action, newParams }) => {
 }
 
 // TODO 功能合并
+export const updatePublishWorkflowParams = ({ id, environment }) => {
+  const action = 'Publish'
+
+  db.get('records')
+    .find({ id })
+    .get('workflow')
+    .find({ action })
+    .unset('params.environment')
+    .write()
+
+  db.get('records')
+    .find({ id })
+    .get('workflow')
+    .find({ action })
+    .set('params.environment', environment)
+    .write()
+}
+
 export const updateNotifyWorkflowParams = ({
   id,
   environment,
