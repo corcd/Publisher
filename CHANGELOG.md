@@ -2,11 +2,17 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-15 14:43:54
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-20 12:57:33
+ * @LastEditTime: 2020-12-22 17:08:15
  * @Description: file content
 -->
+# :tada: 0.5.3-rc4 (2020-12-22)
 
-# :tada: 0.5.1-rc4 (2020-12-20)
+### :bug: Bug Fixes
+
+* 修复工作流运行时可能导致中断的问题，重点是通知模块
+
+
+# :tada: 0.5.2-rc4 (2020-12-20)
 
 ### :sparkles: Features
 

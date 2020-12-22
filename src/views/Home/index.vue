@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:01:15
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-20 19:51:20
+ * @LastEditTime: 2020-12-22 17:03:10
  * @Description: file content
 -->
 <template>
@@ -244,13 +244,9 @@ export default {
       }
       // 参数化构建模块参数录入
       if (this.hasWorkflowItem(currentId, 'ParametricBuild')) {
-        const environment = this.selectOptions.filter(
-          item => item.value === prevExecuteData.environment
-        )[0].label
-
         updateParametricBuildWorkflowParams({
           id: currentId,
-          environment
+          environment: prevExecuteData.environment
         })
       }
       this.$refs.dialog.close()

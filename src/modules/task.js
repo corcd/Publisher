@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-06 22:06:34
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-20 20:01:28
+ * @LastEditTime: 2020-12-22 17:01:59
  * @Description: file content
  */
 // TODO 替换为 nanoid
@@ -199,25 +199,35 @@ const tasks = {
       return Promise.reject(new Error('除更新内容外其他参数不能为空'))
     }
 
-    if (!originalEnvTypes.some(item => item.value === environment)) {
+    if (!originalEnvTypes.some(item => item.label === environment)) {
       return Promise.reject(new Error('environment 参数不合法'))
     }
 
     console.log('notify')
-    await sendWechatNotification({
-      name,
-      jobName,
-      environment,
-      updatedContent,
-      onlyDeveloper: environment !== 'production'
-    })
+    // TODO 修改“生产环境”
+    try {
+      await sendWechatNotification({
+        name,
+        jobName,
+        environment,
+        updatedContent,
+        onlyDeveloper: environment !== '生产环境'
+      })
 
-    await sendEmailNotification({
-      name,
-      jobName,
-      environment,
-      updatedContent
-    })
+      await sendEmailNotification({
+        name,
+        jobName,
+        environment,
+        updatedContent
+      })
+    } catch (err) {
+      console.error(err)
+      showNotification({
+        title: '通知发送异常通知',
+        body: `项目 ${name} 通知发送异常，请检查`
+      })
+      return Promise.reject(err)
+    }
     return Promise.resolve('ok')
   },
   runDeployTask: async () => {
