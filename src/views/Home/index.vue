@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:01:15
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-22 17:03:10
+ * @LastEditTime: 2020-12-23 12:06:02
  * @Description: file content
 -->
 <template>
@@ -232,13 +232,9 @@ export default {
 
       // 通知模块参数录入
       if (this.hasWorkflowItem(currentId, 'Notify')) {
-        const environment = this.selectOptions.filter(
-          item => item.value === prevExecuteData.environment
-        )[0].label
-
         updateNotifyWorkflowParams({
           id: currentId,
-          environment,
+          environment: prevExecuteData.environment,
           updatedContent: prevExecuteData.text
         })
       }
@@ -275,7 +271,6 @@ export default {
         }
       }
       this.defaultMapChangeTracker++
-      // this.updateProjectStatus(currentId, false)
       console.log(this.recordsStatusData)
     },
     cancel() {

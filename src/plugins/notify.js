@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:21:27
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-22 17:08:06
+ * @LastEditTime: 2020-12-23 12:20:20
  * @Description: file content
  */
 import { sendEmail } from '#/plugins/email'
@@ -29,10 +29,31 @@ export const sendWechatNotification = ({
       }
     }
 
+    const baseNotifyWebhookUrl =
+      process.env.NODE_ENV === 'production'
+        ? 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=342b0cee-0e35-4067-939a-82acc4c38031'
+        : 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=afaa2567-4ad4-4aa4-93ba-44df4a776242'
+
+    const globalNotifyWebhookUrl =
+      'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=99f8dc79-a6bd-4328-8569-9897cc9110e1'
+
     // 仅通知研发人员
-    await fetch(
-      'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=342b0cee-0e35-4067-939a-82acc4c38031',
-      {
+    await fetch(baseNotifyWebhookUrl, {
+      body: JSON.stringify(data),
+      cache: 'no-cache',
+      headers: {
+        'content-type': 'application/json'
+      },
+      method: 'POST',
+      mode: 'no-cors',
+      referrer: 'no-referrer'
+    }).catch(err => {
+      return reject(err)
+    })
+
+    if (!onlyDeveloper) {
+      // 全局通知
+      await fetch(globalNotifyWebhookUrl, {
         body: JSON.stringify(data),
         cache: 'no-cache',
         headers: {
@@ -41,26 +62,7 @@ export const sendWechatNotification = ({
         method: 'POST',
         mode: 'no-cors',
         referrer: 'no-referrer'
-      }
-    ).catch(err => {
-      return reject(err)
-    })
-
-    if (!onlyDeveloper) {
-      // 全局通知
-      await fetch(
-        'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=99f8dc79-a6bd-4328-8569-9897cc9110e1',
-        {
-          body: JSON.stringify(data),
-          cache: 'no-cache',
-          headers: {
-            'content-type': 'application/json'
-          },
-          method: 'POST',
-          mode: 'no-cors',
-          referrer: 'no-referrer'
-        }
-      ).catch(err => {
+      }).catch(err => {
         return reject(err)
       })
     }

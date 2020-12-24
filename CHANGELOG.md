@@ -2,14 +2,37 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-15 14:43:54
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-22 17:08:15
+ * @LastEditTime: 2020-12-24 15:53:19
  * @Description: file content
 -->
+# :tada: 0.5.5-rc4 (2020-12-24)
+
+### :bug: Bug Fixes
+
+* 修复前后分支相同时意外产生的分支合并操作
+* 替换使用更加安全的 id 生成器模块
+
+
+
+# :tada: 0.5.4-rc4 (2020-12-23)
+
+### :sparkles: Features
+
+* 完善发布工作流模块，针对于合并请求已存在的情况进行了补全
+
+### :bug: Bug Fixes
+
+* 修复参数化构建时参数名不匹配的小问题
+* 修复环境变量传递不一致的问题
+
+
+
 # :tada: 0.5.3-rc4 (2020-12-22)
 
 ### :bug: Bug Fixes
 
 * 修复工作流运行时可能导致中断的问题，重点是通知模块
+
 
 
 # :tada: 0.5.2-rc4 (2020-12-20)

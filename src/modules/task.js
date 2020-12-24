@@ -2,15 +2,17 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-06 22:06:34
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-22 17:01:59
+ * @LastEditTime: 2020-12-24 15:11:55
  * @Description: file content
  */
 // TODO 替换为 nanoid
-import shortid from 'shortid'
+import { nanoid } from 'nanoid'
 import { showNotification } from '*/notification'
 import {
   getProjectId,
   compareBranches,
+  listMergeRequests,
+  deleteMergeRequest,
   createsNewMergeRequest
 } from '@/plugins/gitlab'
 import { build, buildWithParams } from '@/plugins/jenkins'
@@ -105,36 +107,54 @@ const tasks = {
         item => item.value === environment
       )
       const index = originalEnvTypes.indexOf(includedType)
+      // 当前分支
       const currentBranch = includedType ? includedType.branchName : 'test'
+      // 合并分支
       const nextBranch = originalEnvTypes[index + 1]
         ? originalEnvTypes[index + 1].branchName
         : 'master'
-
       console.log(index, currentBranch, nextBranch)
+
+      const mergeRequestListRes = await listMergeRequests(id, {})
+      const repeatedMergeRequest = mergeRequestListRes.data.find(
+        item =>
+          item.source_branch === currentBranch &&
+          item.target_branch === nextBranch &&
+          item.title.includes('Publisher 自动合并请求')
+      )
 
       const res = await compareBranches(id, {
         from: nextBranch,
         to: currentBranch
       })
-
       console.log(
         `当前环境分支<${currentBranch}>共有${res.data.commits.length}次提交未合并到<${nextBranch}>`
       )
       // TODO 总线通讯开启确认弹窗
 
-      await createsNewMergeRequest(id, {
-        sourceBranch: currentBranch,
-        targetBranch: nextBranch,
-        title: `Publisher 自动合并请求 [${shortid.generate()}]`,
-        description: res.data.commits.reduce((acc, cur) => {
-          // markdown
-          return acc.concat(`## ${cur.message}\n\n------\n\n`)
-        }, '')
-      })
+      if (repeatedMergeRequest) {
+        await deleteMergeRequest(id, repeatedMergeRequest.id)
+      }
+
+      if (currentBranch !== nextBranch) {
+        await createsNewMergeRequest(id, {
+          sourceBranch: currentBranch,
+          targetBranch: nextBranch,
+          title: `Publisher 自动合并请求 [${nanoid()}]`,
+          description: res.data.commits.reduce((acc, cur) => {
+            // markdown
+            return acc.concat(`## ${cur.message}\n\n------\n\n`)
+          }, '')
+        })
+      }
 
       // TODO 自动合并
     } catch (err) {
-      // TODO 错误时优化
+      console.log(err)
+      showNotification({
+        title: '自动发布异常通知',
+        body: `Gitlab 项目 ${projectName} 自动发布异常，请检查`
+      })
       return Promise.reject(err)
     }
 
@@ -171,12 +191,12 @@ const tasks = {
 
     console.log('parametric build')
     const params = [
-      { hostname: 'development', script: 'build:dev', branch: 'test' },
-      { hostname: 'preview', script: 'build:pre', branch: 'dev' },
-      { hostname: 'production', script: 'build:prod', branch: 'master' }
+      { HOSTNAME: 'development', SCRIPT: 'build:dev', BRANCH: 'test' },
+      { HOSTNAME: 'preview', SCRIPT: 'build:pre', BRANCH: 'dev' },
+      { HOSTNAME: 'production', SCRIPT: 'build:prod', BRANCH: 'master' }
     ]
 
-    const preload = params.filter(item => item.hostname === environment)[0]
+    const preload = params.filter(item => item.HOSTNAME === environment)[0]
 
     try {
       await buildWithParams(jobName, preload)
@@ -199,9 +219,13 @@ const tasks = {
       return Promise.reject(new Error('除更新内容外其他参数不能为空'))
     }
 
-    if (!originalEnvTypes.some(item => item.label === environment)) {
+    if (!originalEnvTypes.some(item => item.value === environment)) {
       return Promise.reject(new Error('environment 参数不合法'))
     }
+
+    const includedType = originalEnvTypes.find(
+      item => item.value === environment
+    )
 
     console.log('notify')
     // TODO 修改“生产环境”
@@ -209,15 +233,15 @@ const tasks = {
       await sendWechatNotification({
         name,
         jobName,
-        environment,
+        environment: includedType.label,
         updatedContent,
-        onlyDeveloper: environment !== '生产环境'
+        onlyDeveloper: environment !== 'production'
       })
 
       await sendEmailNotification({
         name,
         jobName,
-        environment,
+        environment: includedType.label,
         updatedContent
       })
     } catch (err) {

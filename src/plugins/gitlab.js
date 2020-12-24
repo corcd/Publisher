@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-19 13:56:16
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-20 19:44:40
+ * @LastEditTime: 2020-12-23 14:21:48
  * @Description: file content
  */
 import _axios from '@/request'
@@ -14,7 +14,7 @@ const { baseUrl, private_token } = gitlab
 const request = (restfulUrl, method, params = {}) => {
   return _axios({
     method,
-    url: `${baseUrl}/${restfulUrl}`,
+    url: `${baseUrl}${restfulUrl}`,
     headers: {
       'PRIVATE-TOKEN': private_token,
       'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' // 指定提交方式为表单提交
@@ -71,6 +71,11 @@ export const getSingleCommit = (id, sha) => {
   return request(`/projects/${id}/repository/commits/${sha}`, 'GET')
 }
 
+// 获取所有合并记录
+export const listMergeRequests = (id, { state = 'opened' }) => {
+  return request(`/projects/${id}/merge_requests`, 'GET', { state })
+}
+
 // 获取合并提交记录
 export const getSingleMergeRequestCommits = (id, mergeRequestId) => {
   return request(
@@ -97,6 +102,11 @@ export const createsNewMergeRequest = (
     title,
     description
   })
+}
+
+// 移除合并请求
+export const deleteMergeRequest = (id, mergeRequestId) => {
+  return request(`/projects/${id}/merge_requests/${mergeRequestId}`, 'DELETE')
 }
 
 // 接受合并请求

@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:22:13
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-19 23:36:08
+ * @LastEditTime: 2020-12-23 10:53:32
  * @Description: file content
  */
 import _axios from '@/request'
@@ -12,28 +12,17 @@ import qs from 'qs'
 const { baseUrl, authorization } = jenkins
 
 const request = (jobName, actionUrl, method, params = {}) => {
-  return method === 'POST'
-    ? _axios({
-        method,
-        url: `${baseUrl}/${jobName}/${actionUrl}`,
-        headers: {
-          Authorization: `Basic ${window.btoa(
-            `${authorization.username}:${authorization.password}`
-          )}`,
-          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' // 指定提交方式为表单提交
-        },
-        data: params ? qs.stringify(params) : {}
-      })
-    : _axios({
-        method,
-        url: `${baseUrl}/${jobName}/${actionUrl}`,
-        headers: {
-          Authorization: `Basic ${window.btoa(
-            `${authorization.username}:${authorization.password}`
-          )}`,
-          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' // 指定提交方式为表单提交
-        }
-      })
+  return _axios({
+    method,
+    url: `${baseUrl}/${jobName}/${actionUrl}`,
+    headers: {
+      Authorization: `Basic ${window.btoa(
+        `${authorization.username}:${authorization.password}`
+      )}`,
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' // 指定提交方式为表单提交
+    },
+    data: method === 'POST' ? qs.stringify(params) : params
+  })
 }
 
 // 获取任务详情
