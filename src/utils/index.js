@@ -2,16 +2,14 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-09 17:27:59
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-13 15:46:08
+ * @LastEditTime: 2020-12-25 00:45:32
  * @Description: file content
  */
 import os from 'os'
 import { execSync } from 'child_process'
 
 export const sleep = (delay = 0) => {
-  setTimeout(() => {
-    return Promise.resolve()
-  }, delay)
+  return new Promise(resolve => setTimeout(resolve, delay))
 }
 
 export const platform = os.platform()

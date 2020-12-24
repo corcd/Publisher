@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:22:13
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-23 10:53:32
+ * @LastEditTime: 2020-12-24 17:40:26
  * @Description: file content
  */
 import _axios from '@/request'
@@ -43,6 +43,11 @@ export const console = jobName => {
 // 获取最后一次构建数据
 export const getLastBuildNumber = jobName => {
   return request(jobName, 'lastBuild/buildNumber', 'GET')
+}
+
+// 获取最后一次构建时间戳
+export const getBuildTimestamp = jobName => {
+  return request(jobName, 'lastBuild/buildTimestamp', 'GET')
 }
 
 // 任务普通构建

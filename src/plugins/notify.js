@@ -2,58 +2,40 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:21:27
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-23 12:20:20
+ * @LastEditTime: 2020-12-25 00:03:02
  * @Description: file content
  */
 import { sendEmail } from '#/plugins/email'
 import { getLastBuildNumber, getBuildInfo } from './jenkins'
 import { getWechatStyleText, getEmailStyleText } from './text'
+import { originalEnvTypes } from '@/modules/task/types'
+
+const getIncludedType = environment =>
+  originalEnvTypes.find(item => item.value === environment)
 
 export const sendWechatNotification = ({
   name,
   jobName,
   environment,
-  updatedContent,
-  onlyDeveloper = true
+  updatedContent
 }) => {
   return new Promise(async (resolve, reject) => {
+    const { label, webhook } = getIncludedType(environment)
+
     const data = {
       msgtype: 'markdown',
       markdown: {
         content: getWechatStyleText({
           name,
           jobName,
-          environment,
+          environment: label,
           updatedContent
         })
       }
     }
 
-    const baseNotifyWebhookUrl =
-      process.env.NODE_ENV === 'production'
-        ? 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=342b0cee-0e35-4067-939a-82acc4c38031'
-        : 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=afaa2567-4ad4-4aa4-93ba-44df4a776242'
-
-    const globalNotifyWebhookUrl =
-      'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=99f8dc79-a6bd-4328-8569-9897cc9110e1'
-
-    // 仅通知研发人员
-    await fetch(baseNotifyWebhookUrl, {
-      body: JSON.stringify(data),
-      cache: 'no-cache',
-      headers: {
-        'content-type': 'application/json'
-      },
-      method: 'POST',
-      mode: 'no-cors',
-      referrer: 'no-referrer'
-    }).catch(err => {
-      return reject(err)
-    })
-
-    if (!onlyDeveloper) {
-      // 全局通知
-      await fetch(globalNotifyWebhookUrl, {
+    const notifyLoop = webhook.map(url => {
+      return fetch(url, {
         body: JSON.stringify(data),
         cache: 'no-cache',
         headers: {
@@ -62,10 +44,13 @@ export const sendWechatNotification = ({
         method: 'POST',
         mode: 'no-cors',
         referrer: 'no-referrer'
-      }).catch(err => {
-        return reject(err)
       })
-    }
+    })
+
+    await Promise.all(notifyLoop).catch(err => {
+      console.error(err)
+      return reject(err)
+    })
 
     return resolve()
   })
@@ -78,28 +63,20 @@ export const sendEmailNotification = ({
   updatedContent
 }) => {
   return new Promise(async (resolve, reject) => {
+    const { label } = getIncludedType(environment)
+
     const res = await getLastBuildNumber(jobName).catch(err =>
       console.error(err)
     )
 
-    if (res) {
-      const buildInfo = await getBuildInfo(jobName, res.data).catch(err =>
-        console.error(err)
-      )
-      const { actions } = buildInfo.data
-      const buildData = actions.filter(
-        item => item._class === 'hudson.plugins.git.util.BuildData'
-      )
-      const branchInfo = buildData
-        ? buildData[0].lastBuiltRevision.branch[0]
-        : { name: '( 无 )', SHA1: '( 无 )' }
-
+    if (!res) {
+      // 无信息
       const data = getEmailStyleText({
         name,
-        environment,
+        environment: label,
         updatedContent,
-        lastBuildBranch: branchInfo.name,
-        lastBuildHash: branchInfo['SHA1']
+        lastBuildBranch: 'none',
+        lastBuildHash: '无'
       })
       await sendEmail({
         emailTopic: data.theme,
@@ -111,13 +88,23 @@ export const sendEmailNotification = ({
       return resolve()
     }
 
-    // 无信息
+    const buildInfo = await getBuildInfo(jobName, res.data).catch(err =>
+      console.error(err)
+    )
+    const { actions } = buildInfo.data
+    const buildData = actions.filter(
+      item => item._class === 'hudson.plugins.git.util.BuildData'
+    )
+    const branchInfo = buildData
+      ? buildData[0].lastBuiltRevision.branch[0]
+      : { name: '( 无 )', SHA1: '( 无 )' }
+
     const data = getEmailStyleText({
       name,
-      environment,
+      environment: label,
       updatedContent,
-      lastBuildBranch: 'none',
-      lastBuildHash: '无'
+      lastBuildBranch: branchInfo.name,
+      lastBuildHash: branchInfo['SHA1']
     })
     await sendEmail({
       emailTopic: data.theme,

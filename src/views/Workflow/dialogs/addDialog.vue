@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-16 15:09:54
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-18 14:07:43
+ * @LastEditTime: 2020-12-24 17:30:56
  * @Description: file content
 -->
 <template>
@@ -72,7 +72,7 @@
 
 <script>
 import { getOneRecord } from '#/plugins/lowdb'
-import { originalTasksTypes } from '@/modules/task'
+import { originalTasksTypes } from '@/modules/task/types'
 
 export default {
   name: 'AddDialog',

@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-19 13:56:16
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-23 14:21:48
+ * @LastEditTime: 2020-12-24 17:34:51
  * @Description: file content
  */
 import _axios from '@/request'
@@ -24,10 +24,15 @@ const request = (restfulUrl, method, params = {}) => {
 }
 
 // 获取项目 id
-export const getProjectId = projectName => {
+export const getProject = projectName => {
   return request(`/projects`, 'GET', {
     search: projectName
   })
+}
+
+// 获取单个项目信息
+export const getSingleProject = id => {
+  return request(`/projects/${id}`, 'GET')
 }
 
 // 获取仓库所有分支

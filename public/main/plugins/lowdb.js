@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-06 20:06:23
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-20 14:10:43
+ * @LastEditTime: 2020-12-24 23:26:47
  * @Description: file content
  */
 import { app, remote } from 'electron'
@@ -74,8 +74,8 @@ export const addRecord = ({
   name,
   projectName,
   jobName,
-  remoteUrl,
-  branchInfo
+  buildInfo,
+  projectInfo
 }) => {
   if (!name || !projectName || !jobName) {
     return Promise.reject(new Error('任一参数均不能为空'))
@@ -85,24 +85,12 @@ export const addRecord = ({
     .push({
       id: shortid.generate(),
       name,
+      projectName,
       jobName,
-      branchInfo,
-      remoteUrl,
-      workflow: [
-        // TODO 之后开放导入时直接配置
-        {
-          action: 'Publish',
-          params: { projectName, environment: '' }
-        },
-        {
-          action: 'Establish',
-          params: { jobName }
-        },
-        {
-          action: 'Notify',
-          params: { name, jobName, environment: '', updatedContent: '' }
-        }
-      ],
+      buildInfo,
+      projectInfo,
+      workflow: [],
+      attackTime: 0,
       updateTime: dayjs().unix()
     })
     .write()

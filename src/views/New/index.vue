@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-14 12:48:23
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-20 13:57:44
+ * @LastEditTime: 2020-12-24 18:20:18
  * @Description: file content
 -->
 <template>
@@ -41,7 +41,8 @@
 <script>
 import { addRecord } from '#/plugins/lowdb'
 import { showNotification } from '@/app/notification'
-import { getLastBuildNumber, getBuildInfo } from '@/plugins/jenkins'
+import { getJobInfo } from '@/plugins/jenkins'
+import { getProject } from '@/plugins/gitlab'
 import Topbar from '@/common/topbar'
 import StatusBar from '@/common/statusbar'
 
@@ -59,24 +60,29 @@ export default {
   methods: {
     async add() {
       try {
-        const res = await getLastBuildNumber(this.newProjectData.jobName)
+        const jobInfo = await getJobInfo(this.newProjectData.jobName)
+        const { nextBuildNumber, lastSuccessfulBuild } = jobInfo.data
+        const { number, url } = lastSuccessfulBuild
 
-        const buildInfo = await getBuildInfo(
-          this.newProjectData.jobName,
-          res.data
-        )
-
-        const { actions } = buildInfo.data
-        const buildData = actions.filter(
-          item => item._class === 'hudson.plugins.git.util.BuildData'
-        )
-        const remoteUrl = buildData ? buildData[0].remoteUrls[0] : ''
-        const branchInfo = buildData
-          ? buildData[0].lastBuiltRevision.branch[0]
-          : { name: '( 无 )', SHA1: '( 无 )' }
+        const projectInfo = await getProject(this.newProjectData.projectName)
+        const projectData = projectInfo.data
+        if (projectData.length > 1) {
+          // 项目不唯一
+          showNotification({
+            title: '项目信息获取异常通知',
+            body: `项目 ${this.newProjectData.projectName} 不唯一，请检查`
+          })
+          return
+        }
+        const { id, web_url } = projectData[0]
 
         await addRecord(
-          Object.assign({}, this.newProjectData, { branchInfo }, { remoteUrl })
+          Object.assign(
+            {},
+            this.newProjectData,
+            { buildInfo: { number, nextBuildNumber, url } },
+            { projectInfo: { id, url: web_url } }
+          )
         )
 
         this.$router.push({ name: 'Home' })

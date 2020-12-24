@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-16 12:33:40
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-20 13:56:08
+ * @LastEditTime: 2020-12-25 01:53:55
  * @Description: file content
 -->
 <template>
@@ -21,20 +21,20 @@
       label-width="80px"
       size="mini"
     >
-      <el-form-item label="更新内容" v-if="hasWorkflowItem(id, 'Notify')">
+      <el-form-item label="更新内容" v-if="hasSuchParams('updatedContent')">
         <el-input
           type="textarea"
           :rows="3"
           placeholder="请输入更新内容，一个条目单独一行"
-          v-model="prevExecuteData.text"
+          v-model="prevExecuteData['updatedContent']"
         >
         </el-input>
       </el-form-item>
-      <el-form-item label="发布环境">
+      <el-form-item label="发布环境" v-if="hasSuchParams('environment')">
         <el-select
-          v-model="prevExecuteData.environment"
           size="mini"
           placeholder="请选择"
+          v-model="prevExecuteData['environment']"
         >
           <el-option
             v-for="item in selectOptions"
@@ -59,7 +59,7 @@
 
 <script>
 import { getOneRecord } from '#/plugins/lowdb'
-import { originalEnvTypes } from '@/modules/task'
+import { originalEnvTypes, originalTasksTypes } from '@/modules/task/types'
 
 export default {
   name: 'ExecuteDialog',
@@ -68,10 +68,8 @@ export default {
       dialogVisible: false,
       selectOptions: Object.freeze(originalEnvTypes),
       id: '',
-      prevExecuteData: {
-        text: '',
-        environment: 'development'
-      }
+      uniqueParamsList: [],
+      prevExecuteData: {}
     }
   },
   computed: {
@@ -83,19 +81,40 @@ export default {
         const chosenList = workflow.filter(item => item.action === action)
         return chosenList.length > 0
       }
+    },
+    hasSuchParams() {
+      return paramName => {
+        return this.uniqueParamsList.includes(paramName)
+      }
     }
   },
   methods: {
     open(id) {
+      const { workflow } = getOneRecord(id)
+      const actionsList = workflow.map(item => item.action)
+
+      const paramsList = actionsList.map(item =>
+        originalTasksTypes
+          .find(ele => ele.value === item)
+          .params.filter(ele => ele.prefixed)
+      )
+      for (const item in paramsList) {
+        if (paramsList.hasOwnProperty(item)) {
+          paramsList[item].forEach(ele => {
+            if (this.uniqueParamsList.includes(ele.name)) return
+            this.uniqueParamsList.push(ele.name)
+            this.$set(this.prevExecuteData, ele.name, '')
+          })
+        }
+      }
+
       this.id = id
       this.dialogVisible = true
     },
     close() {
       this.dialogVisible = false
-      this.prevExecuteData = {
-        text: '',
-        environment: 'development'
-      }
+      this.uniqueParamsList = []
+      this.prevExecuteData = {}
     },
     cancel() {
       this.$emit('cancel')

@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:01:15
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-23 12:06:02
+ * @LastEditTime: 2020-12-25 01:55:43
  * @Description: file content
 -->
 <template>
@@ -18,6 +18,9 @@
         >
           <template slot="title">
             {{ getTitle({ name: item.name, jobName: item.jobName }) }}
+            <span class="home-collapse__subtitle">
+              [ {{ item.workflow.length }} jobs ]
+            </span>
             <i
               class="home-collapse__headericon el-icon-loading"
               v-if="getRecordStatus(item.id) === 'loading'"
@@ -34,25 +37,37 @@
           <div class="home-collapse">
             <div class="home-collapse__left">
               <p class="home-collapse__details">
-                最近一次构建:
+                最近任务触发时间:
+                {{ `${item.attackTime || '( 无 )'}` }}
+              </p>
+              <p class="home-collapse__details">
+                下一次构建编号:
                 {{
                   `&lt;${
-                    item.branchInfo ? item.branchInfo.name : '( 无 )'
-                  }&gt; ${item.branchInfo ? item.branchInfo['SHA1'] : '( 无 )'}`
+                    item.buildInfo ? item.buildInfo.nextBuildNumber : '( 无 )'
+                  }&gt;`
+                }}
+              </p>
+              <p class="home-collapse__details">
+                最近一次成功构建:
+                {{
+                  `&lt;${
+                    item.buildInfo ? item.buildInfo.number : '( 无 )'
+                  }&gt; ${item.buildInfo ? item.buildInfo.url : '( 无 )'}`
                 }}
                 <i
                   class="home-collapse__icons el-icon-document-copy"
                   @click="
-                    copyDocument(item.branchInfo ? item.branchInfo['SHA1'] : '')
+                    copyDocument(item.buildInfo ? item.buildInfo.url : '')
                   "
                 ></i>
               </p>
               <p class="home-collapse__details">
-                远程地址:
-                {{ item.remoteUrl || '( 无 )' }}
+                远程仓库地址:
+                {{ item.projectInfo.url || '( 无 )' }}
                 <i
                   class="home-collapse__icons el-icon-document-copy"
-                  @click="copyDocument(item.remoteUrl || '')"
+                  @click="copyDocument(item.projectInfo.url || '')"
                 ></i>
               </p>
             </div>
@@ -84,6 +99,7 @@
 </template>
 
 <script>
+import { Message } from 'element-ui'
 import {
   getRecords,
   getOneRecord,
@@ -93,7 +109,8 @@ import {
   updateParametricBuildWorkflowParams
 } from '#/plugins/lowdb'
 import { setText } from '@/app/clipboard'
-import { originalEnvTypes, runWorkflow } from '@/modules/task'
+import { originalEnvTypes } from '@/modules/task/types'
+import { runWorkflow } from '@/modules/task'
 import Topbar from '@/components/home/topbar'
 import Searchbar from '@/components/home/searchbar'
 import ExecuteDialog from './dialogs/executeDialog'
@@ -212,14 +229,18 @@ export default {
       // prevExecuteData 构建前填写的参数
       console.log(prevExecuteData)
       const currentId = this.activeId
-      this.updateProjectStatus(currentId, true)
-
       if (!currentId) {
         console.error('工作流执行 id 错误')
         return
       }
 
-      const { workflow } = getOneRecord(currentId)
+      const { projectName, jobName, workflow } = getOneRecord(currentId)
+      if (workflow.length === 0) {
+        Message.warning('请先添加工作流后再执行任务')
+        return
+      }
+
+      this.updateProjectStatus(currentId, true)
 
       // TODO 功能抽离
       // 发布模块参数录入
@@ -235,7 +256,7 @@ export default {
         updateNotifyWorkflowParams({
           id: currentId,
           environment: prevExecuteData.environment,
-          updatedContent: prevExecuteData.text
+          updatedContent: prevExecuteData.updatedContent
         })
       }
       // 参数化构建模块参数录入
@@ -248,11 +269,15 @@ export default {
       this.$refs.dialog.close()
 
       try {
-        const res = await runWorkflow(workflow)
+        // TODO 添加全局参数
+        const res = await runWorkflow(
+          workflow,
+          Object.assign({}, prevExecuteData, { projectName, jobName })
+        )
         console.log(res)
 
         // TODO 可以优化复用 recordsStatusData 更新策略
-        if (res.every(item => item.status === 'fulfilled')) {
+        if (res.every(item => item === 'ok')) {
           if (this.recordsStatusData.has(String(currentId))) {
             this.recordsStatusData.set(String(currentId), 'completed')
           }
@@ -317,6 +342,14 @@ export default {
     justify-content: space-between;
     padding: 10px 0 0 0;
 
+    &__subtitle {
+      margin-left: 10px;
+      color: #999;
+      font: {
+        size: 12px;
+      }
+    }
+
     &__headericon {
       margin-left: 10px;
       font: {
@@ -342,6 +375,7 @@ export default {
       color: #999;
       text-align: left;
       font: {
+        size: 12px;
       }
     }
 
