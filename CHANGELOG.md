@@ -2,9 +2,17 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-15 14:43:54
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-25 17:53:31
+ * @LastEditTime: 2020-12-25 18:24:06
  * @Description: file content
 -->
+# :tada: 0.6.4-rc5 (2020-12-25)
+
+### :bug: Bug Fixes
+
+* 修复数据不兼容导致的问题
+
+
+
 # :tada: 0.6.3-rc5 (2020-12-25)
 
 ### :sparkles: Features

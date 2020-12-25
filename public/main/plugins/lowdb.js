@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-06 20:06:23
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-25 17:35:07
+ * @LastEditTime: 2020-12-25 18:21:11
  * @Description: file content
  */
 import { app, remote } from 'electron'
@@ -27,8 +27,7 @@ const file = path.resolve(App.getPath('userData'), dbFile)
 const adapter = isDevelopment ? new FileSync(dbFile) : new FileSync(file)
 
 const db = low(adapter)
-
-db.defaults({
+const defaultData = {
   records: [],
   user: {
     name: '',
@@ -42,7 +41,16 @@ db.defaults({
       pass: '4TdSaT7doqovs7dn' // 授权码
     }
   }
-}).write()
+}
+
+db.defaults(defaultData).write()
+
+export const resetDataBase = () => {
+  // db.setState(defaultData).write()
+
+  db.unset('records').write()
+  db.set('records', []).write()
+}
 
 export const getUser = db.get('user').value()
 

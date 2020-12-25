@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-08 13:23:42
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-25 15:43:32
+ * @LastEditTime: 2020-12-25 18:22:45
  * @Description: file content
 -->
 <template>
@@ -14,7 +14,7 @@
           <span>团队成员校验</span>
         </header>
         <header>
-          <span class="subtitle">
+          <span class="subtitle" @click="additionalAction()">
             {{ subtitle }}
           </span>
         </header>
@@ -49,11 +49,12 @@
 </template>
 
 <script>
-import pConfig from '../../../package.json'
-
-import { getUser } from '#/plugins/lowdb'
+import { Message } from 'element-ui'
+import { resetDataBase, getUser } from '#/plugins/lowdb'
 import { login } from '@/modules/auth'
 import Topbar from '@/common/topbar'
+
+import pConfig from '../../../package.json'
 
 export default {
   name: 'Log',
@@ -61,7 +62,7 @@ export default {
   data() {
     return {
       pConfig,
-      subtitle: '重要：本次更新涉及架构调整，请清空所有项目后重新录入',
+      subtitle: '重要：本次更新涉及架构调整，请点击这里清空所有项目',
       btnLoading: false,
       authInfo: {
         username: '',
@@ -84,6 +85,15 @@ export default {
     })
   },
   methods: {
+    additionalAction() {
+      try {
+        resetDataBase()
+        Message.success('数据重置成功')
+        window.location.reload()
+      } catch (err) {
+        Message.error('数据重置异常，请检查')
+      }
+    },
     submit() {
       this.btnLoading = true
 
@@ -144,6 +154,7 @@ export default {
           size: 12px;
           weight: 500;
         }
+        cursor: pointer;
       }
     }
 
