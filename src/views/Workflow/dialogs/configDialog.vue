@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-16 15:10:13
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-24 17:30:48
+ * @LastEditTime: 2020-12-25 16:19:26
  * @Description: file content
 -->
 <template>
@@ -40,7 +40,7 @@
         ></el-input>
       </el-form-item>
       <el-form-item
-        label="无数据"
+        label="无参数"
         v-show="Object.keys(tempData.params).length === 0"
       ></el-form-item>
     </el-form>

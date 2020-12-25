@@ -2,15 +2,23 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-15 14:43:54
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-24 15:57:14
+ * @LastEditTime: 2020-12-25 17:53:31
  * @Description: file content
 -->
-# :tada: 0.5.5-rc4 (2020-12-24)
+# :tada: 0.6.3-rc5 (2020-12-25)
+
+### :sparkles: Features
+
+* 拆分 task 模块为多文件分散组合，工作流底层实现重构，所有任务由完全独立改为相互依赖，并实现全局参数概念
+* 优化 jenkins 模块逻辑，现在可以侦测 jenkins 构建过程，在构建没有完毕时任务不会提前结束
+* 优化 notify 模块逻辑，引入 webhook 通知池概念，实现环境区分通知
+* 实现参数按需录入，完善工作流执行概念
+* 使用全新的项目信息，摒弃无用的数据
 
 ### :bug: Bug Fixes
 
-* 
-
+* 修复工作流执行时可能导致的对象引用的问题
+* 增加部分界面参数缺失时的判断
 
 
 

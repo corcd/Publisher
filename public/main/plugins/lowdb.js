@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-06 20:06:23
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-24 23:26:47
+ * @LastEditTime: 2020-12-25 17:35:07
  * @Description: file content
  */
 import { app, remote } from 'electron'
@@ -10,7 +10,8 @@ import path from 'path'
 import low from 'lowdb'
 import FileSync from 'lowdb/adapters/FileSync'
 import dayjs from 'dayjs'
-import shortid from 'shortid'
+import { nanoid } from 'nanoid'
+import { originalTasksTypes } from '@/modules/task/types'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const App = process.type === 'renderer' ? remote.app : app
@@ -70,23 +71,15 @@ export const clearUser = () => {
     .write()
 }
 
-export const addRecord = ({
-  name,
-  projectName,
-  jobName,
-  buildInfo,
-  projectInfo
-}) => {
-  if (!name || !projectName || !jobName) {
+export const addRecord = ({ attribute, buildInfo, projectInfo }) => {
+  if (!attribute.name || !attribute.projectName || !attribute.jobName) {
     return Promise.reject(new Error('任一参数均不能为空'))
   }
 
   db.get('records')
     .push({
-      id: shortid.generate(),
-      name,
-      projectName,
-      jobName,
+      id: nanoid(),
+      attribute,
       buildInfo,
       projectInfo,
       workflow: [],
@@ -161,6 +154,13 @@ export const insertWorkflow = ({
     .write()
 }
 
+export const updateRecordAttackTime = ({ id }) => {
+  db.get('records')
+    .find({ id })
+    .assign({ attackTime: dayjs().unix() })
+    .write()
+}
+
 export const updateWorkflowParams = ({ id, action, newParams }) => {
   db.get('records')
     .find({ id })
@@ -177,65 +177,42 @@ export const updateWorkflowParams = ({ id, action, newParams }) => {
     .write()
 }
 
-// TODO 功能合并
-export const updatePublishWorkflowParams = ({ id, environment }) => {
-  const action = 'Publish'
-
-  db.get('records')
+export const updateAllWorkflowParams = ({ id, globalParams }) => {
+  const { workflow } = db
+    .get('records')
     .find({ id })
-    .get('workflow')
-    .find({ action })
-    .unset('params.environment')
-    .write()
+    .value()
+  const keyValues = Object.entries(globalParams)
+  console.log('keyValues', keyValues)
 
-  db.get('records')
-    .find({ id })
-    .get('workflow')
-    .find({ action })
-    .set('params.environment', environment)
-    .write()
-}
+  workflow.forEach(({ action }) => {
+    const exceptParams = originalTasksTypes.find(task => task.value === action)
+      .params
+    console.log('exceptParams', exceptParams)
+    if (exceptParams.length === 0) return
 
-export const updateNotifyWorkflowParams = ({
-  id,
-  environment,
-  updatedContent
-}) => {
-  const action = 'Notify'
+    exceptParams.forEach(param => {
+      const matchedItem = keyValues.find(item => item[0] === param.name)
 
-  db.get('records')
-    .find({ id })
-    .get('workflow')
-    .find({ action })
-    .unset('params.environment')
-    .unset('params.updatedContent')
-    .write()
+      if (matchedItem) {
+        console.log('update params', param.name)
 
-  db.get('records')
-    .find({ id })
-    .get('workflow')
-    .find({ action })
-    .set('params.environment', environment)
-    .set('params.updatedContent', updatedContent)
-    .write()
-}
+        db.get('records')
+          .find({ id })
+          .get('workflow')
+          .find({ action })
+          .unset(`params.${param.name}`)
+          .write()
 
-export const updateParametricBuildWorkflowParams = ({ id, environment }) => {
-  const action = 'ParametricBuild'
-
-  db.get('records')
-    .find({ id })
-    .get('workflow')
-    .find({ action })
-    .unset('params.environment')
-    .write()
-
-  db.get('records')
-    .find({ id })
-    .get('workflow')
-    .find({ action })
-    .set('params.environment', environment)
-    .write()
+        db.get('records')
+          .find({ id })
+          .get('workflow')
+          .find({ action })
+          .set(`params.${param.name}`, matchedItem[1])
+          .write()
+      }
+    })
+  })
 }
 
 export const deleteWorkflowItem = ({ id, action }) => {

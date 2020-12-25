@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-24 16:34:28
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-25 01:40:13
+ * @LastEditTime: 2020-12-25 15:57:26
  * @Description: file content
  */
 export const originalEnvTypes = [
@@ -27,7 +27,6 @@ export const originalEnvTypes = [
     label: '生产环境',
     branchName: 'master',
     webhook: [
-      'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=342b0cee-0e35-4067-939a-82acc4c38031',
       'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=99f8dc79-a6bd-4328-8569-9897cc9110e1'
     ]
   }
@@ -37,26 +36,30 @@ export const originalTasksTypes = [
   {
     value: 'Update',
     label: '配置更新',
-    params: [{ name: 'jobName', required: true }]
+    params: [
+      // { name: 'jobName', required: true }
+    ]
   },
   {
     value: 'Publish',
     label: '发布',
     params: [
-      { name: 'projectName', required: true },
+      // { name: 'projectName', required: true },
       { name: 'environment', required: true, prefixed: true }
     ]
   },
   {
     value: 'Establish',
     label: '构建',
-    params: [{ name: 'jobName', required: true }]
+    params: [
+      // { name: 'jobName', required: true }
+    ]
   },
   {
     value: 'ParametricBuild',
     label: '参数化构建',
     params: [
-      { name: 'jobName', required: true },
+      // { name: 'jobName', required: true },
       { name: 'environment', required: true, prefixed: true }
     ]
   },
@@ -64,8 +67,8 @@ export const originalTasksTypes = [
     value: 'Notify',
     label: '通知',
     params: [
-      { name: 'name', required: true },
-      { name: 'jobName', required: true },
+      // { name: 'name', required: true },
+      // { name: 'jobName', required: true },
       { name: 'environment', required: true, prefixed: true },
       { name: 'updatedContent', required: false, prefixed: true }
     ]

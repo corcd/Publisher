@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-08 13:23:42
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-19 00:58:48
+ * @LastEditTime: 2020-12-25 15:43:32
  * @Description: file content
 -->
 <template>
@@ -12,6 +12,11 @@
       <section class="log-loginbox">
         <header>
           <span>团队成员校验</span>
+        </header>
+        <header>
+          <span class="subtitle">
+            {{ subtitle }}
+          </span>
         </header>
         <content>
           <el-input
@@ -56,6 +61,7 @@ export default {
   data() {
     return {
       pConfig,
+      subtitle: '重要：本次更新涉及架构调整，请清空所有项目后重新录入',
       btnLoading: false,
       authInfo: {
         username: '',
@@ -123,12 +129,21 @@ export default {
 
     header {
       width: 100%;
-      margin-bottom: 20px;
+      margin-right: 10px;
+      margin-bottom: 10px;
       color: #333;
       text-align: left;
       font: {
         size: 18px;
         weight: 500;
+      }
+
+      .subtitle {
+        color: #ff5959;
+        font: {
+          size: 12px;
+          weight: 500;
+        }
       }
     }
 

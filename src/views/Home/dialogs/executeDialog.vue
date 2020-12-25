@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-16 12:33:40
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-25 01:53:55
+ * @LastEditTime: 2020-12-25 16:20:20
  * @Description: file content
 -->
 <template>
@@ -21,6 +21,9 @@
       label-width="80px"
       size="mini"
     >
+      <el-form-item>
+        <p class="home-form__topic">参数设置</p>
+      </el-form-item>
       <el-form-item label="更新内容" v-if="hasSuchParams('updatedContent')">
         <el-input
           type="textarea"
@@ -45,19 +48,24 @@
           </el-option>
         </el-select>
       </el-form-item>
+      <el-form-item
+        label="无参数"
+        v-show="uniqueParamsList.length === 0"
+      ></el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button type="default" size="mini" @click="cancel">
         取 消
       </el-button>
       <el-button type="primary" size="mini" @click="confirm">
-        确 定
+        执 行
       </el-button>
     </span>
   </el-dialog>
 </template>
 
 <script>
+import { Message } from 'element-ui'
 import { getOneRecord } from '#/plugins/lowdb'
 import { originalEnvTypes, originalTasksTypes } from '@/modules/task/types'
 
@@ -120,6 +128,14 @@ export default {
       this.$emit('cancel')
     },
     confirm() {
+      for (const i in this.prevExecuteData) {
+        if (this.prevExecuteData.hasOwnProperty(i)) {
+          if (String.prototype.trim.call(this.prevExecuteData[i]) === '') {
+            Message.error('参数不完整，请补充后重新提交')
+            return
+          }
+        }
+      }
       this.$emit('confirm', this.prevExecuteData)
     }
   }
@@ -131,7 +147,7 @@ export default {
   &-form {
     width: 100%;
 
-    &::v-deep .workflow-form__topic {
+    &::v-deep .home-form__topic {
       width: 100%;
       text-align: left;
       font: {

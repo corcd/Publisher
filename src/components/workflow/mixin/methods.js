@@ -2,10 +2,14 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-18 10:19:26
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-25 02:06:58
+ * @LastEditTime: 2020-12-25 16:16:13
  * @Description: file content
  */
-import { getOneRecord, deleteWorkflowItem } from '#/plugins/lowdb'
+import {
+  getOneRecord,
+  deleteWorkflowItem,
+  updateRecordAttackTime
+} from '#/plugins/lowdb'
 import { runOneTask } from '@/modules/task'
 
 const methods = {
@@ -20,13 +24,17 @@ const methods = {
     }
   },
   methods: {
-    runAction() {
-      // FIXME 思考：单任务执行时，是否需要考虑全局 projectName 和 jobName
-      const { projectName, jobName } = getOneRecord(this.id)
-      runOneTask({
-        action: this.workflowItemName,
-        params: Object.assign({}, this.params, { projectName, jobName })
-      })
+    async runAction() {
+      const { attribute } = getOneRecord(this.id)
+      try {
+        await runOneTask({
+          action: this.workflowItemName,
+          params: Object.assign({}, this.params, { ...attribute })
+        })
+        updateRecordAttackTime({ id: this.id })
+      } catch (err) {
+        console.error(err)
+      }
     },
     deleteWorkflowItem() {
       deleteWorkflowItem({ id: this.id, action: this.workflowItemName })

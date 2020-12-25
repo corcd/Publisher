@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:01:15
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-25 01:55:43
+ * @LastEditTime: 2020-12-25 16:48:28
  * @Description: file content
 -->
 <template>
@@ -17,7 +17,12 @@
           :name="item.id"
         >
           <template slot="title">
-            {{ getTitle({ name: item.name, jobName: item.jobName }) }}
+            {{
+              getTitle({
+                name: item.attribute.name,
+                jobName: item.attribute.jobName
+              })
+            }}
             <span class="home-collapse__subtitle">
               [ {{ item.workflow.length }} jobs ]
             </span>
@@ -37,16 +42,8 @@
           <div class="home-collapse">
             <div class="home-collapse__left">
               <p class="home-collapse__details">
-                最近任务触发时间:
-                {{ `${item.attackTime || '( 无 )'}` }}
-              </p>
-              <p class="home-collapse__details">
-                下一次构建编号:
-                {{
-                  `&lt;${
-                    item.buildInfo ? item.buildInfo.nextBuildNumber : '( 无 )'
-                  }&gt;`
-                }}
+                最近任务完成时间:
+                {{ formatTimeStamp(item.attackTime) || '( 无 )' }}
               </p>
               <p class="home-collapse__details">
                 最近一次成功构建:
@@ -61,6 +58,14 @@
                     copyDocument(item.buildInfo ? item.buildInfo.url : '')
                   "
                 ></i>
+              </p>
+              <p class="home-collapse__details">
+                下一次构建编号:
+                {{
+                  `&lt;${
+                    item.buildInfo ? item.buildInfo.nextBuildNumber : '( 无 )'
+                  }&gt;`
+                }}
               </p>
               <p class="home-collapse__details">
                 远程仓库地址:
@@ -100,13 +105,13 @@
 
 <script>
 import { Message } from 'element-ui'
+import dayjs from 'dayjs'
 import {
   getRecords,
   getOneRecord,
   delRecord,
-  updatePublishWorkflowParams,
-  updateNotifyWorkflowParams,
-  updateParametricBuildWorkflowParams
+  updateAllWorkflowParams,
+  updateRecordAttackTime
 } from '#/plugins/lowdb'
 import { setText } from '@/app/clipboard'
 import { originalEnvTypes } from '@/modules/task/types'
@@ -143,15 +148,20 @@ export default {
           : ''
       }
     },
-    hasWorkflowItem() {
-      return (id, action) => {
-        if (!id || !action) return false
-
-        const { workflow } = getOneRecord(id)
-        const chosenList = workflow.filter(item => item.action === action)
-        return chosenList.length > 0
+    formatTimeStamp() {
+      return timestamp => {
+        return dayjs(timestamp * 1000).format('YYYY-MM-DD HH:mm:ss')
       }
     }
+    // hasWorkflowItem() {
+    //   return (id, action) => {
+    //     if (!id || !action) return false
+
+    //     const { workflow } = getOneRecord(id)
+    //     const chosenList = workflow.filter(item => item.action === action)
+    //     return chosenList.length > 0
+    //   }
+    // }
   },
   mounted() {
     this.freshData()
@@ -215,15 +225,15 @@ export default {
     preExecute(id) {
       // TODO 判断优化
       this.activeId = id
-      if (
-        this.hasWorkflowItem(id, 'Publish') ||
-        this.hasWorkflowItem(id, 'Notify') ||
-        this.hasWorkflowItem(id, 'ParametricBuild')
-      ) {
-        this.$refs.dialog.open(id)
-        return
-      }
-      return this.execute()
+      // if (
+      //   this.hasWorkflowItem(id, 'Publish') ||
+      //   this.hasWorkflowItem(id, 'Notify') ||
+      //   this.hasWorkflowItem(id, 'ParametricBuild')
+      // ) {
+      this.$refs.dialog.open(id)
+      return
+      // }
+      // return this.execute()
     },
     async execute(prevExecuteData = {}) {
       // prevExecuteData 构建前填写的参数
@@ -234,49 +244,24 @@ export default {
         return
       }
 
-      const { projectName, jobName, workflow } = getOneRecord(currentId)
+      const { attribute, workflow } = getOneRecord(currentId)
       if (workflow.length === 0) {
         Message.warning('请先添加工作流后再执行任务')
         return
       }
 
       this.updateProjectStatus(currentId, true)
-
-      // TODO 功能抽离
-      // 发布模块参数录入
-      if (this.hasWorkflowItem(currentId, 'Publish')) {
-        updatePublishWorkflowParams({
-          id: currentId,
-          environment: prevExecuteData.environment
-        })
-      }
-
-      // 通知模块参数录入
-      if (this.hasWorkflowItem(currentId, 'Notify')) {
-        updateNotifyWorkflowParams({
-          id: currentId,
-          environment: prevExecuteData.environment,
-          updatedContent: prevExecuteData.updatedContent
-        })
-      }
-      // 参数化构建模块参数录入
-      if (this.hasWorkflowItem(currentId, 'ParametricBuild')) {
-        updateParametricBuildWorkflowParams({
-          id: currentId,
-          environment: prevExecuteData.environment
-        })
-      }
+      updateAllWorkflowParams({ id: currentId, globalParams: prevExecuteData })
       this.$refs.dialog.close()
 
       try {
-        // TODO 添加全局参数
         const res = await runWorkflow(
           workflow,
-          Object.assign({}, prevExecuteData, { projectName, jobName })
+          Object.assign({}, prevExecuteData, { ...attribute })
         )
         console.log(res)
+        updateRecordAttackTime({ id: currentId })
 
-        // TODO 可以优化复用 recordsStatusData 更新策略
         if (res.every(item => item === 'ok')) {
           if (this.recordsStatusData.has(String(currentId))) {
             this.recordsStatusData.set(String(currentId), 'completed')
@@ -295,6 +280,7 @@ export default {
           this.recordsStatusData.set(String(currentId), 'error')
         }
       }
+
       this.defaultMapChangeTracker++
       console.log(this.recordsStatusData)
     },

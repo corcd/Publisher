@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-14 12:48:23
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-24 18:20:18
+ * @LastEditTime: 2020-12-25 17:44:33
  * @Description: file content
 -->
 <template>
@@ -39,8 +39,8 @@
 </template>
 
 <script>
+import { Message } from 'element-ui'
 import { addRecord } from '#/plugins/lowdb'
-import { showNotification } from '@/app/notification'
 import { getJobInfo } from '@/plugins/jenkins'
 import { getProject } from '@/plugins/gitlab'
 import Topbar from '@/common/topbar'
@@ -54,7 +54,19 @@ export default {
       newProjectData: { name: '', projectName: '', jobName: '' }
     }
   },
+  mounted() {
+    window.addEventListener(
+      'keyup',
+      e => {
+        if (e.key === 'Enter') e.stopPropagation()
+      },
+      true
+    )
+  },
   beforeDestroy() {
+    window.removeEventListener('keyup', e => {
+      if (e.key === 'Enter') e.stopPropagation()
+    })
     this.reset()
   },
   methods: {
@@ -68,10 +80,9 @@ export default {
         const projectData = projectInfo.data
         if (projectData.length > 1) {
           // 项目不唯一
-          showNotification({
-            title: '项目信息获取异常通知',
-            body: `项目 ${this.newProjectData.projectName} 不唯一，请检查`
-          })
+          Message.error(
+            `项目 ${this.newProjectData.projectName} 不唯一，请检查`
+          )
           return
         }
         const { id, web_url } = projectData[0]
@@ -79,7 +90,7 @@ export default {
         await addRecord(
           Object.assign(
             {},
-            this.newProjectData,
+            { attribute: this.newProjectData },
             { buildInfo: { number, nextBuildNumber, url } },
             { projectInfo: { id, url: web_url } }
           )
@@ -88,10 +99,9 @@ export default {
         this.$router.push({ name: 'Home' })
       } catch (err) {
         console.log(err)
-        showNotification({
-          title: '新增项目失败',
-          body: `项目 ${this.newProjectData.name} 新增失败，请检查项目是否存在或合法`
-        })
+        Message.error(
+          `项目 ${this.newProjectData.name} 新增失败，请检查项目是否存在或合法`
+        )
       }
     },
     reset() {

@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-06 22:06:34
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-25 02:04:02
+ * @LastEditTime: 2020-12-25 17:24:36
  * @Description: file content
  */
 import { originalTasksTypes } from './types'
@@ -47,14 +47,14 @@ export const addCustomTask = fn => {
 
 // 执行任务工作流
 export const runWorkflow = async (workflow, globalParams = {}) => {
-  // TODO 更新全局参数至各模块
   const tasksQueue = workflow.map(task => {
     const isExist = isLegalTask(task)
+    const params = JSON.parse(JSON.stringify(task.params))
 
     return isExist
       ? {
           task: tasks[`run${task.action}Task`],
-          params: Object.assign(task.params, globalParams)
+          params: Object.assign({}, params, globalParams)
         }
       : {}
   })
@@ -68,7 +68,6 @@ export const runWorkflow = async (workflow, globalParams = {}) => {
   console.log(finalTasksQueue)
 
   // TODO 总线通讯调起全局变量输入弹窗
-
   return Promise.all(
     finalTasksQueue.map(item => {
       try {

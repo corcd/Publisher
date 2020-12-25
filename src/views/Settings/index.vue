@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-12 21:37:09
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-16 16:32:42
+ * @LastEditTime: 2020-12-25 17:04:18
  * @Description: file content
 -->
 <template>
@@ -87,7 +87,7 @@ export default {
     return {
       settingsData: { user: null, mail: null },
       autosaveTimer: null,
-      timeInterval: 10000
+      timeInterval: 15000
     }
   },
   created() {
