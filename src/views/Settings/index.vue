@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-12 21:37:09
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-25 17:04:18
+ * @LastEditTime: 2020-12-26 20:47:34
  * @Description: file content
 -->
 <template>
@@ -75,7 +75,7 @@ import {
   setUser,
   setMailAuth,
   setMailAddressee
-} from '#/plugins/lowdb'
+} from '#/plugins/data'
 import { logout } from '@/modules/auth'
 import Topbar from '@/common/topbar'
 import StatusBar from '@/common/statusbar'
@@ -104,8 +104,8 @@ export default {
     freshData() {
       this.settingsData = { user: null, mail: null }
 
-      this.$set(this.settingsData, 'user', JSON.parse(JSON.stringify(getUser)))
-      this.$set(this.settingsData, 'mail', JSON.parse(JSON.stringify(getMail)))
+      this.$set(this.settingsData, 'user', JSON.parse(JSON.stringify(getUser())))
+      this.$set(this.settingsData, 'mail', JSON.parse(JSON.stringify(getMail())))
       console.log(this.settingsData)
     },
     submit() {

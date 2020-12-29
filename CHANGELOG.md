@@ -2,9 +2,24 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-15 14:43:54
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-25 18:24:06
+ * @LastEditTime: 2020-12-29 17:53:50
  * @Description: file content
 -->
+# :tada: 0.6.5-rc5 (2020-12-29)
+
+### :sparkles: Features
+
+* 实现全局更新状态和任务状态
+* 拆分数据存储模块，优化数据库读写，增加备份功能
+* 增加对过期数据的校验，增加页面缓存
+
+### :bug: Bug Fixes
+
+* 修改工作流任务原有并行模式为串行模式
+* 修复工作流模块中存在的已知问题
+
+
+
 # :tada: 0.6.4-rc5 (2020-12-25)
 
 ### :bug: Bug Fixes

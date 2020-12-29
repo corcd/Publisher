@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-16 12:33:40
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-25 16:20:20
+ * @LastEditTime: 2020-12-26 21:19:10
  * @Description: file content
 -->
 <template>
@@ -66,7 +66,7 @@
 
 <script>
 import { Message } from 'element-ui'
-import { getOneRecord } from '#/plugins/lowdb'
+import { getOneRecord } from '#/plugins/data'
 import { originalEnvTypes, originalTasksTypes } from '@/modules/task/types'
 
 export default {

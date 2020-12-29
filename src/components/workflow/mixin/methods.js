@@ -2,14 +2,14 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-18 10:19:26
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-25 16:16:13
+ * @LastEditTime: 2020-12-26 21:12:46
  * @Description: file content
  */
 import {
   getOneRecord,
-  deleteWorkflowItem,
-  updateRecordAttackTime
-} from '#/plugins/lowdb'
+  updateRecordAttackTime,
+  deleteWorkflowItem
+} from '#/plugins/data'
 import { runOneTask } from '@/modules/task'
 
 const methods = {

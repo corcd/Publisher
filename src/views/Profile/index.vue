@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-10 17:44:39
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-14 09:39:57
+ * @LastEditTime: 2020-12-26 20:36:07
  * @Description: file content
 -->
 <template>
@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { getUser, setUser } from '#/plugins/lowdb'
+import { getUser, setUser } from '#/plugins/data'
 import Topbar from '@/common/topbar'
 
 export default {
@@ -66,7 +66,7 @@ export default {
     }
   },
   mounted() {
-    Object.assign(this.profileInfo, getUser)
+    Object.assign(this.profileInfo, getUser())
   },
   methods: {
     submit() {

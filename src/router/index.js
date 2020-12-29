@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:01:15
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-19 09:50:47
+ * @LastEditTime: 2020-12-28 14:12:15
  * @Description: file content
  */
 import Vue from 'vue'
@@ -45,7 +45,9 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "chunk-home" */ '@/views/Home'),
     meta: {
-      title: '前端发布工具'
+      title: '前端发布工具',
+      keepAlive: true,
+      isInitial: false
     }
   },
   {

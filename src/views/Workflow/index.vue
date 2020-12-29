@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-13 19:42:43
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-25 16:28:11
+ * @LastEditTime: 2020-12-28 09:40:30
  * @Description: file content
 -->
 <template>
@@ -47,7 +47,7 @@ import {
   unshiftWorkflow,
   insertWorkflow,
   updateWorkflowParams
-} from '#/plugins/lowdb'
+} from '#/plugins/data'
 import Topbar from '@/common/topbar'
 import StatusBar from '@/common/statusbar'
 import UpdateWorkflowItem from '@/components/workflow/UpdateItem'
@@ -89,7 +89,6 @@ export default {
     refreshData() {
       this.workflow = []
       this.workflow = getOneRecord(this.id).workflow
-      console.log(this.workflow)
     },
     setWorkflowItemParams(currentAction) {
       this.$refs.configdialog.open(currentAction)
@@ -102,16 +101,16 @@ export default {
     },
     addWorkflowItem(tempData) {
       console.log(tempData)
+      if (!tempData.newAction) {
+        return
+      }
 
-      // TODO 工作流操作合并，单独分模块
       if (!tempData.currentAction) {
         unshiftWorkflow({
           id: this.id,
           newAction: tempData.newAction,
           params: tempData.params || {}
         })
-        // 没有依赖组件，需要在页面内主动更新数据
-        this.refreshData()
       } else {
         insertWorkflow({
           id: this.id,
@@ -120,14 +119,20 @@ export default {
           params: tempData.params || {}
         })
       }
+      this.refreshData()
       this.$refs.adddialog.close()
     },
     updateWorkflowItemParams(tempData) {
+      if (!tempData.currentAction) {
+        return
+      }
+      
       updateWorkflowParams({
         id: this.id,
         action: tempData.currentAction,
         newParams: tempData.params || {}
       })
+      this.refreshData()
       this.$refs.configdialog.close()
     },
     cancel() {

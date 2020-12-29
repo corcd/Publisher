@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:01:15
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-25 16:48:28
+ * @LastEditTime: 2020-12-28 14:44:15
  * @Description: file content
 -->
 <template>
@@ -24,7 +24,13 @@
               })
             }}
             <span class="home-collapse__subtitle">
-              [ {{ item.workflow.length }} jobs ]
+              [
+              {{
+                item.workflow.length
+                  ? `${item.workflow.length} 任务数`
+                  : '请添加任务'
+              }}
+              ]
             </span>
             <i
               class="home-collapse__headericon el-icon-loading"
@@ -100,19 +106,22 @@
       @confirm="execute"
       @cancel="cancel"
     ></ExecuteDialog>
+
+    <!-- <ErrorDialog ref="error"></ErrorDialog> -->
   </div>
 </template>
 
 <script>
-import { Message } from 'element-ui'
+import { Message, MessageBox } from 'element-ui'
 import dayjs from 'dayjs'
 import {
+  resetDataBase,
   getRecords,
   getOneRecord,
   delRecord,
-  updateAllWorkflowParams,
-  updateRecordAttackTime
-} from '#/plugins/lowdb'
+  updateRecordAttackTime,
+  updateAllWorkflowParams
+} from '#/plugins/data'
 import { setText } from '@/app/clipboard'
 import { originalEnvTypes } from '@/modules/task/types'
 import { runWorkflow } from '@/modules/task'
@@ -135,7 +144,7 @@ export default {
   },
   computed: {
     getTitle() {
-      return ({ name, jobName }) => {
+      return ({ name = '', jobName = '' }) => {
         return `${name || '暂无名称'} ( ${jobName || '暂无工作任务名称'} )`
       }
     },
@@ -163,15 +172,37 @@ export default {
     //   }
     // }
   },
-  mounted() {
-    this.freshData()
+  beforeRouteEnter(to, from, next) {
+    if (from.name !== 'Log' || from.name !== 'New') {
+      to.meta.isInitial = true
+    }
+    next()
+  },
+  activated() {
+    if (this.$route.meta.isInitial) {
+      this.freshData()
+    } else {
+      // 取缓存数据
+    }
+    if (
+      this.recordsData.length > 0 &&
+      !this.recordsData.every(item => item.hasOwnProperty('attribute'))
+    ) {
+      MessageBox.alert('项目数据格式已过期，请重新录入', '数据错误', {
+        confirmButtonText: '重置项目数据',
+        callback: () => {
+          resetDataBase()
+          this.freshData()
+        }
+      })
+    }
   },
   methods: {
     freshData() {
       this.recordsData = []
-      const records = JSON.parse(JSON.stringify(getRecords))
+      const records = JSON.parse(JSON.stringify(getRecords()))
 
-      this.recordsData.push(...getRecords)
+      this.recordsData.push(...getRecords())
       if (!this.recordsStatusData) {
         this.recordsStatusData = new Map([
           ...records.map(item => {
@@ -262,15 +293,8 @@ export default {
         console.log(res)
         updateRecordAttackTime({ id: currentId })
 
-        if (res.every(item => item === 'ok')) {
-          if (this.recordsStatusData.has(String(currentId))) {
-            this.recordsStatusData.set(String(currentId), 'completed')
-          }
-        } else {
-          if (this.recordsStatusData.has(String(currentId))) {
-            // TODO 错误信息可以支持录入
-            this.recordsStatusData.set(String(currentId), 'error')
-          }
+        if (this.recordsStatusData.has(String(currentId))) {
+          this.recordsStatusData.set(String(currentId), 'completed')
         }
 
         this.clearTempData()
@@ -282,6 +306,7 @@ export default {
       }
 
       this.defaultMapChangeTracker++
+      // 更新数据
       console.log(this.recordsStatusData)
     },
     cancel() {
@@ -291,12 +316,8 @@ export default {
     clearTempData() {
       this.activeId = ''
     },
-    async deleteData(id) {
-      try {
-        await delRecord({ id })
-      } catch (err) {
-        console.error(err)
-      }
+    deleteData(id) {
+      delRecord({ id })
       this.freshData()
     },
     leadToWorkflowPage(id) {

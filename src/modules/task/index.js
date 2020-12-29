@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-06 22:06:34
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-25 17:24:36
+ * @LastEditTime: 2020-12-28 14:42:08
  * @Description: file content
  */
 import { originalTasksTypes } from './types'
@@ -30,6 +30,23 @@ const tasks = {
 // 任务队列去除空值（ 例如：{} ）
 const tasksQueueTrim = tasksQueue => {
   return tasksQueue.filter(item => Object.getOwnPropertyNames(item).length > 0)
+}
+
+// 任务队列顺序执行器
+const tasksQueueExecutor = async queue => {
+  let index = 0
+  while (index >= 0 && index < queue.length) {
+    const item = queue[index]
+
+    if (typeof item.task !== 'function') {
+      throw new Error('task not a function')
+    }
+    // eslint-disable-next-line no-await-in-loop
+    await item.task(item.params).catch(err => {
+      throw err
+    })
+    index++
+  }
 }
 
 // 判断是否为合法任务
@@ -67,18 +84,19 @@ export const runWorkflow = async (workflow, globalParams = {}) => {
   // TODO 任务队列去重
   console.log(finalTasksQueue)
 
-  // TODO 总线通讯调起全局变量输入弹窗
-  return Promise.all(
-    finalTasksQueue.map(item => {
-      try {
-        return typeof item.task === 'function'
-          ? item.task(item.params)
-          : item.task
-      } catch (e) {
-        return Promise.reject(e)
-      }
-    })
-  )
+  // return Promise.all(
+  //   finalTasksQueue.map(item => {
+  //     try {
+  //       return typeof item.task === 'function'
+  //         ? item.task(item.params)
+  //         : item.task
+  //     } catch (e) {
+  //       return Promise.reject(e)
+  //     }
+  //   })
+  // )
+
+  return tasksQueueExecutor(finalTasksQueue)
 }
 
 // 执行单一任务
@@ -90,16 +108,5 @@ export const runOneTask = async ({ action, params }) => {
 
   console.log(oneTask)
 
-  // TODO 格式暂时与队列保持一致
-  return Promise.all(
-    oneTask.map(item => {
-      try {
-        return typeof item.task === 'function'
-          ? item.task(item.params)
-          : item.task
-      } catch (e) {
-        return Promise.reject(e)
-      }
-    })
-  )
+  return tasksQueueExecutor(oneTask)
 }

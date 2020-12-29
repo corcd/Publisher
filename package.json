@@ -1,6 +1,6 @@
 {
   "name": "publisher",
-  "version": "0.6.4-rc5",
+  "version": "0.6.5-rc5",
   "description": "Frontend Publisher",
   "author": "whzcorcd <whzcorcd@gmail.com>",
   "license": "MIT",
@@ -27,6 +27,7 @@
     "electron-log": "^4.3.1",
     "electron-updater": "^4.3.5",
     "element-ui": "^2.4.5",
+    "fs-extra": "^9.0.1",
     "jsencrypt": "^3.0.0-rc.1",
     "lowdb": "^1.0.0",
     "nanoid": "^3.1.20",

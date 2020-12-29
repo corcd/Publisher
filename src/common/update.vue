@@ -2,16 +2,21 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-18 15:43:07
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-19 01:04:57
+ * @LastEditTime: 2020-12-29 17:07:51
  * @Description: file content
 -->
 <template>
   <transition name="fade">
     <div class="update" :style="`text-align: ${align}`">
-      <span v-if="visible && percent !== 100">更新进度: {{ percent }}%</span>
-      <span v-else-if="visible && percent === 100">
+      <span v-if="status === -1">更新发生错误</span>
+      <span v-else-if="status === 0">正在检查更新</span>
+      <span v-else-if="status === 1 && percent < 100">
+        更新进度: {{ percent }}%
+      </span>
+      <span v-else-if="status === 1 && percent >= 100">
         更新完成，请关闭重进
       </span>
+      <span v-else-if="status === 2">已是最新版本</span>
       <span v-else @click="updateApp">检查更新</span>
     </div>
   </transition>
@@ -19,7 +24,7 @@
 
 <script>
 import { ipcRenderer } from 'electron'
-import { showNotification } from '@/app/notification'
+import { mapState } from 'vuex'
 
 export default {
   name: 'Update',
@@ -29,54 +34,10 @@ export default {
       default: 'center'
     }
   },
-  data() {
-    return {
-      visible: false,
-      percent: 0
-    }
-  },
-  mounted() {
-    // 更新进度
-    ipcRenderer.on('downloadProgress', (event, data) => {
-      this.percent = data.percent.toFixed(2)
-      if (data.percent >= 100) {
-        // this.show = false;
-      }
-    })
-
-    // 更新检测状态
-    ipcRenderer.on('message', (event, data) => {
-      const title = '自动更新'
-      switch (data.status) {
-        case -1:
-          showNotification({
-            title,
-            body: data.msg
-          })
-          break
-        case 0:
-          showNotification({
-            title,
-            body: data.msg
-          })
-          break
-        case 1:
-          showNotification({
-            title,
-            body: data.msg
-          })
-          this.visible = true
-          break
-        case 2:
-          showNotification({
-            title,
-            body: data.msg
-          })
-          this.visible = false
-          break
-        default:
-          break
-      }
+  computed: {
+    ...mapState('update', {
+      percent: state => state.percent,
+      status: state => state.status
     })
   },
   methods: {

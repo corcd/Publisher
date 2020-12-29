@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-09 01:17:07
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-18 15:09:48
+ * @LastEditTime: 2020-12-26 22:24:50
  * @Description: file content
 -->
 <template>
@@ -40,13 +40,13 @@
 </template>
 
 <script>
-import { getUser } from '#/plugins/lowdb'
+import { getUser } from '#/plugins/data'
 
 export default {
   name: 'Topbar',
   data() {
     return {
-      userInfo: getUser
+      userInfo: getUser()
     }
   },
   methods: {

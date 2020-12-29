@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-16 15:09:54
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-24 17:30:56
+ * @LastEditTime: 2020-12-26 22:19:49
  * @Description: file content
 -->
 <template>
@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { getOneRecord } from '#/plugins/lowdb'
+import { getOneRecord } from '#/plugins/data'
 import { originalTasksTypes } from '@/modules/task/types'
 
 export default {
@@ -96,17 +96,22 @@ export default {
   computed: {
     selectOptions() {
       return id => {
-        const workflow = getOneRecord(id).workflow
-        const workflowActions = workflow.map(item => item.action)
-        const selectOptions = JSON.parse(JSON.stringify(this.original))
+        const { workflow } = getOneRecord(id)
 
-        selectOptions.forEach((item, index) => {
+        const workflowActions = workflow.map(item => item.action)
+        const options = JSON.parse(JSON.stringify(this.original))
+
+        const postSelectOptions = options.map(item => {
           if (workflowActions.includes(item.value)) {
-            selectOptions.splice(index, 1)
+            return {}
           }
+          return item
         })
 
-        return selectOptions
+        const res = postSelectOptions.filter(
+          item => Object.keys(item).length > 0
+        )
+        return res
       }
     },
     paramsList() {

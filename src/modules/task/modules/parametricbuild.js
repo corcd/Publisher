@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-24 16:43:41
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-25 01:01:28
+ * @LastEditTime: 2020-12-28 14:43:55
  * @Description: file content
  */
 import { Message } from 'element-ui'
@@ -60,10 +60,6 @@ export const ParametricBuildTask = ({ jobName, environment }) => {
       await buildWithParams(jobName, preload)
     } catch (err) {
       console.error(err)
-      // showNotification({
-      //   title: '参数化构建异常通知',
-      //   body: `工作任务 ${jobName} 参数化构建请求异常，请检查`
-      // })
       Message.error(`工作任务 ${jobName} 参数化构建请求异常，请检查`)
       return reject(err)
     }

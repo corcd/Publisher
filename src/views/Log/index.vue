@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-08 13:23:42
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-25 18:22:45
+ * @LastEditTime: 2020-12-28 15:23:43
  * @Description: file content
 -->
 <template>
@@ -14,7 +14,7 @@
           <span>团队成员校验</span>
         </header>
         <header>
-          <span class="subtitle" @click="additionalAction()">
+          <span class="subtitle">
             {{ subtitle }}
           </span>
         </header>
@@ -49,8 +49,7 @@
 </template>
 
 <script>
-import { Message } from 'element-ui'
-import { resetDataBase, getUser } from '#/plugins/lowdb'
+import { getUser } from '#/plugins/data'
 import { login } from '@/modules/auth'
 import Topbar from '@/common/topbar'
 
@@ -62,7 +61,7 @@ export default {
   data() {
     return {
       pConfig,
-      subtitle: '重要：本次更新涉及架构调整，请点击这里清空所有项目',
+      subtitle: '重要：该应用涉及相关隐私安全，仅限内部使用，切勿泄露',
       btnLoading: false,
       authInfo: {
         username: '',
@@ -85,22 +84,12 @@ export default {
     })
   },
   methods: {
-    additionalAction() {
-      try {
-        resetDataBase()
-        Message.success('数据重置成功')
-        window.location.reload()
-      } catch (err) {
-        Message.error('数据重置异常，请检查')
-      }
-    },
     submit() {
       this.btnLoading = true
 
       const res = login(this.authInfo)
       if (res) {
-        console.log(getUser)
-        const isFull = Object.values(getUser).some(item => item.trim() === '')
+        const isFull = Object.values(getUser()).some(item => item.trim() === '')
         return isFull
           ? this.$router.push({ name: 'Profile' })
           : this.$router.push({ name: 'Home' })

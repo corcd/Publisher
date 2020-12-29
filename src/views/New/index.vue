@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-14 12:48:23
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-25 17:44:33
+ * @LastEditTime: 2020-12-28 11:29:53
  * @Description: file content
 -->
 <template>
@@ -18,13 +18,13 @@
         :model="newProjectData"
       >
         <el-form-item><p class="new-form__topic">项目资料</p></el-form-item>
-        <el-form-item label="项目名">
+        <el-form-item label="项目中文名">
           <el-input v-model="newProjectData.name"></el-input>
         </el-form-item>
-        <el-form-item label="项目仓库名">
+        <el-form-item label="Gitlab 仓库名">
           <el-input v-model="newProjectData.projectName"></el-input>
         </el-form-item>
-        <el-form-item label="工作任务名">
+        <el-form-item label="Jenkins 任务名">
           <el-input v-model="newProjectData.jobName"></el-input>
         </el-form-item>
         <el-form-item label=" ">
@@ -40,7 +40,7 @@
 
 <script>
 import { Message } from 'element-ui'
-import { addRecord } from '#/plugins/lowdb'
+import { addRecord } from '#/plugins/data'
 import { getJobInfo } from '@/plugins/jenkins'
 import { getProject } from '@/plugins/gitlab'
 import Topbar from '@/common/topbar'
@@ -74,7 +74,8 @@ export default {
       try {
         const jobInfo = await getJobInfo(this.newProjectData.jobName)
         const { nextBuildNumber, lastSuccessfulBuild } = jobInfo.data
-        const { number, url } = lastSuccessfulBuild
+        const number = lastSuccessfulBuild ? lastSuccessfulBuild.number : 0
+        const url = lastSuccessfulBuild ? lastSuccessfulBuild.url : ''
 
         const projectInfo = await getProject(this.newProjectData.projectName)
         const projectData = projectInfo.data
@@ -87,7 +88,7 @@ export default {
         }
         const { id, web_url } = projectData[0]
 
-        await addRecord(
+        addRecord(
           Object.assign(
             {},
             { attribute: this.newProjectData },

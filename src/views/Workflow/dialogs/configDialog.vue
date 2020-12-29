@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { getOneRecord } from '#/plugins/lowdb'
+import { getOneRecord } from '#/plugins/data'
 import { originalTasksTypes } from '@/modules/task/types'
 
 export default {
