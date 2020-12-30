@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-24 16:43:41
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-30 16:12:40
+ * @LastEditTime: 2020-12-30 17:12:15
  * @Description: file content
  */
 import { Message } from 'element-ui'
@@ -34,7 +34,9 @@ const checkJobStatus = async (jobName, delay = 3000) => {
   }
 
   // 判断通过状态，只允许完全成功
-  return color === 'blue' ? Promise.resolve() : Promise.reject(new Error('Jenkins 构建任务失败'))
+  return color === 'blue'
+    ? Promise.resolve()
+    : Promise.reject(new Error('Jenkins 参数化构建任务中止或失败'))
 }
 
 export const ParametricBuildTask = ({ jobName, environment }) => {

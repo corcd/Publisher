@@ -2,9 +2,18 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-15 14:43:54
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-30 16:27:50
+ * @LastEditTime: 2020-12-30 17:14:36
  * @Description: file content
 -->
+# :tada: 0.6.8-rc5 (2020-12-30)
+
+### :sparkles: Features
+
+* 增加任务执行前未合并 MR 检测机制
+* 细节修改
+
+
+
 # :tada: 0.6.7-rc5 (2020-12-30)
 
 ### :sparkles: Features

@@ -2,11 +2,10 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-24 16:42:33
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-25 01:01:36
+ * @LastEditTime: 2020-12-30 17:13:57
  * @Description: file content
  */
 import { Message } from 'element-ui'
-import { showNotification } from '@/app/notification'
 import { sleep } from '@/utils'
 import { getJobInfo, build } from '@/plugins/jenkins'
 
@@ -34,7 +33,9 @@ const checkJobStatus = async (jobName, delay = 3000) => {
   }
 
   // 判断通过状态，只允许完全成功
-  return color === 'blue' ? Promise.resolve() : Promise.reject(new Error())
+  return color === 'blue'
+    ? Promise.resolve()
+    : Promise.reject(new Error('Jenkins 通用构建任务中止或失败'))
 }
 
 export const EstablishTask = ({ jobName }) => {
@@ -46,15 +47,10 @@ export const EstablishTask = ({ jobName }) => {
       await build(jobName)
     } catch (err) {
       console.error(err)
-      // showNotification({
-      //   title: '构建异常通知',
-      //   body: `工作任务 ${jobName} 构建请求异常，请检查`
-      // })
-      Message.error(`工作任务 ${jobName} 构建请求异常，请检查`)
+      Message.error(`工作任务 ${jobName} 通用构建请求异常，请检查`)
       return reject(err)
     }
 
-    Message.info(`工作任务 ${jobName} 发起构建请求，等待构建`)
     await sleep(3000)
 
     await checkJobStatus(jobName).catch(err => {
@@ -62,10 +58,6 @@ export const EstablishTask = ({ jobName }) => {
       return reject(err)
     })
 
-    showNotification({
-      title: '前端构建通知',
-      body: `工作任务 ${jobName} 完成构建`
-    })
     return resolve('ok')
   })
 }

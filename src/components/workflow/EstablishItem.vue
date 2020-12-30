@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-13 21:31:43
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-18 12:31:14
+ * @LastEditTime: 2020-12-30 17:13:47
  * @Description: file content
 -->
 <template>
@@ -37,7 +37,7 @@ import methods from './mixin/methods'
 
 const NAME = 'Establish'
 const INFO = {
-  title: '构 建',
+  title: '通用构建',
   pointerList: ['构建项目', '分析代码质量', '远程部署']
 }
 

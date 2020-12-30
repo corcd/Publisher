@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-16 12:33:40
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-26 21:19:10
+ * @LastEditTime: 2020-12-30 17:11:45
  * @Description: file content
 -->
 <template>
@@ -38,6 +38,7 @@
           size="mini"
           placeholder="请选择"
           v-model="prevExecuteData['environment']"
+          @change="handleSelectChange"
         >
           <el-option
             v-for="item in selectOptions"
@@ -49,6 +50,10 @@
         </el-select>
       </el-form-item>
       <el-form-item
+        label="当前环境对应分支存在未合并/未关闭的 MR，请及时处理"
+        v-show="untreated"
+      ></el-form-item>
+      <el-form-item
         label="无参数"
         v-show="uniqueParamsList.length === 0"
       ></el-form-item>
@@ -57,7 +62,12 @@
       <el-button type="default" size="mini" @click="cancel">
         取 消
       </el-button>
-      <el-button type="primary" size="mini" @click="confirm">
+      <el-button
+        type="primary"
+        size="mini"
+        :disabled="btnDisabled"
+        @click="confirm"
+      >
         执 行
       </el-button>
     </span>
@@ -68,6 +78,7 @@
 import { Message } from 'element-ui'
 import { getOneRecord } from '#/plugins/data'
 import { originalEnvTypes, originalTasksTypes } from '@/modules/task/types'
+import { getProject, listMergeRequests } from '@/plugins/gitlab'
 
 export default {
   name: 'ExecuteDialog',
@@ -76,6 +87,8 @@ export default {
       dialogVisible: false,
       selectOptions: Object.freeze(originalEnvTypes),
       id: '',
+      untreated: false,
+      btnDisabled: true,
       uniqueParamsList: [],
       prevExecuteData: {}
     }
@@ -97,6 +110,33 @@ export default {
     }
   },
   methods: {
+    async handleSelectChange(e) {
+      // TODO 考虑根据任务附加参数指定是否需要该步骤
+      this.btnDisabled = true
+      const includedType = originalEnvTypes.find(item => item.value === e)
+      // 当前分支
+      const currentBranch = includedType ? includedType.branchName : 'master'
+
+      const { attribute } = getOneRecord(this.id)
+      try {
+        const getProjectRes = await getProject(attribute.projectName)
+        const projectId = getProjectRes.data[0].id
+        const mergeRequestListRes = await listMergeRequests(projectId, {})
+        const existedMergeRequest = mergeRequestListRes.data.filter(
+          item => item.target_branch === currentBranch
+        )
+        if (existedMergeRequest.length > 0) {
+          // 当前分支存在 MR
+          this.untreated = true
+          return
+        }
+      } catch (err) {
+        console.error(err)
+        return
+      }
+      this.untreated = false
+      this.btnDisabled = false
+    },
     open(id) {
       const { workflow } = getOneRecord(id)
       const actionsList = workflow.map(item => item.action)
@@ -121,6 +161,8 @@ export default {
     },
     close() {
       this.dialogVisible = false
+      this.untreated = false
+      this.btnDisabled = false
       this.uniqueParamsList = []
       this.prevExecuteData = {}
     },
