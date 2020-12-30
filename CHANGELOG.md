@@ -2,9 +2,21 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-15 14:43:54
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-29 17:53:50
+ * @LastEditTime: 2020-12-30 15:05:56
  * @Description: file content
 -->
+# :tada: 0.6.6-rc5 (2020-12-30)
+
+### :sparkles: Features
+
+* 实现全局任务状态，并且由列表页局部状态同步全局状态
+
+### :bug: Bug Fixes
+
+* 修复任务状态录入 action 时存在的问题
+
+
+
 # :tada: 0.6.5-rc5 (2020-12-29)
 
 ### :sparkles: Features

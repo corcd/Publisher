@@ -3,7 +3,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-28 14:52:41
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-29 12:18:15
+ * @LastEditTime: 2020-12-30 15:06:15
  * @Description: file content
  */
 const state = {
@@ -31,9 +31,9 @@ const mutations = {
     }
   },
   ADD_COMPLETED_TASKS(state, { id }) {
-    if (state.ongoingTasks.includes(id) && !state.failedTasks.includes(id)) {
+    if (state.ongoingTasks.includes(id) && !state.completedTasks.includes(id)) {
       state.ongoingTasks.splice(state.ongoingTasks.indexOf(id), 1)
-      state.failedTasks.push(id)
+      state.completedTasks.push(id)
     }
   }
 }

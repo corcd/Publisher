@@ -2,9 +2,10 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-06 22:06:34
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-28 14:42:08
+ * @LastEditTime: 2020-12-30 15:03:23
  * @Description: file content
  */
+import store from '@/store'
 import { originalTasksTypes } from './types'
 
 import {
@@ -43,6 +44,7 @@ const tasksQueueExecutor = async queue => {
     }
     // eslint-disable-next-line no-await-in-loop
     await item.task(item.params).catch(err => {
+      console.error(err)
       throw err
     })
     index++
@@ -109,4 +111,38 @@ export const runOneTask = async ({ action, params }) => {
   console.log(oneTask)
 
   return tasksQueueExecutor(oneTask)
+}
+
+// 重构的执行任务工作流，支持全局状态
+export const runWorkflowRefactored = async (
+  id,
+  workflow,
+  globalParams = {}
+) => {
+  const tasksQueue = workflow.map(task => {
+    const isExist = isLegalTask(task)
+    const params = JSON.parse(JSON.stringify(task.params))
+
+    return isExist
+      ? {
+          task: tasks[`run${task.action}Task`],
+          params: Object.assign({}, params, globalParams)
+        }
+      : {}
+  })
+
+  const finalTasksQueue = tasksQueueTrim(tasksQueue)
+
+  // TODO 插入规则待改进
+  customTasksQueue && finalTasksQueue.push(...customTasksQueue)
+
+  store.dispatch('task/addOngoingTasks', { id })
+  try {
+    await tasksQueueExecutor(finalTasksQueue)
+    store.dispatch('task/addCompletedTasks', { id })
+  } catch (err) {
+    store.dispatch('task/addFailedTasks', { id })
+    return Promise.reject(new Error('failed'))
+  }
+  return Promise.resolve()
 }

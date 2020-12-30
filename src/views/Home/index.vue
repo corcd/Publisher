@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:01:15
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-28 14:44:15
+ * @LastEditTime: 2020-12-30 14:58:38
  * @Description: file content
 -->
 <template>
@@ -114,6 +114,7 @@
 <script>
 import { Message, MessageBox } from 'element-ui'
 import dayjs from 'dayjs'
+import { mapState } from 'vuex'
 import {
   resetDataBase,
   getRecords,
@@ -124,7 +125,7 @@ import {
 } from '#/plugins/data'
 import { setText } from '@/app/clipboard'
 import { originalEnvTypes } from '@/modules/task/types'
-import { runWorkflow } from '@/modules/task'
+import { runWorkflowRefactored } from '@/modules/task'
 import Topbar from '@/components/home/topbar'
 import Searchbar from '@/components/home/searchbar'
 import ExecuteDialog from './dialogs/executeDialog'
@@ -143,6 +144,11 @@ export default {
     }
   },
   computed: {
+    ...mapState('task', {
+      ongoingTasks: state => state.ongoingTasks,
+      failedTasks: state => state.failedTasks,
+      completedTasks: state => state.completedTasks
+    }),
     getTitle() {
       return ({ name = '', jobName = '' }) => {
         return `${name || '暂无名称'} ( ${jobName || '暂无工作任务名称'} )`
@@ -151,10 +157,15 @@ export default {
     getRecordStatus() {
       return id => {
         // eslint-disable-next-line no-unused-vars
-        const temp = this.defaultMapChangeTracker
-        return this.recordsStatusData.has(id)
-          ? this.recordsStatusData.get(id)
-          : ''
+        // const temp = this.defaultMapChangeTracker
+        // return this.recordsStatusData.has(id)
+        //   ? this.recordsStatusData.get(id)
+        //   : ''
+        let status = 'standby'
+        if (this.ongoingTasks.includes(id)) status = 'loading'
+        if (this.failedTasks.includes(id)) status = 'error'
+        if (this.completedTasks.includes(id)) status = 'completed'
+        return status
       }
     },
     formatTimeStamp() {
@@ -200,59 +211,59 @@ export default {
   methods: {
     freshData() {
       this.recordsData = []
-      const records = JSON.parse(JSON.stringify(getRecords()))
+      // const records = JSON.parse(JSON.stringify(getRecords()))
 
       this.recordsData.push(...getRecords())
-      if (!this.recordsStatusData) {
-        this.recordsStatusData = new Map([
-          ...records.map(item => {
-            return [
-              String(item.id), // key -> id
-              'standby' // value -> status
-            ]
-          })
-        ])
-      } else {
-        for (const i in records) {
-          if (!this.recordsStatusData.has(i.id)) {
-            this.recordsStatusData.set(String(i.id), '')
-          }
-        }
-      }
-      this.defaultMapChangeTracker++
+      // if (!this.recordsStatusData) {
+      //   this.recordsStatusData = new Map([
+      //     ...records.map(item => {
+      //       return [
+      //         String(item.id), // key -> id
+      //         'standby' // value -> status
+      //       ]
+      //     })
+      //   ])
+      // } else {
+      //   for (const i in records) {
+      //     if (!this.recordsStatusData.has(i.id)) {
+      //       this.recordsStatusData.set(String(i.id), '')
+      //     }
+      //   }
+      // }
+      // this.defaultMapChangeTracker++
       console.log(this.recordsData)
     },
     copyDocument(text) {
       setText(text)
     },
-    updateProjectStatus(id, status) {
-      if (status) {
-        if (
-          this.recordsStatusData.has(String(id)) &&
-          this.recordsStatusData.get(String(id)) === 'loading'
-        ) {
-          console.log('项目任务已在运行')
-          return
-        }
-        this.recordsStatusData.set(String(id), 'loading')
-        this.defaultMapChangeTracker++
-        console.log(this.recordsStatusData)
-        return
-      }
+    // updateProjectStatus(id, status) {
+    //   if (status) {
+    //     if (
+    //       this.recordsStatusData.has(String(id)) &&
+    //       this.recordsStatusData.get(String(id)) === 'loading'
+    //     ) {
+    //       console.log('项目任务已在运行')
+    //       return
+    //     }
+    //     this.recordsStatusData.set(String(id), 'loading')
+    //     this.defaultMapChangeTracker++
+    //     console.log(this.recordsStatusData)
+    //     return
+    //   }
 
-      if (this.recordsStatusData.size < 1) {
-        console.error('任务队列为空')
-        return
-      }
+    //   if (this.recordsStatusData.size < 1) {
+    //     console.error('任务队列为空')
+    //     return
+    //   }
 
-      if (this.recordsStatusData.has(String(id))) {
-        this.recordsStatusData.set(String(id), 'standby')
-        this.defaultMapChangeTracker++
-        console.log(this.recordsStatusData)
-        return
-      }
-      console.error('项目任务不存在')
-    },
+    //   if (this.recordsStatusData.has(String(id))) {
+    //     this.recordsStatusData.set(String(id), 'standby')
+    //     this.defaultMapChangeTracker++
+    //     console.log(this.recordsStatusData)
+    //     return
+    //   }
+    //   console.error('项目任务不存在')
+    // },
     preExecute(id) {
       // TODO 判断优化
       this.activeId = id
@@ -281,33 +292,31 @@ export default {
         return
       }
 
-      this.updateProjectStatus(currentId, true)
+      // this.updateProjectStatus(currentId, true)
       updateAllWorkflowParams({ id: currentId, globalParams: prevExecuteData })
       this.$refs.dialog.close()
 
       try {
-        const res = await runWorkflow(
+        await runWorkflowRefactored(
+          currentId,
           workflow,
           Object.assign({}, prevExecuteData, { ...attribute })
         )
-        console.log(res)
         updateRecordAttackTime({ id: currentId })
 
-        if (this.recordsStatusData.has(String(currentId))) {
-          this.recordsStatusData.set(String(currentId), 'completed')
-        }
+        // if (this.recordsStatusData.has(String(currentId))) {
+        //   this.recordsStatusData.set(String(currentId), 'completed')
+        // }
 
         this.clearTempData()
       } catch (err) {
         console.error(err)
-        if (this.recordsStatusData.has(String(currentId))) {
-          this.recordsStatusData.set(String(currentId), 'error')
-        }
+        // if (this.recordsStatusData.has(String(currentId))) {
+        //   this.recordsStatusData.set(String(currentId), 'error')
+        // }
       }
 
-      this.defaultMapChangeTracker++
-      // 更新数据
-      console.log(this.recordsStatusData)
+      // this.defaultMapChangeTracker++
     },
     cancel() {
       this.$refs.dialog.close()
