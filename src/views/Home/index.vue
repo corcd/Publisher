@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:01:15
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-30 14:58:38
+ * @LastEditTime: 2020-12-30 16:25:49
  * @Description: file content
 -->
 <template>
@@ -40,10 +40,18 @@
               class="home-collapse__headericon home-collapse__headericon--completed el-icon-circle-check"
               v-if="getRecordStatus(item.id) === 'completed'"
             ></i>
-            <i
-              class="home-collapse__headericon home-collapse__headericon--error el-icon-circle-close"
-              v-if="getRecordStatus(item.id) === 'error'"
-            ></i>
+            <el-popover
+              placement="right"
+              width="200"
+              trigger="hover"
+              :content="getRecordWorkflowHistory(item.id)"
+            >
+              <i
+                slot="reference"
+                class="home-collapse__headericon home-collapse__headericon--error el-icon-circle-close"
+                v-if="getRecordStatus(item.id) === 'error'"
+              ></i>
+            </el-popover>
           </template>
           <div class="home-collapse">
             <div class="home-collapse__left">
@@ -147,7 +155,8 @@ export default {
     ...mapState('task', {
       ongoingTasks: state => state.ongoingTasks,
       failedTasks: state => state.failedTasks,
-      completedTasks: state => state.completedTasks
+      completedTasks: state => state.completedTasks,
+      taskHistory: state => state.taskHistory
     }),
     getTitle() {
       return ({ name = '', jobName = '' }) => {
@@ -166,6 +175,15 @@ export default {
         if (this.failedTasks.includes(id)) status = 'error'
         if (this.completedTasks.includes(id)) status = 'completed'
         return status
+      }
+    },
+    getRecordWorkflowHistory() {
+      return id => {
+        const history = this.taskHistory.filter(item => item.id === id)
+        console.log(history)
+        return history.length > 0
+          ? history[history.length - 1].result
+          : '（无）'
       }
     },
     formatTimeStamp() {

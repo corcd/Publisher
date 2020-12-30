@@ -3,13 +3,16 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-28 14:52:41
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-30 15:06:15
+ * @LastEditTime: 2020-12-30 15:26:41
  * @Description: file content
  */
+import dayjs from 'dayjs'
+
 const state = {
   ongoingTasks: [],
   failedTasks: [],
-  completedTasks: []
+  completedTasks: [],
+  taskHistory: []
 }
 
 const mutations = {
@@ -24,17 +27,29 @@ const mutations = {
       state.ongoingTasks.push(id)
     }
   },
-  ADD_FAILED_TASKS(state, { id }) {
+  ADD_FAILED_TASKS(state, { id, err }) {
     if (state.ongoingTasks.includes(id) && !state.failedTasks.includes(id)) {
       state.ongoingTasks.splice(state.ongoingTasks.indexOf(id), 1)
       state.failedTasks.push(id)
     }
+    state.taskHistory.push({
+      id,
+      status: 'failed',
+      result: err instanceof Error ? err.message : err,
+      timestamp: dayjs().unix()
+    })
   },
   ADD_COMPLETED_TASKS(state, { id }) {
     if (state.ongoingTasks.includes(id) && !state.completedTasks.includes(id)) {
       state.ongoingTasks.splice(state.ongoingTasks.indexOf(id), 1)
       state.completedTasks.push(id)
     }
+    state.taskHistory.push({
+      id,
+      status: 'completed',
+      result: 'success',
+      timestamp: dayjs().unix()
+    })
   }
 }
 

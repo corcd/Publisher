@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:53:51
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-20 18:46:59
+ * @LastEditTime: 2020-12-30 15:54:09
  * @Description: file content
  */
 import Vue from 'vue'
@@ -18,7 +18,8 @@ import {
   Form,
   FormItem,
   Divider,
-  Dialog
+  Dialog,
+  Tooltip
 } from 'element-ui'
 
 Vue.use(Input)
@@ -33,3 +34,4 @@ Vue.use(Form)
 Vue.use(FormItem)
 Vue.use(Divider)
 Vue.use(Dialog)
+Vue.use(Tooltip)

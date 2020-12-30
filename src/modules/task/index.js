@@ -2,10 +2,11 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-06 22:06:34
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-30 15:03:23
+ * @LastEditTime: 2020-12-30 16:12:07
  * @Description: file content
  */
 import store from '@/store'
+import { showNotification } from '@/app/notification'
 import { originalTasksTypes } from './types'
 
 import {
@@ -40,7 +41,7 @@ const tasksQueueExecutor = async queue => {
     const item = queue[index]
 
     if (typeof item.task !== 'function') {
-      throw new Error('task not a function')
+      throw new Error('task is not a function')
     }
     // eslint-disable-next-line no-await-in-loop
     await item.task(item.params).catch(err => {
@@ -140,9 +141,18 @@ export const runWorkflowRefactored = async (
   try {
     await tasksQueueExecutor(finalTasksQueue)
     store.dispatch('task/addCompletedTasks', { id })
+    showNotification({
+      title: '工作流通知',
+      body: `工作流<${id}>已全部完成`
+    })
   } catch (err) {
-    store.dispatch('task/addFailedTasks', { id })
-    return Promise.reject(new Error('failed'))
+    console.error(err)
+    store.dispatch('task/addFailedTasks', { id, err })
+    showNotification({
+      title: '工作流通知',
+      body: `工作流<${id}>执行发生错误，已中止`
+    })
+    return Promise.reject(new Error(err))
   }
   return Promise.resolve()
 }

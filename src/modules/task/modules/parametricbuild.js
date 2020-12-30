@@ -2,11 +2,10 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-24 16:43:41
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-28 14:43:55
+ * @LastEditTime: 2020-12-30 16:12:40
  * @Description: file content
  */
 import { Message } from 'element-ui'
-import { showNotification } from '@/app/notification'
 import { sleep } from '@/utils'
 import { originalEnvTypes } from '@/modules/task/types'
 import { getJobInfo, buildWithParams } from '@/plugins/jenkins'
@@ -35,7 +34,7 @@ const checkJobStatus = async (jobName, delay = 3000) => {
   }
 
   // 判断通过状态，只允许完全成功
-  return color === 'blue' ? Promise.resolve() : Promise.reject(new Error())
+  return color === 'blue' ? Promise.resolve() : Promise.reject(new Error('Jenkins 构建任务失败'))
 }
 
 export const ParametricBuildTask = ({ jobName, environment }) => {
@@ -64,7 +63,7 @@ export const ParametricBuildTask = ({ jobName, environment }) => {
       return reject(err)
     }
 
-    Message.info(`工作任务 ${jobName} 发起构建请求，等待构建`)
+    // 等待，排除服务器接收信息时延的影响
     await sleep(3000)
 
     await checkJobStatus(jobName).catch(err => {
@@ -72,10 +71,6 @@ export const ParametricBuildTask = ({ jobName, environment }) => {
       return reject(err)
     })
 
-    showNotification({
-      title: '前端参数化构建通知',
-      body: `工作任务 ${jobName} 完成参数化构建`
-    })
     return resolve('ok')
   })
 }

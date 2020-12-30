@@ -2,9 +2,17 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-15 14:43:54
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-30 15:05:56
+ * @LastEditTime: 2020-12-30 16:27:50
  * @Description: file content
 -->
+# :tada: 0.6.7-rc5 (2020-12-30)
+
+### :sparkles: Features
+
+* 增加任务执行历史记录功能，并在错误时可以提供错误信息
+
+
+
 # :tada: 0.6.6-rc5 (2020-12-30)
 
 ### :sparkles: Features
