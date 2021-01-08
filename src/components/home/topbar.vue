@@ -2,14 +2,14 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-09 01:17:07
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-26 22:24:50
+ * @LastEditTime: 2021-01-06 14:23:16
  * @Description: file content
 -->
 <template>
   <div class="topbar">
     <section>
       <span>Publisher</span>
-      <div>
+      <div v-if="isDeveloper">
         <el-button
           icon="el-icon-warning-outline"
           size="mini"
@@ -35,11 +35,32 @@
           @click="lead2SettingsPage"
         ></el-button>
       </div>
+      <div v-if="isPM">
+        <el-button
+          icon="el-icon-warning-outline"
+          size="mini"
+          circle
+          @click="lead2AboutPage"
+        ></el-button>
+        <el-button
+          icon="el-icon-refresh"
+          size="mini"
+          circle
+          @click="fresh"
+        ></el-button>
+        <el-button
+          icon="el-icon-setting"
+          size="mini"
+          circle
+          @click="lead2SettingsPage"
+        ></el-button>
+      </div>
     </section>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { getUser } from '#/plugins/data'
 
 export default {
@@ -48,6 +69,9 @@ export default {
     return {
       userInfo: getUser()
     }
+  },
+  computed: {
+    ...mapGetters('user', ['isDeveloper', 'isPM'])
   },
   methods: {
     fresh() {

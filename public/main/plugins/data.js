@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-26 17:57:55
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-28 09:18:55
+ * @LastEditTime: 2021-01-05 18:42:29
  * @Description: file content
  */
 import dayjs from 'dayjs'
@@ -69,6 +69,11 @@ export const addRecord = ({ attribute, buildInfo, projectInfo }) => {
 
 export const updateRecordAttackTime = ({ id }) => {
   datastore.setById('records', id, 'attackTime', dayjs().unix())
+}
+
+export const updateRecord = ({ id, buildInfo }) => {
+  // TODO 更新记录
+  datastore.assignById('records', id, 'buildInfo', buildInfo)
 }
 
 export const delRecord = ({ id }) => {

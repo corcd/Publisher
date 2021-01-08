@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-10 17:44:39
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-26 20:36:07
+ * @LastEditTime: 2021-01-06 13:49:52
  * @Description: file content
 -->
 <template>
@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { getUser, setUser } from '#/plugins/data'
 import Topbar from '@/common/topbar'
 
@@ -65,6 +66,9 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters('user', ['isDeveloper', 'isPM'])
+  },
   mounted() {
     Object.assign(this.profileInfo, getUser())
   },
@@ -73,7 +77,10 @@ export default {
       this.btnLoading = true
       setUser(this.profileInfo)
       this.btnLoading = false
-      return this.$router.push({ name: 'Home' })
+      if (this.isDeveloper) return this.$router.push({ name: 'Home' })
+      if (this.isPM) return this.$router.push({ name: 'Home' })
+      console.error('不合法的身份')
+      return
     }
   }
 }

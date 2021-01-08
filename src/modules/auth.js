@@ -2,18 +2,29 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-08 13:15:18
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-19 14:32:57
+ * @LastEditTime: 2021-01-05 15:52:44
  * @Description: file content
  */
 import { decrypt } from '#/plugins/encrypt'
+import store from '@/store'
 import { auth } from '@/config'
 
-const insideUsergroup = JSON.parse(window.$u)
+const insideDeveloperUsergroup = JSON.parse(window.$u)
+const insidePMUsergroup = JSON.parse(window.$pm)
 const insidePassword = window.$p
 const { privatekey } = auth
 
-export const login = ({ username, password }) => {
-  if (!insideUsergroup.includes(username)) return false
+store.dispatch('user/setUserList', {
+  developersList: insideDeveloperUsergroup,
+  productManagersList: insidePMUsergroup
+})
+
+export const login = async ({ username, password }) => {
+  try {
+    await store.dispatch('user/setUserSession', { username })
+  } catch (err) {
+    return Promise.reject(err)
+  }
 
   const verification = decrypt({
     cipherText: insidePassword,
@@ -21,10 +32,11 @@ export const login = ({ username, password }) => {
   })
   console.log(verification)
 
-  if (password === verification) return true
-  return false
+  if (password === verification) return Promise.resolve()
+  // eslint-disable-next-line prefer-promise-reject-errors
+  return Promise.reject()
 }
 
-export const logout = () => {
-  // TODO 登出功能
+export const logout = async () => {
+  await store.dispatch('user/clearUserSession')
 }

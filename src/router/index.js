@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:01:15
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-28 14:12:15
+ * @LastEditTime: 2021-01-06 17:43:50
  * @Description: file content
  */
 import Vue from 'vue'
@@ -44,6 +44,17 @@ const routes = [
     name: 'Home',
     component: () =>
       import(/* webpackChunkName: "chunk-home" */ '@/views/Home'),
+    meta: {
+      title: '前端发布工具',
+      keepAlive: true,
+      isInitial: false
+    }
+  },
+  {
+    path: '/check',
+    name: 'Check',
+    component: () =>
+      import(/* webpackChunkName: "chunk-check" */ '@/views/Check'),
     meta: {
       title: '前端发布工具',
       keepAlive: true,

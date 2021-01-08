@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-12 21:37:09
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-26 20:47:34
+ * @LastEditTime: 2021-01-05 15:54:21
  * @Description: file content
 -->
 <template>
@@ -104,8 +104,16 @@ export default {
     freshData() {
       this.settingsData = { user: null, mail: null }
 
-      this.$set(this.settingsData, 'user', JSON.parse(JSON.stringify(getUser())))
-      this.$set(this.settingsData, 'mail', JSON.parse(JSON.stringify(getMail())))
+      this.$set(
+        this.settingsData,
+        'user',
+        JSON.parse(JSON.stringify(getUser()))
+      )
+      this.$set(
+        this.settingsData,
+        'mail',
+        JSON.parse(JSON.stringify(getMail()))
+      )
       console.log(this.settingsData)
     },
     submit() {
@@ -129,8 +137,8 @@ export default {
     reset() {
       this.freshData()
     },
-    quit() {
-      logout()
+    async quit() {
+      await logout()
       this.$router.push('/')
     }
   }

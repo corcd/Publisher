@@ -2,13 +2,16 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-13 19:42:43
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-28 09:40:30
+ * @LastEditTime: 2021-01-05 18:31:00
  * @Description: file content
 -->
 <template>
   <div class="workflow">
     <Topbar subtitle="工作流设置"></Topbar>
     <StatusBar content=""></StatusBar>
+    <div class="workflow-recommend">
+      <p>推荐流程：{{ recommend }}</p>
+    </div>
     <div class="workflow-content">
       <div class="workflow-content-item" @click="unshiftWorkflowItem">
         <i class="el-icon-circle-plus-outline"></i>
@@ -75,6 +78,7 @@ export default {
   },
   data() {
     return {
+      recommend: '更新配置 - 静态扫描 - 参数化构建 - 发布 - 通知',
       id: '',
       workflow: []
     }
@@ -126,7 +130,7 @@ export default {
       if (!tempData.currentAction) {
         return
       }
-      
+
       updateWorkflowParams({
         id: this.id,
         action: tempData.currentAction,
@@ -183,6 +187,23 @@ export default {
         weight: 500;
       }
       line-height: 24px;
+    }
+  }
+
+  &-recommend {
+    flex-shrink: 0;
+    width: 100%;
+    height: 40px;
+    padding: 0 36px;
+
+    p {
+      width: 100%;
+      color: #999;
+      font: {
+        size: 14px;
+        weight: 500;
+      }
+      text-align: center;
     }
   }
 

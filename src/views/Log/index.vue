@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-08 13:23:42
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-28 15:23:43
+ * @LastEditTime: 2021-01-07 10:42:59
  * @Description: file content
 -->
 <template>
@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { getUser } from '#/plugins/data'
 import { login } from '@/modules/auth'
 import Topbar from '@/common/topbar'
@@ -69,6 +70,9 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapGetters('user', ['isDeveloper', 'isPM'])
+  },
   mounted() {
     window.addEventListener(
       'keyup',
@@ -84,18 +88,25 @@ export default {
     })
   },
   methods: {
-    submit() {
+    async submit() {
       this.btnLoading = true
 
-      const res = login(this.authInfo)
-      if (res) {
-        const isFull = Object.values(getUser()).some(item => item.trim() === '')
-        return isFull
-          ? this.$router.push({ name: 'Profile' })
-          : this.$router.push({ name: 'Home' })
+      try {
+        await login(this.authInfo)
+
+        const isFull = Object.values(getUser()).every(
+          item => item.trim() !== ''
+        )
+        if (!isFull) {
+          return this.$router.push({ name: 'Profile' })
+        }
+        this.isDeveloper && this.$router.push({ name: 'Home' })
+        this.isPM && this.$router.push({ name: 'Check' })
+      } catch (err) {
+        console.error('验证未通过', err)
+        this.btnLoading = false
       }
-      console.error('验证未通过')
-      this.btnLoading = false
+      return
     }
   }
 }

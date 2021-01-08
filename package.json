@@ -1,6 +1,6 @@
 {
   "name": "publisher",
-  "version": "0.6.8-rc5",
+  "version": "0.7.3-rc6",
   "description": "Frontend Publisher",
   "author": "whzcorcd <whzcorcd@gmail.com>",
   "license": "MIT",
@@ -28,14 +28,19 @@
     "electron-updater": "^4.3.5",
     "element-ui": "^2.4.5",
     "fs-extra": "^9.0.1",
+    "iconv-lite": "^0.6.2",
+    "imap-simple": "^5.0.0",
     "jsencrypt": "^3.0.0-rc.1",
+    "lodash-es": "^4.17.20",
     "lowdb": "^1.0.0",
+    "mailparser": "^3.0.1",
     "nanoid": "^3.1.20",
     "nodemailer": "^6.4.16",
     "shortid": "^2.2.16",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
-    "vuex": "^3.4.0"
+    "vuex": "^3.4.0",
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

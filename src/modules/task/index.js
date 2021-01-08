@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-06 22:06:34
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-30 16:12:07
+ * @LastEditTime: 2021-01-06 11:42:52
  * @Description: file content
  */
 import store from '@/store'
@@ -65,53 +65,32 @@ export const addCustomTask = fn => {
   }
 }
 
-// 执行任务工作流
-export const runWorkflow = async (workflow, globalParams = {}) => {
-  const tasksQueue = workflow.map(task => {
-    const isExist = isLegalTask(task)
-    const params = JSON.parse(JSON.stringify(task.params))
-
-    return isExist
-      ? {
-          task: tasks[`run${task.action}Task`],
-          params: Object.assign({}, params, globalParams)
-        }
-      : {}
-  })
-
-  const finalTasksQueue = tasksQueueTrim(tasksQueue)
-
-  // TODO 插入规则待改进
-  customTasksQueue && finalTasksQueue.push(...customTasksQueue)
-
-  // TODO 任务队列去重
-  console.log(finalTasksQueue)
-
-  // return Promise.all(
-  //   finalTasksQueue.map(item => {
-  //     try {
-  //       return typeof item.task === 'function'
-  //         ? item.task(item.params)
-  //         : item.task
-  //     } catch (e) {
-  //       return Promise.reject(e)
-  //     }
-  //   })
-  // )
-
-  return tasksQueueExecutor(finalTasksQueue)
-}
-
 // 执行单一任务
-export const runOneTask = async ({ action, params }) => {
+export const runOneTask = async ({ id, action, params }) => {
   const isExist = isLegalTask({ action, params })
   if (!isExist) return Promise.reject(new Error('不是合法的任务'))
 
-  const oneTask = [{ task: tasks[`run${action}Task`], params }]
+  const finalParams = Object.assign({}, params, { id })
+  const oneTask = [{ task: tasks[`run${action}Task`], params: finalParams }]
 
-  console.log(oneTask)
-
-  return tasksQueueExecutor(oneTask)
+  store.dispatch('task/addOngoingTasks', { id })
+  try {
+    await tasksQueueExecutor(oneTask)
+    store.dispatch('task/addCompletedTasks', { id })
+    showNotification({
+      title: '工作流通知',
+      body: `工作流<${id}>单任务${action}已完成`
+    })
+  } catch (err) {
+    console.error(err)
+    store.dispatch('task/addFailedTasks', { id, err })
+    showNotification({
+      title: '工作流通知',
+      body: `工作流<${id}>单任务${action}执行发生错误，已中止`
+    })
+    return Promise.reject(new Error(err))
+  }
+  return Promise.resolve()
 }
 
 // 重构的执行任务工作流，支持全局状态
@@ -127,7 +106,7 @@ export const runWorkflowRefactored = async (
     return isExist
       ? {
           task: tasks[`run${task.action}Task`],
-          params: Object.assign({}, params, globalParams)
+          params: Object.assign({}, params, globalParams, { id })
         }
       : {}
   })

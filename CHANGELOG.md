@@ -2,9 +2,21 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-15 14:43:54
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-30 17:14:36
+ * @LastEditTime: 2021-01-08 17:33:29
  * @Description: file content
 -->
+# :tada: 0.7.3-rc6 (2021-01-08)
+
+### :sparkles: Features
+
+* 新增项目时自动绑定对应 Gitlab 仓库
+* 构建后加入更新数据流程
+* 工作流拥有推荐流程
+* 集成 PM 账号体系
+* 集成邮件收发功能，PM 可以通过 Publisher 实现一键回复验证
+
+
+
 # :tada: 0.6.8-rc5 (2020-12-30)
 
 ### :sparkles: Features

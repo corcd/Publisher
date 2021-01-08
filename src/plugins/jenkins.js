@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:22:13
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-24 17:40:26
+ * @LastEditTime: 2021-01-04 11:46:36
  * @Description: file content
  */
 import _axios from '@/request'
@@ -28,6 +28,11 @@ const request = (jobName, actionUrl, method, params = {}) => {
 // 获取任务详情
 export const getJobInfo = jobName => {
   return request(jobName, 'api/json', 'GET')
+}
+
+// 获取任务详情
+export const getJobConfig = jobName => {
+  return request(jobName, 'config.xml', 'GET')
 }
 
 // 获取构建详情

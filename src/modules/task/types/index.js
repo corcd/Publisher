@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-24 16:34:28
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-25 15:57:26
+ * @LastEditTime: 2021-01-06 11:35:55
  * @Description: file content
  */
 export const originalEnvTypes = [
@@ -36,9 +36,7 @@ export const originalTasksTypes = [
   {
     value: 'Update',
     label: '配置更新',
-    params: [
-      // { name: 'jobName', required: true }
-    ]
+    params: [{ name: 'id', required: true }]
   },
   {
     value: 'Publish',

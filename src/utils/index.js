@@ -2,11 +2,12 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-09 17:27:59
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-25 00:45:32
+ * @LastEditTime: 2021-01-04 17:11:53
  * @Description: file content
  */
 import os from 'os'
 import { execSync } from 'child_process'
+export { parseXml } from './xml'
 
 export const sleep = (delay = 0) => {
   return new Promise(resolve => setTimeout(resolve, delay))

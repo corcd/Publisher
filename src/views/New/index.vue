@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-14 12:48:23
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-28 11:29:53
+ * @LastEditTime: 2021-01-07 16:35:53
  * @Description: file content
 -->
 <template>
@@ -21,14 +21,21 @@
         <el-form-item label="项目中文名">
           <el-input v-model="newProjectData.name"></el-input>
         </el-form-item>
-        <el-form-item label="Gitlab 仓库名">
-          <el-input v-model="newProjectData.projectName"></el-input>
-        </el-form-item>
+        <!-- <el-form-item label="Gitlab 仓库名">
+          <el-input v-model="newProjectData.projectName" readonly></el-input>
+        </el-form-item> -->
         <el-form-item label="Jenkins 任务名">
           <el-input v-model="newProjectData.jobName"></el-input>
         </el-form-item>
         <el-form-item label=" ">
-          <el-button type="primary" size="mini" @click="add">添 加</el-button>
+          <el-button
+            type="primary"
+            size="mini"
+            :loading="btnLoading"
+            @click="add"
+          >
+            添 加
+          </el-button>
           <el-button type="default" size="mini" @click="reset">
             重 置
           </el-button>
@@ -39,9 +46,11 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { Message } from 'element-ui'
 import { addRecord } from '#/plugins/data'
-import { getJobInfo } from '@/plugins/jenkins'
+import { parseXml } from '@/utils'
+import { getJobInfo, getJobConfig } from '@/plugins/jenkins'
 import { getProject } from '@/plugins/gitlab'
 import Topbar from '@/common/topbar'
 import StatusBar from '@/common/statusbar'
@@ -51,8 +60,12 @@ export default {
   components: { Topbar, StatusBar },
   data() {
     return {
+      btnLoading: false,
       newProjectData: { name: '', projectName: '', jobName: '' }
     }
+  },
+  computed: {
+    ...mapGetters('user', ['isDeveloper', 'isPM'])
   },
   mounted() {
     window.addEventListener(
@@ -71,7 +84,21 @@ export default {
   },
   methods: {
     async add() {
+      this.btnLoading = true
       try {
+        const jobConfig = await getJobConfig(this.newProjectData.jobName)
+        const parsedJobConfig = await parseXml(jobConfig.data)
+        // 暂时只有一个仓库
+        const gitUrl =
+          parsedJobConfig.project.scm[0].userRemoteConfigs[0][
+            'hudson.plugins.git.UserRemoteConfig'
+          ][0].url[0] || ''
+        const repoUrl = gitUrl.match(
+          /http:\/\/gitlab\.aodianyun\.com\/*\/(\S*)\.git/i
+        )
+        const repoName = repoUrl[1].split('/')
+        this.$set(this.newProjectData, 'projectName', repoName[1])
+
         const jobInfo = await getJobInfo(this.newProjectData.jobName)
         const { nextBuildNumber, lastSuccessfulBuild } = jobInfo.data
         const number = lastSuccessfulBuild ? lastSuccessfulBuild.number : 0
@@ -97,12 +124,15 @@ export default {
           )
         )
 
-        this.$router.push({ name: 'Home' })
+        this.btnLoading = false
+        this.isDeveloper && this.$router.push({ name: 'Home' })
+        this.isPM && this.$router.push({ name: 'Check' })
       } catch (err) {
         console.log(err)
         Message.error(
           `项目 ${this.newProjectData.name} 新增失败，请检查项目是否存在或合法`
         )
+        this.btnLoading = false
       }
     },
     reset() {

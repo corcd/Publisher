@@ -2,13 +2,13 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:01:15
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-30 16:25:49
+ * @LastEditTime: 2021-01-06 14:45:33
  * @Description: file content
 -->
 <template>
   <div class="home">
     <Topbar @change="freshData"></Topbar>
-    <Searchbar></Searchbar>
+    <Searchbar title="数据集合"></Searchbar>
     <section>
       <el-collapse v-model="activeName" accordion>
         <el-collapse-item
@@ -96,8 +96,14 @@
                 @click="preExecute(item.id)"
               ></i>
               <i
+                class="home-collapse__controls home-collapse__icons el-icon-edit-outline"
+              ></i>
+              <i
                 class="home-collapse__controls home-collapse__icons el-icon-setting"
                 @click="leadToWorkflowPage(item.id)"
+              ></i>
+              <i
+                class="home-collapse__controls home-collapse__icons home-collapse__icons--danger el-icon-refresh-left"
               ></i>
               <i
                 class="home-collapse__controls home-collapse__icons home-collapse__icons--danger el-icon-delete"
@@ -165,11 +171,6 @@ export default {
     },
     getRecordStatus() {
       return id => {
-        // eslint-disable-next-line no-unused-vars
-        // const temp = this.defaultMapChangeTracker
-        // return this.recordsStatusData.has(id)
-        //   ? this.recordsStatusData.get(id)
-        //   : ''
         let status = 'standby'
         if (this.ongoingTasks.includes(id)) status = 'loading'
         if (this.failedTasks.includes(id)) status = 'error'
@@ -191,15 +192,6 @@ export default {
         return dayjs(timestamp * 1000).format('YYYY-MM-DD HH:mm:ss')
       }
     }
-    // hasWorkflowItem() {
-    //   return (id, action) => {
-    //     if (!id || !action) return false
-
-    //     const { workflow } = getOneRecord(id)
-    //     const chosenList = workflow.filter(item => item.action === action)
-    //     return chosenList.length > 0
-    //   }
-    // }
   },
   beforeRouteEnter(to, from, next) {
     if (from.name !== 'Log' || from.name !== 'New') {
@@ -211,7 +203,7 @@ export default {
     if (this.$route.meta.isInitial) {
       this.freshData()
     } else {
-      // 取缓存数据
+      // TODO 取缓存数据
     }
     if (
       this.recordsData.length > 0 &&
@@ -229,26 +221,8 @@ export default {
   methods: {
     freshData() {
       this.recordsData = []
-      // const records = JSON.parse(JSON.stringify(getRecords()))
 
       this.recordsData.push(...getRecords())
-      // if (!this.recordsStatusData) {
-      //   this.recordsStatusData = new Map([
-      //     ...records.map(item => {
-      //       return [
-      //         String(item.id), // key -> id
-      //         'standby' // value -> status
-      //       ]
-      //     })
-      //   ])
-      // } else {
-      //   for (const i in records) {
-      //     if (!this.recordsStatusData.has(i.id)) {
-      //       this.recordsStatusData.set(String(i.id), '')
-      //     }
-      //   }
-      // }
-      // this.defaultMapChangeTracker++
       console.log(this.recordsData)
     },
     copyDocument(text) {
@@ -283,16 +257,9 @@ export default {
     //   console.error('项目任务不存在')
     // },
     preExecute(id) {
-      // TODO 判断优化
       this.activeId = id
-      // if (
-      //   this.hasWorkflowItem(id, 'Publish') ||
-      //   this.hasWorkflowItem(id, 'Notify') ||
-      //   this.hasWorkflowItem(id, 'ParametricBuild')
-      // ) {
       this.$refs.dialog.open(id)
       return
-      // }
       // return this.execute()
     },
     async execute(prevExecuteData = {}) {
@@ -310,7 +277,6 @@ export default {
         return
       }
 
-      // this.updateProjectStatus(currentId, true)
       updateAllWorkflowParams({ id: currentId, globalParams: prevExecuteData })
       this.$refs.dialog.close()
 
@@ -322,19 +288,10 @@ export default {
         )
         updateRecordAttackTime({ id: currentId })
 
-        // if (this.recordsStatusData.has(String(currentId))) {
-        //   this.recordsStatusData.set(String(currentId), 'completed')
-        // }
-
         this.clearTempData()
       } catch (err) {
         console.error(err)
-        // if (this.recordsStatusData.has(String(currentId))) {
-        //   this.recordsStatusData.set(String(currentId), 'error')
-        // }
       }
-
-      // this.defaultMapChangeTracker++
     },
     cancel() {
       this.$refs.dialog.close()

@@ -2,12 +2,12 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-09 01:17:27
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-10 18:27:53
+ * @LastEditTime: 2021-01-06 13:53:28
  * @Description: file content
 -->
 <template>
   <div class="searchbar">
-    <span>数据集</span>
+    <span>{{ title }}</span>
     <el-input
       type="text"
       size="mini"
@@ -23,6 +23,12 @@
 <script>
 export default {
   name: 'Searchbar',
+  props: {
+    title: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       searchWord: ''

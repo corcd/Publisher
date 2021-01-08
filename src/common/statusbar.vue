@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-12 21:40:27
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-14 09:38:48
+ * @LastEditTime: 2021-01-07 16:36:58
  * @Description: file content
 -->
 <template>
@@ -12,6 +12,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'StatusBar',
   props: {
@@ -20,9 +22,13 @@ export default {
       default: ''
     }
   },
+  computed: {
+    ...mapGetters('user', ['isDeveloper', 'isPM'])
+  },
   methods: {
     goBackHome() {
-      this.$router.push({ name: 'Home' })
+      this.isDeveloper && this.$router.push({ name: 'Home' })
+      this.isPM && this.$router.push({ name: 'Check' })
     }
   }
 }

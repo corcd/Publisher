@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 18:09:44
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-15 15:03:32
+ * @LastEditTime: 2021-01-04 09:37:02
  * @Description: file content
  */
 const path = require('path')
@@ -45,15 +45,14 @@ module.exports = {
             {
               target: 'nsis',
               arch: [
-                'x64', // 64位
-                'ia32' // 32位
+                'x64' // 64位
               ]
             }
           ]
         },
         mac: {
           icon: 'build/icons/icon.icns',
-          target: ['pkg', 'dmg', 'zip']
+          target: ['pkg', 'dmg']
         },
         linux: {
           icon: 'build/icons/'

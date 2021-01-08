@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-18 10:19:26
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-26 21:12:46
+ * @LastEditTime: 2021-01-06 11:38:47
  * @Description: file content
  */
 import {
@@ -28,6 +28,7 @@ const methods = {
       const { attribute } = getOneRecord(this.id)
       try {
         await runOneTask({
+          id: this.id,
           action: this.workflowItemName,
           params: Object.assign({}, this.params, { ...attribute })
         })
