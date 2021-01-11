@@ -1,15 +1,15 @@
 <!--
  * @Author: Whzcorcd
- * @Date: 2020-12-09 01:17:07
+ * @Date: 2021-01-11 09:25:30
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-11 09:26:43
+ * @LastEditTime: 2021-01-11 09:27:04
  * @Description: file content
 -->
 <template>
   <div class="topbar">
     <section>
       <span>Publisher</span>
-      <div v-if="isDeveloper">
+      <div>
         <el-button
           icon="el-icon-warning-outline"
           size="mini"
@@ -17,16 +17,11 @@
           @click="lead2AboutPage"
         ></el-button>
         <el-button
+          type="default"
           icon="el-icon-refresh"
           size="mini"
           circle
           @click="fresh"
-        ></el-button>
-        <el-button
-          icon="el-icon-plus"
-          size="mini"
-          circle
-          @click="lead2NewPage"
         ></el-button>
         <el-button
           icon="el-icon-setting"

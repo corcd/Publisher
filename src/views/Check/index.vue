@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2021-01-06 12:45:23
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-08 17:30:24
+ * @LastEditTime: 2021-01-11 14:41:55
  * @Description: file content
 -->
 <template>
@@ -66,8 +66,13 @@
       <div class="check-rightarea">
         <h4>{{ currentMailContent.subject }}</h4>
         <pre>{{ currentMailContent.html }}</pre>
-        <div class="check-rightarea__controls">
-          <el-button type="primary" size="mini" @click="replyEmail">
+        <div class="check-rightarea__controls" v-show="activeUid">
+          <el-button
+            type="primary"
+            size="mini"
+            :loading="btnLoading"
+            @click="replyEmail"
+          >
             确认更新
           </el-button>
         </div>
@@ -77,9 +82,17 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+import { Message } from 'element-ui'
+import { isEqual } from 'lodash-es'
 import dayjs from 'dayjs'
-import { receiveEmail, setEmailSeen, replyEmail } from '@/app/email'
-import Topbar from '@/components/home/topbar'
+import {
+  receiveEmail,
+  setEmailSeen,
+  setEmailAnswered,
+  replyEmail
+} from '@/app/email'
+import Topbar from '@/components/check/topbar'
 import Searchbar from '@/components/home/searchbar'
 
 export default {
@@ -88,9 +101,11 @@ export default {
   data() {
     return {
       listLoading: false,
+      btnLoading: false,
       mailList: [],
       replayList: [],
-      activeUid: 0
+      activeUid: 0,
+      timer: null
     }
   },
   computed: {
@@ -99,7 +114,6 @@ export default {
         const main = originalTitle.includes('Publisher')
           ? originalTitle.match(/\[(\S*)\] (\S*)-(\S*)-(\S*) Publisher<(\S*)>/i)
           : originalTitle.match(/\[(\S*)\] (\S*)-(\S*)-(\S*)/i)
-        console.log(main)
         return main
       }
     },
@@ -120,32 +134,103 @@ export default {
     }
   },
   mounted() {
+    if (this.timer) {
+      clearTimeout(this.timer)
+      this.timer = null
+    }
     this.freshData()
+    this.setTimer()
+  },
+  beforeDestroy() {
+    if (this.timer) {
+      clearTimeout(this.timer)
+      this.timer = null
+    }
   },
   methods: {
+    ...mapActions('email', ['setNewMailStatus']),
+    setTimer() {
+      this.timer = setTimeout(() => {
+        this.freshData()
+        return this.setTimer()
+      }, 10000)
+    },
     async freshData() {
-      this.listLoading = true
-      this.activeUid = 0
       const {
-        filteredSubjects,
+        filteredUpdateSubjects,
         filteredReplySubjects
-      } = await receiveEmail().catch(err => console.error(err))
-      this.mailList = filteredSubjects.reverse()
-      this.replayList = filteredReplySubjects.reverse()
-      this.mailList.unshift(...this.replayList)
+      } = await receiveEmail().catch(err => {
+        console.error(err)
+        return Promise.reject(err)
+      })
+      this.setNewMailStatus({ status: false })
+      const finalReplySubjects = filteredReplySubjects.reverse()
+      const replaiedMailIdList = finalReplySubjects.map(mail => {
+        try {
+          return this.processedTitle(mail.subject)[5]
+        } catch (err) {
+          return ''
+        }
+      })
+      // console.log(replaiedMailIdList)
+      const finalUpdateSubjects = filteredUpdateSubjects
+        .reverse()
+        .filter(mail => {
+          try {
+            const id = this.processedTitle(mail.subject)[5]
+            if (id && replaiedMailIdList.includes(id)) return false
+          } catch (err) {
+            // nothing
+          }
+          return true
+        })
+
+      // 比较新旧邮件列表是否存在差异
+      const currectMailList = JSON.parse(JSON.stringify(this.mailList))
+      const tempList = []
+      tempList.push(...finalReplySubjects, ...finalUpdateSubjects)
+      if (isEqual(currectMailList, JSON.parse(JSON.stringify(tempList)))) {
+        Message.info('暂无更新的邮件')
+        return
+      }
+      this.listLoading = true
+
+      this.setNewMailStatus({ status: true })
+      this.mailList = []
+      this.replayList = []
+
+      this.replayList.push(...finalReplySubjects)
+      this.mailList.push(...finalUpdateSubjects)
+      this.mailList.unshift(...finalReplySubjects)
+
+      if (!this.mailList.find(item => item.uid === this.activeUid)) {
+        this.activeUid = 0
+      }
+
       this.listLoading = false
     },
-    chooseMail(uid) {
-      if (this.replayList.find(item => item.uid === uid)) return
-      this.activeUid = uid
-      setEmailSeen(uid)
+    async chooseMail(uid) {
+      try {
+        if (this.replayList.find(item => item.uid === uid)) return
+        this.activeUid = uid
+        await setEmailSeen(uid)
+      } catch (err) {
+        console.error(err)
+      }
     },
-    replyEmail() {
-      const { messageId, subject } = this.mailList.find(
-        item => item.uid === this.activeUid
-      )
+    async replyEmail() {
+      this.btnLoading = true
+      try {
+        const { messageId, subject } = this.mailList.find(
+          item => item.uid === this.activeUid
+        )
 
-      replyEmail(messageId, subject)
+        await setEmailAnswered(this.activeUid)
+        await replyEmail(messageId, subject)
+      } catch (err) {
+        console.error(err)
+      }
+      this.btnLoading = false
     }
   }
 }

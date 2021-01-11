@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:03:31
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-28 15:20:57
+ * @LastEditTime: 2021-01-09 09:55:36
  * @Description: file content
  */
 /* global __static */
@@ -25,7 +25,7 @@ const createWindow = async () => {
   // Create the browser window.
   // eslint-disable-next-line no-param-reassign
   const win = new BrowserWindow({
-    width: 1200,
+    width: 1400,
     height: 800,
     resizable: false,
     show: false,

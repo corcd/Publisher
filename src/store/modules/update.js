@@ -3,7 +3,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-28 14:57:35
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-28 15:16:25
+ * @LastEditTime: 2021-01-09 15:59:43
  * @Description: file content
  */
 const state = {
@@ -18,7 +18,7 @@ const mutations = {
     state.msg = msg
   },
   SET_UPDATE_PROCESS(state, { percent }) {
-    state.percent = percent.toFixed(2)
+    state.percent = percent
   }
 }
 

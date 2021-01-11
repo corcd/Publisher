@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 18:09:44
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-04 09:37:02
+ * @LastEditTime: 2021-01-09 15:07:50
  * @Description: file content
  */
 const path = require('path')
@@ -52,7 +52,7 @@ module.exports = {
         },
         mac: {
           icon: 'build/icons/icon.icns',
-          target: ['pkg', 'dmg']
+          target: ['zip', 'pkg', 'dmg']
         },
         linux: {
           icon: 'build/icons/'
@@ -73,7 +73,8 @@ module.exports = {
     sourceMap: false,
     loaderOptions: {
       sass: {
-        sourceMap: false
+        sourceMap: false,
+        prependData: `@import "~@/assets/styles/element-variables.scss";`
       }
     }
   }

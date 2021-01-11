@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-24 16:41:21
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-06 11:34:40
+ * @LastEditTime: 2021-01-09 10:53:12
  * @Description: file content
  */
 import { updateRecord } from '#/plugins/data'
@@ -19,7 +19,7 @@ export const UpdateTask = async ({ id, jobName }) => {
 
     updateRecord({ id, buildInfo: { number, nextBuildNumber, url } })
   } catch (err) {
-    console.log(err)
+    console.error(err)
     return Promise.reject(
       new Error('项目配置更新失败，请检查项目是否存在或合法')
     )

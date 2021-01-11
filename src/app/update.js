@@ -2,11 +2,10 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-18 15:51:49
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-29 16:56:06
+ * @LastEditTime: 2021-01-09 16:14:16
  * @Description: file content
  */
 import { autoUpdater } from 'electron-updater'
-import store from '@/store'
 import { log } from '@/modules/logger'
 
 // 发送请求更新
@@ -43,21 +42,18 @@ export const checkUpdate = win => {
 
   // 更新错误事件
   autoUpdater.on('error', error => {
-    store.dispatch('update/setUpdateStatus', returnData.error)
     sendUpdateMessage(returnData.error)
     log.info(returnData.error, error)
   })
 
   // 检查事件
   autoUpdater.on('checking-for-update', () => {
-    store.dispatch('update/setUpdateStatus', returnData.checking)
     sendUpdateMessage(returnData.checking)
     log.info(returnData.checking)
   })
 
   // 发现新版本
   autoUpdater.on('update-available', () => {
-    store.dispatch('update/setUpdateStatus', returnData.updateAva)
     sendUpdateMessage(returnData.updateAva)
     log.info(returnData.updateAva)
   })
@@ -65,7 +61,6 @@ export const checkUpdate = win => {
   // 当前版本为最新版本
   autoUpdater.on('update-not-available', () => {
     setTimeout(() => {
-      store.dispatch('update/setUpdateStatus', returnData.updateNotAva)
       sendUpdateMessage(returnData.updateNotAva)
       log.info(returnData.updateNotAva)
     }, 1000)
@@ -73,7 +68,6 @@ export const checkUpdate = win => {
 
   // 更新下载进度事件
   autoUpdater.on('download-progress', progressObj => {
-    store.dispatch('update/setUpdateProcess', progressObj)
     win.webContents.send('downloadProgress', progressObj)
     log.info('正在下载', progressObj)
   })

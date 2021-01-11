@@ -4,7 +4,7 @@
  * @Author: Whzcorcd
  * @Date: 2021-01-06 17:42:15
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-08 17:00:39
+ * @LastEditTime: 2021-01-11 14:42:19
  * @Description: file content
  */
 import { sendEmail } from '#/plugins/email'
@@ -26,9 +26,6 @@ const config = {
       rejectUnauthorized: false
     },
     authTimeout: 3000
-  },
-  onmail: numNewMail => {
-    console.log('new mail!' + numNewMail.toString())
   }
 }
 
@@ -58,7 +55,7 @@ export const receiveEmail = async () => {
       connection.end()
       return Promise.reject(new Error('can not search'))
     }
-    console.log(results)
+    // console.log(results)
 
     const subjects = await Promise.all(
       results.map(async res => {
@@ -99,28 +96,30 @@ export const receiveEmail = async () => {
         }
       })
     )
-    console.log(subjects)
+    // console.log(subjects)
     const filteredSubjects = subjects.filter(
       item =>
-        !(item.subject.includes('回复：') || item.subject.includes('Re:')) &&
-        (item.subject.includes('[测试环境]') ||
-          item.subject.includes('[预发环境]') ||
-          item.subject.includes('[生产环境]'))
+        item.subject.includes('[测试环境]') ||
+        item.subject.includes('[预发环境]') ||
+        item.subject.includes('[生产环境]')
     )
 
-    const filteredReplySubjects = subjects.filter(
-      item =>
-        (item.subject.includes('回复：') || item.subject.includes('Re:')) &&
-        (item.subject.includes('[测试环境]') ||
-          item.subject.includes('[预发环境]') ||
-          item.subject.includes('[生产环境]'))
+    const filteredUpdateSubjects = filteredSubjects.filter(
+      item => !item.subject.includes('回复：') && !item.subject.includes('Re:')
     )
-    console.log(filteredSubjects, filteredReplySubjects)
-    connection.end()
-    return Promise.resolve({ filteredSubjects, filteredReplySubjects })
+    const filteredReplySubjects = filteredSubjects.filter(
+      item => item.subject.includes('回复：') || item.subject.includes('Re:')
+    )
+    console.log(
+      filteredSubjects.length,
+      filteredUpdateSubjects.length,
+      filteredReplySubjects.length
+    )
+    await connection.end()
+    return Promise.resolve({ filteredUpdateSubjects, filteredReplySubjects })
   } catch (err) {
     console.error(err)
-    connection.end()
+    await connection.end()
     return Promise.reject(err)
   }
 }
@@ -135,19 +134,46 @@ export const setEmailSeen = async uid => {
     await connection.openBox('INBOX')
     console.log('connected to imap')
 
-    connection.addFlags(uid, '\\Seen', err => {
+    connection.addFlags(uid, '\\Seen', async err => {
       if (err) {
-        console.log('Problem marking message for seen')
+        console.log('Problem marking message for Seen')
         connection.end()
         return Promise.reject(err)
       }
 
-      connection.end()
+      await connection.end()
       return Promise.resolve()
     })
   } catch (err) {
     console.error(err)
-    connection.end()
+    await connection.end()
+    return Promise.reject(err)
+  }
+}
+
+export const setEmailAnswered = async uid => {
+  const connection = await imaps.connect(config)
+  connection.on('error', err => {
+    console.error('got fatal error during imap operation, stop app.', err)
+  })
+
+  try {
+    await connection.openBox('INBOX')
+    console.log('connected to imap')
+
+    connection.addFlags(uid, '\\Answered', async err => {
+      if (err) {
+        console.log('Problem marking message for Answered')
+        connection.end()
+        return Promise.reject(err)
+      }
+
+      await connection.end()
+      return Promise.resolve()
+    })
+  } catch (err) {
+    console.error(err)
+    await connection.end()
     return Promise.reject(err)
   }
 }

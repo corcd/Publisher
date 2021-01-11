@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-06 22:06:34
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-06 11:42:52
+ * @LastEditTime: 2021-01-09 11:01:37
  * @Description: file content
  */
 import store from '@/store'
@@ -10,6 +10,7 @@ import { showNotification } from '@/app/notification'
 import { originalTasksTypes } from './types'
 
 import {
+  StaticScanTask,
   UpdateTask,
   PublishTask,
   EstablishTask,
@@ -21,6 +22,7 @@ import {
 const customTasksQueue = []
 
 const tasks = {
+  runStaticScanTask: StaticScanTask,
   runUpdateTask: UpdateTask,
   runPublishTask: PublishTask,
   runEstablishTask: EstablishTask,

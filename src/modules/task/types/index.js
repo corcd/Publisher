@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-24 16:34:28
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-06 11:35:55
+ * @LastEditTime: 2021-01-09 15:22:53
  * @Description: file content
  */
 export const originalEnvTypes = [
@@ -33,6 +33,15 @@ export const originalEnvTypes = [
 ]
 
 export const originalTasksTypes = [
+  {
+    value: 'StaticScan',
+    label: '静态扫描',
+    params: [
+      { name: 'id', required: true },
+      // { name: 'projectName', required: true },
+      { name: 'environment', required: true, prefixed: true }
+    ]
+  },
   {
     value: 'Update',
     label: '配置更新',

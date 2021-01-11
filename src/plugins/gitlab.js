@@ -2,21 +2,21 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-19 13:56:16
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-24 17:34:51
+ * @LastEditTime: 2021-01-09 14:46:40
  * @Description: file content
  */
 import _axios from '@/request'
 import { gitlab } from '@/config'
 import qs from 'qs'
 
-const { baseUrl, private_token } = gitlab
+const { baseUrl, authorization } = gitlab
 
 const request = (restfulUrl, method, params = {}) => {
   return _axios({
     method,
     url: `${baseUrl}${restfulUrl}`,
     headers: {
-      'PRIVATE-TOKEN': private_token,
+      'PRIVATE-TOKEN': authorization.private_token,
       'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' // 指定提交方式为表单提交
     },
     data: method === 'GET' ? params : qs.stringify(params)

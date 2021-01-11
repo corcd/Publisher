@@ -2,12 +2,14 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-09 17:27:59
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-04 17:11:53
+ * @LastEditTime: 2021-01-11 09:17:28
  * @Description: file content
  */
+export { parseXml } from './xml'
+export { isArrayEqual } from './array'
+
 import os from 'os'
 import { execSync } from 'child_process'
-export { parseXml } from './xml'
 
 export const sleep = (delay = 0) => {
   return new Promise(resolve => setTimeout(resolve, delay))

@@ -2,9 +2,24 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-15 14:43:54
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-08 17:33:29
+ * @LastEditTime: 2021-01-11 14:43:14
  * @Description: file content
 -->
+# :tada: 0.7.4-rc6 (2021-01-11)
+
+### :sparkles: Features
+
+* 新增静态扫描工作流
+* 优化推荐工作流流程
+* 完善邮件更新机制，通过 id 比对识别已回复的邮件
+* 增加邮件轮询和新邮件状态提示
+
+### :bug: Bug Fixes
+
+* 修复更新状态显示异常问题
+
+
+
 # :tada: 0.7.3-rc6 (2021-01-08)
 
 ### :sparkles: Features

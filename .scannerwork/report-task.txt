@@ -1,0 +1,6 @@
+projectKey=Lcps-Scene-Vue3
+serverUrl=http://sonar.guangdianyun.tv
+serverVersion=8.6.0.39681
+dashboardUrl=http://sonar.guangdianyun.tv/dashboard?id=Lcps-Scene-Vue3
+ceTaskId=AXbmHqKyAlZRKLjeRMEo
+ceTaskUrl=http://sonar.guangdianyun.tv/api/ce/task?id=AXbmHqKyAlZRKLjeRMEo

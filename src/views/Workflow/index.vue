@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-13 19:42:43
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-05 18:31:00
+ * @LastEditTime: 2021-01-09 11:00:10
  * @Description: file content
 -->
 <template>
@@ -53,6 +53,7 @@ import {
 } from '#/plugins/data'
 import Topbar from '@/common/topbar'
 import StatusBar from '@/common/statusbar'
+import StaticScanWorkflowItem from '@/components/workflow/StaticScanItem'
 import UpdateWorkflowItem from '@/components/workflow/UpdateItem'
 import PublishWorkflowItem from '@/components/workflow/PublishItem'
 import EstablishWorkflowItem from '@/components/workflow/EstablishItem'
@@ -67,6 +68,7 @@ export default {
   components: {
     Topbar,
     StatusBar,
+    StaticScanWorkflowItem,
     UpdateWorkflowItem,
     PublishWorkflowItem,
     NotifyWorkflowItem,
@@ -78,7 +80,7 @@ export default {
   },
   data() {
     return {
-      recommend: '更新配置 - 静态扫描 - 参数化构建 - 发布 - 通知',
+      recommend: '静态扫描 - 参数化构建 - 更新配置 - 发布 - 通知',
       id: '',
       workflow: []
     }
