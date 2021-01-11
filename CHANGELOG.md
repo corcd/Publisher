@@ -2,9 +2,17 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-15 14:43:54
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-11 14:43:14
+ * @LastEditTime: 2021-01-11 15:14:04
  * @Description: file content
 -->
+# :tada: 0.7.5-rc6 (2021-01-11)
+
+### :bug: Bug Fixes
+
+* 修复研发端菜单消失问题
+
+
+
 # :tada: 0.7.4-rc6 (2021-01-11)
 
 ### :sparkles: Features

@@ -2,14 +2,14 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-09 01:17:07
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-11 09:26:43
+ * @LastEditTime: 2021-01-11 15:13:27
  * @Description: file content
 -->
 <template>
   <div class="topbar">
     <section>
       <span>Publisher</span>
-      <div v-if="isDeveloper">
+      <div>
         <el-button
           icon="el-icon-warning-outline"
           size="mini"
