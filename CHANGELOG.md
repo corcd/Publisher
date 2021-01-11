@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-15 14:43:54
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-11 15:14:04
+ * @LastEditTime: 2021-01-11 16:44:12
  * @Description: file content
 -->
 # :tada: 0.7.5-rc6 (2021-01-11)
@@ -10,6 +10,7 @@
 ### :bug: Bug Fixes
 
 * 修复研发端菜单消失问题
+* 修复 iconv-lite 依赖 webpack.require(...) 报错的问题
 
 
 

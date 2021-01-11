@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2021-01-06 12:45:23
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-11 14:41:55
+ * @LastEditTime: 2021-01-11 15:37:50
  * @Description: file content
 -->
 <template>
@@ -91,7 +91,7 @@ import {
   setEmailSeen,
   setEmailAnswered,
   replyEmail
-} from '@/app/email'
+} from '#/plugins/email'
 import Topbar from '@/components/check/topbar'
 import Searchbar from '@/components/home/searchbar'
 
@@ -134,18 +134,15 @@ export default {
     }
   },
   mounted() {
-    if (this.timer) {
-      clearTimeout(this.timer)
-      this.timer = null
-    }
+    clearTimeout(this.timer)
+    this.timer = null
+
     this.freshData()
     this.setTimer()
   },
   beforeDestroy() {
-    if (this.timer) {
-      clearTimeout(this.timer)
-      this.timer = null
-    }
+    clearTimeout(this.timer)
+    this.timer = null
   },
   methods: {
     ...mapActions('email', ['setNewMailStatus']),

@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 18:09:44
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-09 15:07:50
+ * @LastEditTime: 2021-01-11 16:36:33
  * @Description: file content
  */
 const path = require('path')
@@ -16,6 +16,19 @@ module.exports = {
   chainWebpack: config => {
     config.resolve.alias.set('#', resolve('public/main'))
     config.resolve.alias.set('*', resolve('src/app'))
+  },
+  configureWebpack: {
+    // bug from 'iconv-lite', https://github.com/ashtuchkin/iconv-lite/issues/204
+    module: {
+      rules: [
+        {
+          test: /node_modules[\\/\\](iconv-lite)[\\/\\].+/,
+          resolve: {
+            aliasFields: ['main']
+          }
+        }
+      ]
+    }
   },
   pluginOptions: {
     electronBuilder: {
