@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-14 12:48:23
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-07 16:35:53
+ * @LastEditTime: 2021-01-13 17:06:42
  * @Description: file content
 -->
 <template>
@@ -15,24 +15,24 @@
         label-position="top"
         label-width="80px"
         size="mini"
-        :model="newProjectData"
+        :model="newProjectData.attribute"
       >
         <el-form-item><p class="new-form__topic">项目资料</p></el-form-item>
         <el-form-item label="项目中文名">
-          <el-input v-model="newProjectData.name"></el-input>
+          <el-input v-model="newProjectData.attribute.name"></el-input>
         </el-form-item>
         <!-- <el-form-item label="Gitlab 仓库名">
-          <el-input v-model="newProjectData.projectName" readonly></el-input>
+          <el-input v-model="newProjectData.attribute.projectName" readonly></el-input>
         </el-form-item> -->
         <el-form-item label="Jenkins 任务名">
-          <el-input v-model="newProjectData.jobName"></el-input>
+          <el-input v-model="newProjectData.attribute.jobName"></el-input>
         </el-form-item>
         <el-form-item label=" ">
           <el-button
             type="primary"
             size="mini"
             :loading="btnLoading"
-            @click="add"
+            @click="preAdd"
           >
             添 加
           </el-button>
@@ -42,6 +42,12 @@
         </el-form-item>
       </el-form>
     </section>
+
+    <SelectDialog
+      ref="dialog"
+      @confirm="confirm"
+      @cancel="cancel"
+    ></SelectDialog>
   </div>
 </template>
 
@@ -54,14 +60,18 @@ import { getJobInfo, getJobConfig } from '@/plugins/jenkins'
 import { getProject } from '@/plugins/gitlab'
 import Topbar from '@/common/topbar'
 import StatusBar from '@/common/statusbar'
+import SelectDialog from './dialogs/selectDialog'
 
 export default {
   name: 'New',
-  components: { Topbar, StatusBar },
+  components: { Topbar, StatusBar, SelectDialog },
   data() {
     return {
       btnLoading: false,
-      newProjectData: { name: '', projectName: '', jobName: '' }
+      newProjectData: {
+        attribute: { name: '', projectName: '', jobName: '' },
+        buildInfo: { number: 0, nextBuildNumber: 0, url: '' }
+      }
     }
   },
   computed: {
@@ -83,10 +93,12 @@ export default {
     this.reset()
   },
   methods: {
-    async add() {
+    async preAdd() {
       this.btnLoading = true
       try {
-        const jobConfig = await getJobConfig(this.newProjectData.jobName)
+        const jobConfig = await getJobConfig(
+          this.newProjectData.attribute.jobName
+        )
         const parsedJobConfig = await parseXml(jobConfig.data)
         // 暂时只有一个仓库
         const gitUrl =
@@ -97,30 +109,48 @@ export default {
           /http:\/\/gitlab\.aodianyun\.com\/*\/(\S*)\.git/i
         )
         const repoName = repoUrl[1].split('/')
-        this.$set(this.newProjectData, 'projectName', repoName[1])
+        this.$set(this.newProjectData.attribute, 'projectName', repoName[1])
 
-        const jobInfo = await getJobInfo(this.newProjectData.jobName)
+        const jobInfo = await getJobInfo(this.newProjectData.attribute.jobName)
         const { nextBuildNumber, lastSuccessfulBuild } = jobInfo.data
         const number = lastSuccessfulBuild ? lastSuccessfulBuild.number : 0
         const url = lastSuccessfulBuild ? lastSuccessfulBuild.url : ''
+        this.$set(this.newProjectData.buildInfo, 'number', number)
+        this.$set(
+          this.newProjectData.buildInfo,
+          'nextBuildNumber',
+          nextBuildNumber
+        )
+        this.$set(this.newProjectData.buildInfo, 'url', url)
 
-        const projectInfo = await getProject(this.newProjectData.projectName)
+        const projectInfo = await getProject(
+          this.newProjectData.attribute.projectName
+        )
         const projectData = projectInfo.data
         if (projectData.length > 1) {
-          // 项目不唯一
-          Message.error(
-            `项目 ${this.newProjectData.projectName} 不唯一，请检查`
-          )
+          // 项目不唯一，打开对话框
+          console.log(projectData)
+          this.$refs.dialog.open(projectData)
           return
         }
         const { id, web_url } = projectData[0]
-
+        this.add({ id, url: web_url })
+      } catch (err) {
+        console.log(err)
+        Message.error(
+          `项目 ${this.newProjectData.attribute.name} 新增失败，请检查项目是否存在或合法`
+        )
+        this.btnLoading = false
+      }
+    },
+    add({ id, url }) {
+      try {
         addRecord(
           Object.assign(
             {},
-            { attribute: this.newProjectData },
-            { buildInfo: { number, nextBuildNumber, url } },
-            { projectInfo: { id, url: web_url } }
+            { attribute: this.newProjectData.attribute },
+            { buildInfo: this.newProjectData.buildInfo },
+            { projectInfo: { id, url } }
           )
         )
 
@@ -129,14 +159,33 @@ export default {
         this.isPM && this.$router.push({ name: 'Check' })
       } catch (err) {
         console.log(err)
-        Message.error(
-          `项目 ${this.newProjectData.name} 新增失败，请检查项目是否存在或合法`
-        )
+        Message.error(`项目 ${this.newProjectData.attribute.name} 新增失败`)
         this.btnLoading = false
       }
     },
-    reset() {
-      this.newProjectData = { name: '', projectName: '', jobName: '' }
+    confirm(target) {
+      const { id, name, url } = target
+      this.$set(this.newProjectData.attribute, 'projectName', name)
+      this.$refs.dialog.close()
+      this.add({ id, url })
+    },
+    cancel() {
+      this.reset({ partial: true })
+      this.btnLoading = false
+      this.$refs.dialog.close()
+    },
+    reset({ partial = false }) {
+      if (partial) {
+        this.$set(this.newProjectData.buildInfo, 'number', 0)
+        this.$set(this.newProjectData.buildInfo, 'nextBuildNumber', 0)
+        this.$set(this.newProjectData.buildInfo, 'url', '')
+        return
+      }
+
+      this.newProjectData = {
+        attribute: { name: '', projectName: '', jobName: '' },
+        buildInfo: { number: 0, nextBuildNumber: 0, url: '' }
+      }
     }
   }
 }

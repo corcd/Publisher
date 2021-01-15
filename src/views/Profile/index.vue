@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-10 17:44:39
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-06 13:49:52
+ * @LastEditTime: 2021-01-11 17:01:58
  * @Description: file content
 -->
 <template>
@@ -78,7 +78,7 @@ export default {
       setUser(this.profileInfo)
       this.btnLoading = false
       if (this.isDeveloper) return this.$router.push({ name: 'Home' })
-      if (this.isPM) return this.$router.push({ name: 'Home' })
+      if (this.isPM) return this.$router.push({ name: 'Check' })
       console.error('不合法的身份')
       return
     }

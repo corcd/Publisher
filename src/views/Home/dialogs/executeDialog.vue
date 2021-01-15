@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-16 12:33:40
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-30 17:11:45
+ * @LastEditTime: 2021-01-13 15:21:52
  * @Description: file content
 -->
 <template>
@@ -54,6 +54,10 @@
         v-show="untreated"
       ></el-form-item>
       <el-form-item
+        label="当前时间并非合理的升级时间，升级生产环境请慎重"
+        v-show="!isRationalProductionUpdateTime"
+      ></el-form-item>
+      <el-form-item
         label="无参数"
         v-show="uniqueParamsList.length === 0"
       ></el-form-item>
@@ -75,6 +79,7 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
 import { Message } from 'element-ui'
 import { getOneRecord } from '#/plugins/data'
 import { originalEnvTypes, originalTasksTypes } from '@/modules/task/types'
@@ -107,6 +112,13 @@ export default {
       return paramName => {
         return this.uniqueParamsList.includes(paramName)
       }
+    },
+    isRationalProductionUpdateTime() {
+      const day = dayjs().day()
+      if (this.prevExecuteData['environment'] && (day === 2 || day === 4)) {
+        return true
+      }
+      return false
     }
   },
   methods: {

@@ -2,11 +2,13 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-06 19:16:38
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-11 16:31:26
+ * @LastEditTime: 2021-01-13 14:46:37
  * @Description: file content
  */
 import nodemailer from 'nodemailer'
 import imaps from 'imap-simple'
+import utf8 from 'utf8'
+import quotedPrintable from 'quoted-printable'
 import { simpleParser } from 'mailparser'
 import { getMail } from '#/plugins/data'
 import { getEmailReplyText } from '@/plugins/text'
@@ -75,36 +77,30 @@ export const receiveEmail = async () => {
       connection.end()
       return Promise.reject(new Error('can not search'))
     }
-    // console.log(results)
+    console.log(results)
 
     const subjects = await Promise.all(
       results.map(async res => {
-        const content = Buffer.from(
-          res.parts.find(part => part.which === 'TEXT').body,
-          'base64'
-        ).toString('utf8')
+        const HEADER = res.parts.find(part => part.which === 'HEADER')
+        const TEXT = res.parts.find(part => part.which === 'TEXT')
+
+        const content =
+          HEADER.body['content-transfer-encoding'] &&
+          HEADER.body['content-transfer-encoding'].includes('quoted-printable')
+            ? utf8.decode(quotedPrintable.decode(TEXT.body))
+            : Buffer.from(TEXT.body, 'base64').toString('utf8')
 
         const uid = res.attributes.uid
         const idHeader = 'Imap-Id: ' + uid + '\r\n'
-        const parsed = await simpleParser(
-          idHeader + res.parts.find(part => part.which === 'TEXT').body
-        )
+        const parsed = await simpleParser(idHeader + TEXT.body)
 
-        const messageId = res.parts.find(part => part.which === 'HEADER').body[
-          'message-id'
-        ]
-          ? res.parts.find(part => part.which === 'HEADER').body[
-              'message-id'
-            ][0]
+        const messageId = HEADER.body['message-id']
+          ? HEADER.body['message-id'][0]
           : ''
 
-        const date = res.parts.find(part => part.which === 'HEADER').body
-          .date[0]
+        const date = HEADER.body.date[0]
 
-        const subject = res.parts.find(part => part.which === 'HEADER').body
-          .subject
-          ? res.parts.find(part => part.which === 'HEADER').body.subject[0]
-          : ''
+        const subject = HEADER.body.subject ? HEADER.body.subject[0] : ''
 
         return {
           uid,
@@ -198,8 +194,8 @@ export const setEmailAnswered = async uid => {
   }
 }
 
-export const replyEmail = async (messageId, subject) => {
-  const data = getEmailReplyText(subject)
+export const replyEmail = async (messageId, subject, verified = true) => {
+  const data = getEmailReplyText(subject, verified)
 
   await sendEmail({
     emailTopic: data.theme,

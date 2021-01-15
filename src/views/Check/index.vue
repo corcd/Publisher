@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2021-01-06 12:45:23
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-11 15:37:50
+ * @LastEditTime: 2021-01-13 10:50:09
  * @Description: file content
 -->
 <template>
@@ -68,10 +68,18 @@
         <pre>{{ currentMailContent.html }}</pre>
         <div class="check-rightarea__controls" v-show="activeUid">
           <el-button
+            type="danger"
+            size="mini"
+            :loading="btnLoading"
+            @click="replyEmail(false)"
+          >
+            驳回更新
+          </el-button>
+          <el-button
             type="primary"
             size="mini"
             :loading="btnLoading"
-            @click="replyEmail"
+            @click="replyEmail(true)"
           >
             确认更新
           </el-button>
@@ -215,7 +223,7 @@ export default {
         console.error(err)
       }
     },
-    async replyEmail() {
+    async replyEmail(verified) {
       this.btnLoading = true
       try {
         const { messageId, subject } = this.mailList.find(
@@ -223,7 +231,7 @@ export default {
         )
 
         await setEmailAnswered(this.activeUid)
-        await replyEmail(messageId, subject)
+        await replyEmail(messageId, subject, verified)
       } catch (err) {
         console.error(err)
       }

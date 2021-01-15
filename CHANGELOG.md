@@ -2,9 +2,24 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-15 14:43:54
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-11 16:44:12
+ * @LastEditTime: 2021-01-13 17:17:05
  * @Description: file content
 -->
+# :tada: 0.7.6-rc6 (2021-01-13)
+
+### :sparkles: Features
+
+* 产品经理端-增加更新驳回功能
+* 研发端-增加生产环境构建时间提醒
+* 研发端-增加项目多选时的选择处理
+
+### :bug: Bug Fixes
+
+* 产品经理端-修复邮件 quoted-printable 编码时无法正常解析的问题
+* 产品经理端-修复个人资料填写页路由跳转问题
+
+
+
 # :tada: 0.7.5-rc6 (2021-01-11)
 
 ### :bug: Bug Fixes

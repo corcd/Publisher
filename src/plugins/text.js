@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-07 13:22:06
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-08 17:23:21
+ * @LastEditTime: 2021-01-13 10:49:05
  * @Description: file content
  */
 import dayjs from 'dayjs'
@@ -63,15 +63,15 @@ export const getEmailStyleText = ({
   }
 }
 
-export const getEmailReplyText = subject => {
+export const getEmailReplyText = (subject, verified) => {
   const profile = `\n\n\n------------------------------------\n杭州奥点科技股份有限公司\n\n云平台产品经理: ${
     getUser().name
   }\n联系方式: ${getUser().contact}\n工作邮箱: ${getUser().workmail}`
 
   return {
     theme: `Re: ${subject}`,
-    content: `（此邮件通过 Publisher 发送）\n\n验证测试通过\n验证时间: ${dayjs().format(
-      'YYYY-MM-DD HH:mm:ss'
-    )}`.concat(profile)
+    content: `（此邮件通过 Publisher 发送）\n\n验证测试${
+      verified ? '通过，完成更新' : '未通过，驳回更新'
+    }\n验证时间: ${dayjs().format('YYYY-MM-DD HH:mm:ss')}`.concat(profile)
   }
 }
