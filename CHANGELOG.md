@@ -2,9 +2,17 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-15 14:43:54
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-13 17:17:05
+ * @LastEditTime: 2021-01-27 10:40:53
  * @Description: file content
 -->
+# :tada: 0.7.7-rc6 (2021-01-27)
+
+### :bug: Bug Fixes
+
+* 研发端-修复 npm-conf 依赖在 win32 环境下缓存地址读取为 undefined 的问题
+
+
+
 # :tada: 0.7.6-rc6 (2021-01-13)
 
 ### :sparkles: Features
