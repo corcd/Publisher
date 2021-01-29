@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 18:09:44
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-11 16:36:33
+ * @LastEditTime: 2021-01-29 09:08:27
  * @Description: file content
  */
 const path = require('path')
@@ -16,6 +16,31 @@ module.exports = {
   chainWebpack: config => {
     config.resolve.alias.set('#', resolve('public/main'))
     config.resolve.alias.set('*', resolve('src/app'))
+    config.optimization.splitChunks({
+      chunks: 'all',
+      minSize: 30000,
+      maxAsyncRequests: Infinity,
+      maxInitialRequests: 3,
+      automaticNameDelimiter: '-',
+      cacheGroups: {
+        libs: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'chunk-libs',
+          priority: 10,
+          chunks: 'initial' // 只打包初始时依赖的第三方
+        },
+        elementUI: {
+          test: /[\\/]node_modules[\\/]element-ui[\\/]/,
+          name: 'chunk-elementUI', // 单独将 elementUI 拆包
+          priority: 20 // 权重要大于 libs 和 app 不然会被打包进 libs 或者 app
+        },
+        commons: {
+          name: 'chunk-commons',
+          minChunks: 2, // 最小共用次数
+          priority: 10
+        }
+      }
+    })
   },
   configureWebpack: {
     // bug from 'iconv-lite', https://github.com/ashtuchkin/iconv-lite/issues/204

@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:01:15
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-06 14:45:33
+ * @LastEditTime: 2021-01-29 15:36:56
  * @Description: file content
 -->
 <template>
@@ -97,6 +97,7 @@
               ></i>
               <i
                 class="home-collapse__controls home-collapse__icons el-icon-edit-outline"
+                @click="openEditor(item.id)"
               ></i>
               <i
                 class="home-collapse__controls home-collapse__icons el-icon-setting"
@@ -116,10 +117,12 @@
     </section>
 
     <ExecuteDialog
-      ref="dialog"
+      ref="execute"
       @confirm="execute"
       @cancel="cancel"
     ></ExecuteDialog>
+
+    <EditDialog ref="edit" @confirm="update" @cancel="cancel"></EditDialog>
 
     <!-- <ErrorDialog ref="error"></ErrorDialog> -->
   </div>
@@ -135,6 +138,7 @@ import {
   getOneRecord,
   delRecord,
   updateRecordAttackTime,
+  updateRecordAttribute,
   updateAllWorkflowParams
 } from '#/plugins/data'
 import { setText } from '@/app/clipboard'
@@ -143,10 +147,11 @@ import { runWorkflowRefactored } from '@/modules/task'
 import Topbar from '@/components/home/topbar'
 import Searchbar from '@/components/home/searchbar'
 import ExecuteDialog from './dialogs/executeDialog'
+import EditDialog from './dialogs/editDialog'
 
 export default {
   name: 'Home',
-  components: { Topbar, Searchbar, ExecuteDialog },
+  components: { Topbar, Searchbar, ExecuteDialog, EditDialog },
   data() {
     return {
       defaultMapChangeTracker: 0,
@@ -256,11 +261,19 @@ export default {
     //   }
     //   console.error('项目任务不存在')
     // },
+    openEditor(id) {
+      this.$refs.edit.open(id)
+      return
+    },
+    update(id, prevAttributeParams = {}) {
+      updateRecordAttribute({ id, attribute: prevAttributeParams })
+      this.$refs.edit.close()
+      this.freshData()
+    },
     preExecute(id) {
       this.activeId = id
-      this.$refs.dialog.open(id)
+      this.$refs.execute.open(id)
       return
-      // return this.execute()
     },
     async execute(prevExecuteData = {}) {
       // prevExecuteData 构建前填写的参数
@@ -278,7 +291,7 @@ export default {
       }
 
       updateAllWorkflowParams({ id: currentId, globalParams: prevExecuteData })
-      this.$refs.dialog.close()
+      this.$refs.execute.close()
 
       try {
         await runWorkflowRefactored(
@@ -294,7 +307,8 @@ export default {
       }
     },
     cancel() {
-      this.$refs.dialog.close()
+      this.$refs.execute.close()
+      this.$refs.edit.close()
       this.clearTempData()
     },
     clearTempData() {

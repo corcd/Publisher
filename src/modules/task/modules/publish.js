@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-24 16:35:50
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-30 16:33:00
+ * @LastEditTime: 2021-01-29 09:33:09
  * @Description: file content
  */
 import { nanoid } from 'nanoid'
@@ -26,11 +26,11 @@ export const PublishTask = async ({ projectName, environment }) => {
     const { data } = await getProject(projectName)
     console.log(data)
 
-    if (data.length !== 1) {
-      return Promise.reject(new Error('请填写正确的项目仓库名'))
+    if (data.length === 0) {
+      return Promise.reject(new Error('请检查项目是否存在或合法'))
     }
 
-    const { id } = data[0]
+    const { id } = data.find(item => item.name === projectName)
     const includedType = originalEnvTypes.find(
       item => item.value === environment
     )

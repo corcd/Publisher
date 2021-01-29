@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-16 12:33:40
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-13 15:21:52
+ * @LastEditTime: 2021-01-29 15:20:32
  * @Description: file content
 -->
 <template>
@@ -55,7 +55,9 @@
       ></el-form-item>
       <el-form-item
         label="当前时间并非合理的升级时间，升级生产环境请慎重"
-        v-show="!isRationalProductionUpdateTime"
+        v-show="
+          prevExecuteData['environment'] && !isRationalProductionUpdateTime
+        "
       ></el-form-item>
       <el-form-item
         label="无参数"

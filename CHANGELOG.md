@@ -2,9 +2,23 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-15 14:43:54
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-27 10:40:53
+ * @LastEditTime: 2021-01-29 18:12:29
  * @Description: file content
 -->
+# :tada: 0.7.8-rc6 (2021-01-29)
+
+### :sparkles: Features
+
+* 研发端-增加修改项目属性功能
+* 研发端-优化时间段提醒功能
+* 研发端-增加分包配置
+
+### :bug: Bug Fixes
+
+* 研发端-修复发布工作流中 gitlab 项目 id 选取问题
+
+
+
 # :tada: 0.7.7-rc6 (2021-01-27)
 
 ### :bug: Bug Fixes
