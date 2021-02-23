@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-13 19:42:43
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-09 11:00:10
+ * @LastEditTime: 2021-02-03 17:35:29
  * @Description: file content
 -->
 <template>
@@ -58,6 +58,7 @@ import UpdateWorkflowItem from '@/components/workflow/UpdateItem'
 import PublishWorkflowItem from '@/components/workflow/PublishItem'
 import EstablishWorkflowItem from '@/components/workflow/EstablishItem'
 import ParametricBuildWorkflowItem from '@/components/workflow/ParametricBuildItem'
+import PackImagesWorkflowItem from '@/components/workflow/PackImagesItem'
 import NotifyWorkflowItem from '@/components/workflow/NotifyItem'
 import DeployWorkflowItem from '@/components/workflow/DeployItem'
 import AddDialog from './dialogs/addDialog'
@@ -74,6 +75,7 @@ export default {
     NotifyWorkflowItem,
     EstablishWorkflowItem,
     ParametricBuildWorkflowItem,
+    PackImagesWorkflowItem,
     DeployWorkflowItem,
     AddDialog,
     ConfigDialog

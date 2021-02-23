@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-16 12:33:40
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-29 15:20:32
+ * @LastEditTime: 2021-02-05 16:33:25
  * @Description: file content
 -->
 <template>
@@ -48,6 +48,23 @@
           >
           </el-option>
         </el-select>
+      </el-form-item>
+      <el-form-item
+        label="镜像仓库命名空间"
+        v-if="hasSuchParams('RepoNamespace')"
+      >
+        <el-input
+          type="text"
+          placeholder="请输入镜像仓库命名空间"
+          v-model="prevExecuteData['RepoNamespace']"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="镜像仓库名" v-if="hasSuchParams('RepoName')">
+        <el-input
+          type="text"
+          placeholder="请输入镜像仓库名"
+          v-model="prevExecuteData['RepoName']"
+        ></el-input>
       </el-form-item>
       <el-form-item
         label="当前环境对应分支存在未合并/未关闭的 MR，请及时处理"
@@ -172,6 +189,9 @@ export default {
 
       this.id = id
       this.dialogVisible = true
+      if (this.uniqueParamsList.length === 0) {
+        this.btnDisabled = false
+      }
     },
     close() {
       this.dialogVisible = false

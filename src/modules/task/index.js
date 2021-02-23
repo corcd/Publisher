@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-06 22:06:34
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-09 11:01:37
+ * @LastEditTime: 2021-02-03 18:07:52
  * @Description: file content
  */
 import store from '@/store'
@@ -15,6 +15,7 @@ import {
   PublishTask,
   EstablishTask,
   ParametricBuildTask,
+  PackImagesTask,
   NotifyTask,
   DeployTask
 } from './modules'
@@ -27,6 +28,7 @@ const tasks = {
   runPublishTask: PublishTask,
   runEstablishTask: EstablishTask,
   runParametricBuildTask: ParametricBuildTask,
+  runPackImagesTask: PackImagesTask,
   runNotifyTask: NotifyTask,
   runDeployTask: DeployTask
 }

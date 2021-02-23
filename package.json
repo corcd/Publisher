@@ -1,6 +1,6 @@
 {
   "name": "publisher",
-  "version": "0.7.8-rc6",
+  "version": "0.7.9-rc6",
   "description": "Frontend Publisher",
   "author": "whzcorcd <whzcorcd@gmail.com>",
   "license": "MIT",
@@ -21,8 +21,12 @@
   },
   "main": "background.js",
   "dependencies": {
+    "@alicloud/cs20151215": "^2.2.4",
+    "@alicloud/pop-core": "^1.7.10",
+    "@kubernetes/client-node": "^0.13.2",
     "axios": "^0.21.0",
     "core-js": "^3.6.5",
+    "crypto-js": "^4.0.0",
     "dayjs": "^1.9.6",
     "download-git-repo": "^3.0.2",
     "electron-log": "^4.3.1",
@@ -36,6 +40,7 @@
     "lowdb": "^1.0.0",
     "mailparser": "^3.0.1",
     "nanoid": "^3.1.20",
+    "node-fetch": "^2.6.1",
     "nodemailer": "^6.4.16",
     "quoted-printable": "^1.0.1",
     "shortid": "^2.2.16",

@@ -1,8 +1,8 @@
 <!--
  * @Author: Whzcorcd
- * @Date: 2020-12-13 21:38:42
+ * @Date: 2021-02-03 17:27:27
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-02-05 17:38:25
+ * @LastEditTime: 2021-02-03 17:30:15
  * @Description: file content
 -->
 <template>
@@ -35,14 +35,14 @@
 <script>
 import methods from './mixin/methods'
 
-const NAME = 'Deploy'
+const NAME = 'PackImages'
 const INFO = {
-  title: '容器部署',
-  pointerList: ['连接 Kubernetes', '热更替部署项目']
+  title: ' 镜像打包',
+  pointerList: ['连接容器镜像服务', '打包项目']
 }
 
 export default {
-  name: 'DeployWorkflowItem',
+  name: 'PackImagesWorkflowItem',
   data() {
     return {
       workflowItemName: NAME,

@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-24 16:34:28
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-09 15:22:53
+ * @LastEditTime: 2021-02-03 18:23:18
  * @Description: file content
  */
 export const originalEnvTypes = [
@@ -57,7 +57,7 @@ export const originalTasksTypes = [
   },
   {
     value: 'Establish',
-    label: '构建',
+    label: '通用构建',
     params: [
       // { name: 'jobName', required: true }
     ]
@@ -67,6 +67,15 @@ export const originalTasksTypes = [
     label: '参数化构建',
     params: [
       // { name: 'jobName', required: true },
+      { name: 'environment', required: true, prefixed: true }
+    ]
+  },
+  {
+    value: 'PackImages',
+    label: '镜像打包',
+    params: [
+      { name: 'RepoNamespace', required: true, prefixed: true },
+      { name: 'RepoName', required: true, prefixed: true },
       { name: 'environment', required: true, prefixed: true }
     ]
   },
@@ -82,7 +91,7 @@ export const originalTasksTypes = [
   },
   {
     value: 'Deploy',
-    label: '部署',
+    label: '容器部署',
     params: []
   }
 ]

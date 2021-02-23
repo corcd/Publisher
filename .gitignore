@@ -27,4 +27,4 @@ pnpm-debug.log*
 /dist_electron
 
 #Config module
-/src/config
+/src/config/index.js
