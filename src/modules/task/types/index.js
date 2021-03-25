@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-24 16:34:28
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-02-03 18:23:18
+ * @LastEditTime: 2021-03-25 15:04:29
  * @Description: file content
  */
 export const originalEnvTypes = [
@@ -27,7 +27,7 @@ export const originalEnvTypes = [
     label: '生产环境',
     branchName: 'master',
     webhook: [
-      'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=99f8dc79-a6bd-4328-8569-9897cc9110e1'
+      'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=342b0cee-0e35-4067-939a-82acc4c38031'
     ]
   }
 ]

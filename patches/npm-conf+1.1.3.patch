@@ -1,0 +1,13 @@
+diff --git a/node_modules/npm-conf/lib/defaults.js b/node_modules/npm-conf/lib/defaults.js
+index 6c0db4a..1d664dd 100644
+--- a/node_modules/npm-conf/lib/defaults.js
++++ b/node_modules/npm-conf/lib/defaults.js
+@@ -27,7 +27,7 @@
+ 	}
+ 
+ 	const cacheExtra = process.platform === 'win32' ? 'npm-cache' : '.npm';
+-	const cacheRoot = process.platform === 'win32' ? process.env.APPDATA : home;
++	const cacheRoot = process.platform === 'win32' ? process.env.APPDATA || 'npm-cache' : home;
+ 	const cache = path.resolve(cacheRoot, cacheExtra);
+ 
+ 	let defaults;

@@ -2,12 +2,12 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-24 16:44:43
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-24 23:30:12
+ * @LastEditTime: 2021-03-25 15:01:30
  * @Description: file content
  */
 import { showNotification } from '@/app/notification'
 import { originalEnvTypes } from '@/modules/task/types'
-import { sendWechatNotification, sendEmailNotification } from '@/plugins/notify'
+import { sendWechatNotification } from '@/plugins/notify'
 
 export const NotifyTask = async ({
   name,
@@ -32,12 +32,13 @@ export const NotifyTask = async ({
       updatedContent
     })
 
-    await sendEmailNotification({
-      name,
-      jobName,
-      environment,
-      updatedContent
-    })
+    // FIXME 邮件通知下线
+    // await sendEmailNotification({
+    //   name,
+    //   jobName,
+    //   environment,
+    //   updatedContent
+    // })
   } catch (err) {
     console.error(err)
     showNotification({
