@@ -35,7 +35,11 @@ const tasks = {
 
 // 任务队列去除空值（ 例如：{} ）
 const tasksQueueTrim = tasksQueue => {
-  return tasksQueue.filter(item => Object.getOwnPropertyNames(item).length > 0)
+  return tasksQueue.filter(item => {
+    return Object.prototype.toString.call(item) === '[object Object]'
+      ? Object.getOwnPropertyNames(item).length > 0
+      : Object.getOwnPropertyNames(item).length > 1
+  })
 }
 
 // 任务队列顺序执行器
@@ -43,15 +47,29 @@ const tasksQueueExecutor = async queue => {
   let index = 0
   while (index >= 0 && index < queue.length) {
     const item = queue[index]
-
-    if (typeof item.task !== 'function') {
-      throw new Error('task is not a function')
+    if (Object.prototype.toString.call(item) === '[object Object]') {
+      if (typeof item.task !== 'function') {
+        throw new Error('task is not a function')
+      }
+      // eslint-disable-next-line no-await-in-loop
+      await item.task(item.params).catch(err => {
+        console.error(err)
+        throw err
+      })
+    } else {
+      const parallel = []
+      item.forEach(paral => {
+        if (typeof paral.task !== 'function') {
+          throw new Error('task is not a function')
+        }
+        parallel.push(paral.task(paral.params))
+      })
+      // eslint-disable-next-line no-await-in-loop
+      await Promise.all(parallel).catch(err => {
+        console.error(err)
+        throw err
+      })
     }
-    // eslint-disable-next-line no-await-in-loop
-    await item.task(item.params).catch(err => {
-      console.error(err)
-      throw err
-    })
     index++
   }
 }
@@ -104,15 +122,29 @@ export const runWorkflowRefactored = async (
   globalParams = {}
 ) => {
   const tasksQueue = workflow.map(task => {
-    const isExist = isLegalTask(task)
-    const params = JSON.parse(JSON.stringify(task.params))
-
-    return isExist
-      ? {
-          task: tasks[`run${task.action}Task`],
-          params: Object.assign({}, params, globalParams, { id })
+    if (Object.prototype.toString.call(task) === '[object Object]') {
+      const isExist = isLegalTask(task)
+      const params = JSON.parse(JSON.stringify(task.params))
+      return isExist
+        ? {
+            task: tasks[`run${task.action}Task`],
+            params: Object.assign({}, params, globalParams, { id })
+          }
+        : {}
+    } else {
+      const parallel = []
+      task.forEach(item => {
+        const isExist = isLegalTask(item)
+        const params = JSON.parse(JSON.stringify(item.params))
+        if (isExist) {
+          parallel.push({
+            task: tasks[`run${item.action}Task`],
+            params: Object.assign({}, params, globalParams, { id })
+          })
         }
-      : {}
+      })
+      return parallel
+    }
   })
 
   const finalTasksQueue = tasksQueueTrim(tasksQueue)
