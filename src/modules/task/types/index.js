@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-24 16:34:28
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-03-25 15:04:29
+ * @LastEditTime: 2021-07-13 10:09:36
  * @Description: file content
  */
 export const originalEnvTypes = [
@@ -27,7 +27,7 @@ export const originalEnvTypes = [
     label: '生产环境',
     branchName: 'master',
     webhook: [
-      'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=342b0cee-0e35-4067-939a-82acc4c38031'
+      'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=4834dae6-ede2-478d-b779-7c55978fdac9'
     ]
   }
 ]
@@ -67,7 +67,8 @@ export const originalTasksTypes = [
     label: '参数化构建',
     params: [
       // { name: 'jobName', required: true },
-      { name: 'environment', required: true, prefixed: true }
+      { name: 'environment', required: true, prefixed: true },
+      { name: 'extra', required: true, prefixed: true }
     ]
   },
   {

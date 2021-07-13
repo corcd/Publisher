@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:01:15
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-29 15:36:56
+ * @LastEditTime: 2021-07-13 11:38:11
  * @Description: file content
 -->
 <template>
@@ -34,13 +34,24 @@
             </span>
             <i
               class="home-collapse__headericon el-icon-loading"
-              v-if="getRecordStatus(item.id) === 'loading'"
+              v-show="getRecordStatus(item.id) === 'loading'"
             ></i>
             <i
               class="home-collapse__headericon home-collapse__headericon--completed el-icon-circle-check"
-              v-if="getRecordStatus(item.id) === 'completed'"
+              v-show="getRecordStatus(item.id) === 'completed'"
             ></i>
-            <el-popover
+            <el-tooltip
+              v-show="getRecordStatus(item.id) === 'error'"
+              effect="dark"
+              :content="getRecordWorkflowHistory(item.id)"
+              placement="right"
+            >
+              <i
+                class="home-collapse__headericon home-collapse__headericon--error el-icon-circle-close"
+              ></i>
+            </el-tooltip>
+            <!-- <el-popover
+              v-show="getRecordStatus(item.id) === 'error'"
               placement="right"
               width="200"
               trigger="hover"
@@ -49,9 +60,8 @@
               <i
                 slot="reference"
                 class="home-collapse__headericon home-collapse__headericon--error el-icon-circle-close"
-                v-if="getRecordStatus(item.id) === 'error'"
               ></i>
-            </el-popover>
+            </el-popover> -->
           </template>
           <div class="home-collapse">
             <div class="home-collapse__left">
@@ -146,8 +156,9 @@ import { originalEnvTypes } from '@/modules/task/types'
 import { runWorkflowRefactored } from '@/modules/task'
 import Topbar from '@/components/home/topbar'
 import Searchbar from '@/components/home/searchbar'
-import ExecuteDialog from './dialogs/executeDialog'
-import EditDialog from './dialogs/editDialog'
+
+const ExecuteDialog = () => import('./dialogs/executeDialog')
+const EditDialog = () => import('./dialogs/editDialog')
 
 export default {
   name: 'Home',

@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-16 12:33:40
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-02-05 16:33:25
+ * @LastEditTime: 2021-07-13 10:28:20
  * @Description: file content
 -->
 <template>
@@ -30,6 +30,15 @@
           :rows="3"
           placeholder="请输入更新内容，一个条目单独一行"
           v-model="prevExecuteData['updatedContent']"
+          @change="updateTextCache"
+        >
+        </el-input>
+      </el-form-item>
+      <el-form-item label="额外参数" v-if="hasSuchParams('extra')">
+        <el-input
+          type="text"
+          placeholder="传递至 CI 的额外参数"
+          v-model="prevExecuteData['extra']"
         >
         </el-input>
       </el-form-item>
@@ -114,7 +123,8 @@ export default {
       untreated: false,
       btnDisabled: true,
       uniqueParamsList: [],
-      prevExecuteData: {}
+      prevExecuteData: {},
+      textCache: ''
     }
   },
   computed: {
@@ -187,6 +197,11 @@ export default {
         }
       }
 
+      // FEAT 更新内容输入框缓存
+      if (this.textCache) {
+        this.prevExecuteData['updatedContent'] = this.textCache
+      }
+
       this.id = id
       this.dialogVisible = true
       if (this.uniqueParamsList.length === 0) {
@@ -213,6 +228,9 @@ export default {
         }
       }
       this.$emit('confirm', this.prevExecuteData)
+    },
+    updateTextCache() {
+      this.textCache = this.prevExecuteData['updatedContent']
     }
   }
 }

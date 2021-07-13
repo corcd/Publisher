@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-24 16:43:41
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-30 17:12:15
+ * @LastEditTime: 2021-07-13 10:44:06
  * @Description: file content
  */
 import { Message } from 'element-ui'
@@ -39,7 +39,7 @@ const checkJobStatus = async (jobName, delay = 3000) => {
     : Promise.reject(new Error('Jenkins 参数化构建任务中止或失败'))
 }
 
-export const ParametricBuildTask = ({ jobName, environment }) => {
+export const ParametricBuildTask = ({ jobName, environment, extra = '' }) => {
   if (!jobName || !environment) {
     return Promise.reject(new Error('参数不能为空'))
   }
@@ -55,7 +55,11 @@ export const ParametricBuildTask = ({ jobName, environment }) => {
 
   return new Promise(async (resolve, reject) => {
     console.log('parametric build')
-    const preload = params.filter(item => item.HOSTNAME === environment)[0]
+    const preload = Object.assign(
+      {},
+      params.find(item => item.HOSTNAME === environment) || {},
+      { EXTRA: extra }
+    )
 
     try {
       await buildWithParams(jobName, preload)
