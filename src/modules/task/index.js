@@ -2,9 +2,10 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-06 22:06:34
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-02-03 18:07:52
+ * @LastEditTime: 2021-07-14 13:51:16
  * @Description: file content
  */
+import { powerSaveBlocker } from 'electron'
 import store from '@/store'
 import { showNotification } from '@/app/notification'
 import { originalTasksTypes } from './types'
@@ -38,8 +39,23 @@ const tasksQueueTrim = tasksQueue => {
   return tasksQueue.filter(item => Object.getOwnPropertyNames(item).length > 0)
 }
 
+// 判断是否为合法任务
+export const isLegalTask = task => {
+  const tempList = originalTasksTypes.filter(item => item.value === task.action)
+  return tempList && tempList.length === 1
+}
+
+// 添加自定义任务
+export const addCustomTask = fn => {
+  if (fn) {
+    customTasksQueue.push(fn)
+  }
+}
+
 // 任务队列顺序执行器
 const tasksQueueExecutor = async queue => {
+  const id = powerSaveBlocker.start('prevent-display-sleep')
+
   let index = 0
   while (index >= 0 && index < queue.length) {
     const item = queue[index]
@@ -54,19 +70,8 @@ const tasksQueueExecutor = async queue => {
     })
     index++
   }
-}
 
-// 判断是否为合法任务
-export const isLegalTask = task => {
-  const tempList = originalTasksTypes.filter(item => item.value === task.action)
-  return tempList && tempList.length === 1
-}
-
-// 添加自定义任务
-export const addCustomTask = fn => {
-  if (fn) {
-    customTasksQueue.push(fn)
-  }
+  powerSaveBlocker.isStarted(id) && powerSaveBlocker.stop(id)
 }
 
 // 执行单一任务

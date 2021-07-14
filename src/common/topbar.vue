@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-10 21:04:23
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-10 21:04:18
+ * @LastEditTime: 2021-07-14 10:50:10
  * @Description: file content
 -->
 <template>
@@ -12,7 +12,7 @@
       <div class="topbar-subtitle">
         <span>{{ subtitle }}</span>
       </div>
-      <Update align="right" v-if="update"></Update>
+      <Update align="right" v-show="update"></Update>
       <span class="topbar-copyright"> {{ extra }} 云平台前端团队 </span>
     </section>
   </div>
@@ -46,12 +46,13 @@ export default {
 <style lang="scss" scoped>
 .topbar {
   width: 100%;
-  height: 60px;
+  height: 70px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
+  padding: 10px 20px 0 20px;
   background-color: transparent;
+  -webkit-app-region: drag;
 
   section {
     width: 100%;

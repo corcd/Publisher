@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-24 16:34:28
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-07-13 10:09:36
+ * @LastEditTime: 2021-07-14 12:29:38
  * @Description: file content
  */
 export const originalEnvTypes = [
@@ -68,7 +68,8 @@ export const originalTasksTypes = [
     params: [
       // { name: 'jobName', required: true },
       { name: 'environment', required: true, prefixed: true },
-      { name: 'extra', required: true, prefixed: true }
+      { name: 'tagName', required: false, prefixed: true },
+      { name: 'extra', required: false, prefixed: true }
     ]
   },
   {

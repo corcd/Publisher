@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-24 16:43:41
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-07-13 10:44:06
+ * @LastEditTime: 2021-07-14 12:33:24
  * @Description: file content
  */
 import { Message } from 'element-ui'
@@ -39,7 +39,12 @@ const checkJobStatus = async (jobName, delay = 3000) => {
     : Promise.reject(new Error('Jenkins 参数化构建任务中止或失败'))
 }
 
-export const ParametricBuildTask = ({ jobName, environment, extra = '' }) => {
+export const ParametricBuildTask = ({
+  jobName,
+  environment,
+  tagName = '',
+  extra = ''
+}) => {
   if (!jobName || !environment) {
     return Promise.reject(new Error('参数不能为空'))
   }
@@ -48,9 +53,10 @@ export const ParametricBuildTask = ({ jobName, environment, extra = '' }) => {
   }
 
   const params = [
-    { HOSTNAME: 'development', SCRIPT: 'build:dev', BRANCH: 'test' },
-    { HOSTNAME: 'preview', SCRIPT: 'build:pre', BRANCH: 'dev' },
-    { HOSTNAME: 'production', SCRIPT: 'build:prod', BRANCH: 'master' }
+    { HOSTNAME: 'development', SCRIPT: 'build:dev', BRANCH: '*/test' },
+    { HOSTNAME: 'preview', SCRIPT: 'build:pre', BRANCH: '*/dev' },
+    { HOSTNAME: 'production', SCRIPT: 'build:prod', BRANCH: '*/master' },
+    { HOSTNAME: 'hgclond/production', SCRIPT: 'build:huawei', BRANCH: '*/test' }
   ]
 
   return new Promise(async (resolve, reject) => {
@@ -58,7 +64,8 @@ export const ParametricBuildTask = ({ jobName, environment, extra = '' }) => {
     const preload = Object.assign(
       {},
       params.find(item => item.HOSTNAME === environment) || {},
-      { EXTRA: extra }
+      { EXTRA: extra },
+      tagName ? { BRANCH: tagName } : {}
     )
 
     try {

@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-16 12:33:40
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-07-13 10:28:20
+ * @LastEditTime: 2021-07-14 13:04:47
  * @Description: file content
 -->
 <template>
@@ -57,6 +57,13 @@
           >
           </el-option>
         </el-select>
+        <el-input
+          class="home-form__tagname"
+          type="text"
+          placeholder="可选标签名"
+          v-model="prevExecuteData['tagName']"
+        >
+        </el-input>
       </el-form-item>
       <el-form-item
         label="镜像仓库命名空间"
@@ -108,7 +115,7 @@
 
 <script>
 import dayjs from 'dayjs'
-import { Message } from 'element-ui'
+// import { Message } from 'element-ui'
 import { getOneRecord } from '#/plugins/data'
 import { originalEnvTypes, originalTasksTypes } from '@/modules/task/types'
 import { getProject, listMergeRequests } from '@/plugins/gitlab'
@@ -187,6 +194,7 @@ export default {
           .find(ele => ele.value === item)
           .params.filter(ele => ele.prefixed)
       )
+
       for (const item in paramsList) {
         if (paramsList.hasOwnProperty(item)) {
           paramsList[item].forEach(ele => {
@@ -219,14 +227,14 @@ export default {
       this.$emit('cancel')
     },
     confirm() {
-      for (const i in this.prevExecuteData) {
-        if (this.prevExecuteData.hasOwnProperty(i)) {
-          if (String.prototype.trim.call(this.prevExecuteData[i]) === '') {
-            Message.error('参数不完整，请补充后重新提交')
-            return
-          }
-        }
-      }
+      // for (const i in this.prevExecuteData) {
+      //   if (this.prevExecuteData.hasOwnProperty(i)) {
+      //     if (String.prototype.trim.call(this.prevExecuteData[i]) === '') {
+      //       Message.error('参数不完整，请补充后重新提交')
+      //       return
+      //     }
+      //   }
+      // }
       this.$emit('confirm', this.prevExecuteData)
     },
     updateTextCache() {
@@ -241,7 +249,7 @@ export default {
   &-form {
     width: 100%;
 
-    &::v-deep .home-form__topic {
+    ::v-deep &__topic {
       width: 100%;
       text-align: left;
       font: {
@@ -250,17 +258,23 @@ export default {
       }
     }
 
-    &::v-deep .el-divider--horizontal {
+    ::v-deep &__tagname {
+      display: inline-block;
+      width: 120px;
+      margin: 0 10px;
+    }
+
+    ::v-deep .el-divider--horizontal {
       margin: 12px 0;
     }
 
-    &::v-deep .el-form-item {
+    ::v-deep .el-form-item {
       margin-bottom: 0px;
       padding-bottom: 10px;
       text-align: left;
     }
 
-    &::v-deep .el-form-item__label {
+    ::v-deep .el-form-item__label {
       width: 100%;
       height: 24px;
       padding: 0;

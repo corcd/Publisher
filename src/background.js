@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:03:31
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-09 09:55:36
+ * @LastEditTime: 2021-07-14 10:45:30
  * @Description: file content
  */
 /* global __static */
@@ -29,11 +29,14 @@ const createWindow = async () => {
     height: 800,
     resizable: false,
     show: false,
+    // frame: false,
+    titleBarStyle: 'hidden',
     webPreferences: {
       webSecurity: false,
       enableRemoteModule: true,
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION
     },
+    backgroundColor: '#fff',
     icon: path.join(__static, 'icon.png')
   })
 

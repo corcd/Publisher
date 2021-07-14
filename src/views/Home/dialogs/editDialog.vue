@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2021-01-14 09:51:49
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-29 15:38:21
+ * @LastEditTime: 2021-07-14 12:01:19
  * @Description: file content
 -->
 <template>
@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { Message } from 'element-ui'
+// import { Message } from 'element-ui'
 import { getOneRecord } from '#/plugins/data'
 
 export default {
@@ -74,6 +74,7 @@ export default {
     open(id) {
       const { attribute } = getOneRecord(id)
       this.attributeParams = JSON.parse(JSON.stringify(attribute))
+      console.log(this.attributeParams)
 
       this.id = id
       this.dialogVisible = true
@@ -86,14 +87,14 @@ export default {
       this.$emit('cancel')
     },
     confirm() {
-      for (const i in this.attributeParams) {
-        if (this.attributeParams.hasOwnProperty(i)) {
-          if (String.prototype.trim.call(this.attributeParams[i]) === '') {
-            Message.error('参数不完整，请补充后重新提交')
-            return
-          }
-        }
-      }
+      // for (const i in this.attributeParams) {
+      //   if (this.attributeParams.hasOwnProperty(i)) {
+      //     if (String.prototype.trim.call(this.attributeParams[i]) === '') {
+      //       Message.error('参数不完整，请补充后重新提交')
+      //       return
+      //     }
+      //   }
+      // }
       this.$emit('confirm', this.id, this.attributeParams)
     }
   }
