@@ -2,10 +2,9 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-06 22:06:34
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-07-14 13:51:16
+ * @LastEditTime: 2021-07-14 17:07:58
  * @Description: file content
  */
-import { powerSaveBlocker } from 'electron'
 import store from '@/store'
 import { showNotification } from '@/app/notification'
 import { originalTasksTypes } from './types'
@@ -54,7 +53,7 @@ export const addCustomTask = fn => {
 
 // 任务队列顺序执行器
 const tasksQueueExecutor = async queue => {
-  const id = powerSaveBlocker.start('prevent-display-sleep')
+  // const id = powerSaveBlocker.start('prevent-display-sleep')
 
   let index = 0
   while (index >= 0 && index < queue.length) {
@@ -71,7 +70,7 @@ const tasksQueueExecutor = async queue => {
     index++
   }
 
-  powerSaveBlocker.isStarted(id) && powerSaveBlocker.stop(id)
+  // powerSaveBlocker.isStarted(id) && powerSaveBlocker.stop(id)
 }
 
 // 执行单一任务
