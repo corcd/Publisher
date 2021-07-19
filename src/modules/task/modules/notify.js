@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-24 16:44:43
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-05-05 12:57:50
+ * @LastEditTime: 2021-07-17 00:04:55
  * @Description: file content
  */
 import { showNotification } from '@/app/notification'
@@ -13,7 +13,8 @@ export const NotifyTask = async ({
   name,
   jobName,
   environment,
-  updatedContent
+  updatedContent,
+  mentionedMobile
 }) => {
   if (!name || !jobName || !environment) {
     return Promise.reject(new Error('除更新内容外其他参数不能为空'))
@@ -29,7 +30,8 @@ export const NotifyTask = async ({
       name,
       jobName,
       environment,
-      updatedContent
+      updatedContent,
+      mentionedMobileList: [mentionedMobile]
     })
 
     await sendEmailNotification({

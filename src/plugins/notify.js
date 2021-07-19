@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:21:27
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-29 11:41:47
+ * @LastEditTime: 2021-07-17 00:06:35
  * @Description: file content
  */
 import { sendEmail } from '#/plugins/email'
@@ -17,12 +17,13 @@ export const sendWechatNotification = ({
   name,
   jobName,
   environment,
-  updatedContent
+  updatedContent,
+  mentionedMobileList
 }) => {
   return new Promise(async (resolve, reject) => {
     const { label, webhook } = getIncludedType(environment)
 
-    const data = {
+    const updateInfo = {
       msgtype: 'markdown',
       markdown: {
         content: getWechatStyleText({
@@ -34,20 +35,33 @@ export const sendWechatNotification = ({
       }
     }
 
-    const notifyLoop = webhook.map(url => {
-      return fetch(url, {
-        body: JSON.stringify(data),
-        cache: 'no-cache',
-        headers: {
-          'content-type': 'application/json'
-        },
-        method: 'POST',
-        mode: 'no-cors',
-        referrer: 'no-referrer'
-      })
-    })
+    const updateMessage = {
+      msgtype: 'text',
+      text: {
+        content: `[${label}] ${name} 已完成更新`,
+        mentioned_mobile_list: mentionedMobileList
+      }
+    }
 
-    await Promise.all(notifyLoop).catch(err => {
+    const notifyLoop = content =>
+      webhook.map(url => {
+        return fetch(url, {
+          body: JSON.stringify(content),
+          cache: 'no-cache',
+          headers: {
+            'content-type': 'application/json'
+          },
+          method: 'POST',
+          mode: 'no-cors',
+          referrer: 'no-referrer'
+        })
+      })
+
+    await Promise.all(notifyLoop(updateInfo)).catch(err => {
+      console.error(err)
+      return reject(err)
+    })
+    await Promise.all(notifyLoop(updateMessage)).catch(err => {
       console.error(err)
       return reject(err)
     })

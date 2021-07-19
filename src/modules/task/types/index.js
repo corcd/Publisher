@@ -2,35 +2,12 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-24 16:34:28
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-07-14 12:29:38
+ * @LastEditTime: 2021-07-16 17:57:24
  * @Description: file content
  */
-export const originalEnvTypes = [
-  {
-    value: 'development',
-    label: '测试环境',
-    branchName: 'test',
-    webhook: [
-      'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=afaa2567-4ad4-4aa4-93ba-44df4a776242'
-    ]
-  },
-  {
-    value: 'preview',
-    label: '预发环境',
-    branchName: 'dev',
-    webhook: [
-      'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=342b0cee-0e35-4067-939a-82acc4c38031'
-    ]
-  },
-  {
-    value: 'production',
-    label: '生产环境',
-    branchName: 'master',
-    webhook: [
-      'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=4834dae6-ede2-478d-b779-7c55978fdac9'
-    ]
-  }
-]
+import { envTypes } from '@/config'
+
+export const originalEnvTypes = envTypes
 
 export const originalTasksTypes = [
   {
@@ -88,7 +65,8 @@ export const originalTasksTypes = [
       // { name: 'name', required: true },
       // { name: 'jobName', required: true },
       { name: 'environment', required: true, prefixed: true },
-      { name: 'updatedContent', required: false, prefixed: true }
+      { name: 'updatedContent', required: false, prefixed: true },
+      { name: 'mentionedList', required: false, prefixed: true }
     ]
   },
   {

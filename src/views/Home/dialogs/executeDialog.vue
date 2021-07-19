@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-16 12:33:40
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-07-14 13:04:47
+ * @LastEditTime: 2021-07-17 00:04:47
  * @Description: file content
 -->
 <template>
@@ -65,6 +65,22 @@
         >
         </el-input>
       </el-form-item>
+      <el-form-item label="提醒" v-if="hasSuchParams('mentionedList')">
+        <el-select
+          size="mini"
+          placeholder="可选提醒产品经理"
+          v-model="prevExecuteData['mentionedMobile']"
+          @change="handleSelectChange"
+        >
+          <el-option
+            v-for="item in pmList"
+            :key="item.name"
+            :label="item.name"
+            :value="item.mobile"
+          >
+          </el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item
         label="镜像仓库命名空间"
         v-if="hasSuchParams('RepoNamespace')"
@@ -117,6 +133,7 @@
 import dayjs from 'dayjs'
 // import { Message } from 'element-ui'
 import { getOneRecord } from '#/plugins/data'
+import { pmList } from '@/config'
 import { originalEnvTypes, originalTasksTypes } from '@/modules/task/types'
 import { getProject, listMergeRequests } from '@/plugins/gitlab'
 
@@ -125,6 +142,7 @@ export default {
   data() {
     return {
       dialogVisible: false,
+      pmList: Object.freeze(pmList),
       selectOptions: Object.freeze(originalEnvTypes),
       id: '',
       untreated: false,
