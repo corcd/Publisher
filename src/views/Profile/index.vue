@@ -2,49 +2,51 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-10 17:44:39
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-11 17:01:58
+ * @LastEditTime: 2021-07-23 14:41:32
  * @Description: file content
 -->
 <template>
   <div class="profile">
     <Topbar subtitle="录入资料"></Topbar>
-    <div class="profile-content">
-      <section class="profile-profilebox">
-        <header>
-          <span>录入个人名片资料</span>
-        </header>
-        <content>
-          <el-input
-            type="text"
-            size="mini"
-            placeholder="姓名"
-            v-model="profileInfo.name"
-          ></el-input>
-          <el-input
-            type="number"
-            size="mini"
-            placeholder="联系方式"
-            v-model="profileInfo.contact"
-          ></el-input>
-          <el-input
-            type="email"
-            size="mini"
-            placeholder="工作邮箱"
-            v-model="profileInfo.workmail"
-          ></el-input>
-        </content>
-        <footer>
-          <el-button
-            type="primary"
-            size="mini"
-            :loading="btnLoading"
-            @click="submit"
-          >
-            提 交
-          </el-button>
-        </footer>
-      </section>
-    </div>
+    <section class="container">
+      <div class="profile-content">
+        <section class="profile-profilebox">
+          <header>
+            <span>录入个人名片资料</span>
+          </header>
+          <content>
+            <el-input
+              type="text"
+              size="mini"
+              placeholder="姓名"
+              v-model="profileInfo.name"
+            ></el-input>
+            <el-input
+              type="number"
+              size="mini"
+              placeholder="联系方式"
+              v-model="profileInfo.contact"
+            ></el-input>
+            <el-input
+              type="email"
+              size="mini"
+              placeholder="工作邮箱"
+              v-model="profileInfo.workmail"
+            ></el-input>
+          </content>
+          <footer>
+            <el-button
+              type="primary"
+              size="mini"
+              :loading="btnLoading"
+              @click="submit"
+            >
+              提 交
+            </el-button>
+          </footer>
+        </section>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -88,12 +90,23 @@ export default {
 
 <style lang="scss" scoped>
 .profile {
+  position: relative;
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+
+  .container {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: calc(100% - 70px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+  }
 
   &-content {
     flex-grow: 1;

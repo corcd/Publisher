@@ -2,53 +2,57 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-08 13:23:42
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-02-03 18:12:09
+ * @LastEditTime: 2021-07-23 17:29:00
  * @Description: file content
 -->
 <template>
   <div class="log">
     <Topbar subtitle="成员校验" :extra="`v${pConfig.version}`" update></Topbar>
-    <div class="log-content">
-      <section class="log-loginbox">
-        <header>
-          <span>团队成员校验</span>
-        </header>
-        <header>
-          <span class="subtitle">
-            {{ subtitle }}
-          </span>
-        </header>
-        <content>
-          <el-input
-            type="text"
-            size="mini"
-            placeholder="成员名"
-            v-model="authInfo.username"
-          ></el-input>
-          <el-input
-            type="password"
-            size="mini"
-            placeholder="校验码"
-            show-password
-            v-model="authInfo.password"
-          ></el-input>
-        </content>
-        <footer>
-          <el-button
-            type="primary"
-            size="mini"
-            :loading="btnLoading"
-            @click="submit"
-          >
-            校 验
-          </el-button>
-        </footer>
-      </section>
-    </div>
+    <section class="container">
+      <div class="log-content">
+        <section class="log-loginbox">
+          <header>
+            <span>团队成员校验</span>
+          </header>
+          <header>
+            <span class="subtitle">
+              {{ subtitle }}
+            </span>
+          </header>
+          <content>
+            <el-input
+              type="text"
+              size="mini"
+              placeholder="成员名"
+              v-model="authInfo.username"
+            ></el-input>
+            <el-input
+              type="password"
+              size="mini"
+              placeholder="校验码"
+              show-password
+              v-model="authInfo.password"
+            ></el-input>
+          </content>
+          <footer>
+            <el-button
+              type="primary"
+              size="mini"
+              :disabled="btnDisabled"
+              :loading="btnLoading"
+              @click="submit"
+            >
+              {{ btnDisabled ? '请更新版本' : '成员校验' }}
+            </el-button>
+          </footer>
+        </section>
+      </div>
+    </section>
   </div>
 </template>
 
 <script>
+import { ipcRenderer } from 'electron'
 import { mapGetters } from 'vuex'
 import { getUser } from '#/plugins/data'
 import { login } from '@/modules/auth'
@@ -63,6 +67,7 @@ export default {
     return {
       pConfig,
       subtitle: '重要：该应用涉及相关隐私安全，仅限内部使用，切勿泄露',
+      btnDisabled: process.env.NODE_ENV === 'production',
       btnLoading: false,
       authInfo: {
         username: '',
@@ -72,6 +77,12 @@ export default {
   },
   computed: {
     ...mapGetters('user', ['isDeveloper', 'isPM'])
+  },
+  created() {
+    console.log(process.env.NODE_ENV)
+    ipcRenderer.on('update-not-available', () => {
+      this.btnDisabled = false
+    })
   },
   mounted() {
     window.addEventListener(
@@ -114,12 +125,23 @@ export default {
 
 <style lang="scss" scoped>
 .log {
+  position: relative;
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+
+  .container {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: calc(100% - 70px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+  }
 
   &-content {
     flex-grow: 1;

@@ -2,24 +2,30 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-18 14:22:57
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-19 01:00:13
+ * @LastEditTime: 2021-07-23 17:39:05
  * @Description: file content
 -->
 <template>
   <div class="about">
     <Topbar subtitle="关于"></Topbar>
-    <StatusBar content=""></StatusBar>
-    <section class="about-content">
-      <div class="about-content__block">
-        <img class="about-content__image" src="@/assets/logo.png" alt="logo" />
-        <p class="about-content__title">Publisher</p>
-        <span class="about-content__subtitle">云平台前端发布工具</span>
-        <span class="about-content__version">v{{ pConfig.version }}</span>
-        <Update></Update>
-      </div>
-      <div class="about-content__footer">
-        <span class="about-content__subtitle">Copyright © 2020 Whzcorcd</span>
-      </div>
+    <section class="container">
+      <StatusBar content=""></StatusBar>
+      <section class="about-content">
+        <div class="about-content__block">
+          <img
+            class="about-content__image"
+            src="@/assets/logo.png"
+            alt="logo"
+          />
+          <p class="about-content__title">Publisher</p>
+          <span class="about-content__subtitle">云平台前端发布工具</span>
+          <span class="about-content__version">v{{ pConfig.version }}</span>
+          <Update></Update>
+        </div>
+        <div class="about-content__footer">
+          <span class="about-content__subtitle">Copyright © 2021 Whzcorcd</span>
+        </div>
+      </section>
     </section>
   </div>
 </template>
@@ -53,12 +59,23 @@ export default {
 
 <style lang="scss" scoped>
 .about {
+  position: relative;
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+
+  .container {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: calc(100% - 70px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+  }
 
   &-content {
     flex-grow: 1;

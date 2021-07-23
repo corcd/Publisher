@@ -2,55 +2,56 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:01:15
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-07-13 11:38:11
+ * @LastEditTime: 2021-07-23 17:33:05
  * @Description: file content
 -->
 <template>
   <div class="home">
     <Topbar @change="freshData"></Topbar>
-    <Searchbar title="数据集合"></Searchbar>
-    <section>
-      <el-collapse v-model="activeName" accordion>
-        <el-collapse-item
-          v-for="item in recordsData"
-          :key="item.id"
-          :name="item.id"
-        >
-          <template slot="title">
-            {{
-              getTitle({
-                name: item.attribute.name,
-                jobName: item.attribute.jobName
-              })
-            }}
-            <span class="home-collapse__subtitle">
-              [
+    <section class="container">
+      <Searchbar title="数据集合"></Searchbar>
+      <section>
+        <el-collapse v-model="activeName" accordion>
+          <el-collapse-item
+            v-for="item in recordsData"
+            :key="item.id"
+            :name="item.id"
+          >
+            <template slot="title">
               {{
-                item.workflow.length
-                  ? `${item.workflow.length} 任务数`
-                  : '请添加任务'
+                getTitle({
+                  name: item.attribute.name,
+                  jobName: item.attribute.jobName
+                })
               }}
-              ]
-            </span>
-            <i
-              class="home-collapse__headericon el-icon-loading"
-              v-show="getRecordStatus(item.id) === 'loading'"
-            ></i>
-            <i
-              class="home-collapse__headericon home-collapse__headericon--completed el-icon-circle-check"
-              v-show="getRecordStatus(item.id) === 'completed'"
-            ></i>
-            <el-tooltip
-              v-show="getRecordStatus(item.id) === 'error'"
-              effect="dark"
-              :content="getRecordWorkflowHistory(item.id)"
-              placement="right"
-            >
+              <span class="home-collapse__subtitle">
+                [
+                {{
+                  item.workflow.length
+                    ? `${item.workflow.length} 任务数`
+                    : '请添加任务'
+                }}
+                ]
+              </span>
               <i
-                class="home-collapse__headericon home-collapse__headericon--error el-icon-circle-close"
+                class="home-collapse__headericon el-icon-loading"
+                v-show="getRecordStatus(item.id) === 'loading'"
               ></i>
-            </el-tooltip>
-            <!-- <el-popover
+              <i
+                class="home-collapse__headericon home-collapse__headericon--completed el-icon-circle-check"
+                v-show="getRecordStatus(item.id) === 'completed'"
+              ></i>
+              <el-tooltip
+                v-show="getRecordStatus(item.id) === 'error'"
+                effect="dark"
+                :content="getRecordWorkflowHistory(item.id)"
+                placement="right"
+              >
+                <i
+                  class="home-collapse__headericon home-collapse__headericon--error el-icon-circle-close"
+                ></i>
+              </el-tooltip>
+              <!-- <el-popover
               v-show="getRecordStatus(item.id) === 'error'"
               placement="right"
               width="200"
@@ -62,68 +63,69 @@
                 class="home-collapse__headericon home-collapse__headericon--error el-icon-circle-close"
               ></i>
             </el-popover> -->
-          </template>
-          <div class="home-collapse">
-            <div class="home-collapse__left">
-              <p class="home-collapse__details">
-                最近任务完成时间:
-                {{ formatTimeStamp(item.attackTime) || '( 无 )' }}
-              </p>
-              <p class="home-collapse__details">
-                最近一次成功构建:
-                {{
-                  `&lt;${
-                    item.buildInfo ? item.buildInfo.number : '( 无 )'
-                  }&gt; ${item.buildInfo ? item.buildInfo.url : '( 无 )'}`
-                }}
+            </template>
+            <div class="home-collapse">
+              <div class="home-collapse__left">
+                <p class="home-collapse__details">
+                  最近任务完成时间:
+                  {{ formatTimeStamp(item.attackTime) || '( 无 )' }}
+                </p>
+                <p class="home-collapse__details">
+                  最近一次成功构建:
+                  {{
+                    `&lt;${
+                      item.buildInfo ? item.buildInfo.number : '( 无 )'
+                    }&gt; ${item.buildInfo ? item.buildInfo.url : '( 无 )'}`
+                  }}
+                  <i
+                    class="home-collapse__icons el-icon-document-copy"
+                    @click="
+                      copyDocument(item.buildInfo ? item.buildInfo.url : '')
+                    "
+                  ></i>
+                </p>
+                <p class="home-collapse__details">
+                  下一次构建编号:
+                  {{
+                    `&lt;${
+                      item.buildInfo ? item.buildInfo.nextBuildNumber : '( 无 )'
+                    }&gt;`
+                  }}
+                </p>
+                <p class="home-collapse__details">
+                  远程仓库地址:
+                  {{ item.projectInfo.url || '( 无 )' }}
+                  <i
+                    class="home-collapse__icons el-icon-document-copy"
+                    @click="copyDocument(item.projectInfo.url || '')"
+                  ></i>
+                </p>
+              </div>
+              <div class="home-collapse__right">
                 <i
-                  class="home-collapse__icons el-icon-document-copy"
-                  @click="
-                    copyDocument(item.buildInfo ? item.buildInfo.url : '')
-                  "
+                  class="home-collapse__controls home-collapse__icons el-icon-video-play"
+                  @click="preExecute(item.id)"
                 ></i>
-              </p>
-              <p class="home-collapse__details">
-                下一次构建编号:
-                {{
-                  `&lt;${
-                    item.buildInfo ? item.buildInfo.nextBuildNumber : '( 无 )'
-                  }&gt;`
-                }}
-              </p>
-              <p class="home-collapse__details">
-                远程仓库地址:
-                {{ item.projectInfo.url || '( 无 )' }}
                 <i
-                  class="home-collapse__icons el-icon-document-copy"
-                  @click="copyDocument(item.projectInfo.url || '')"
+                  class="home-collapse__controls home-collapse__icons el-icon-edit-outline"
+                  @click="openEditor(item.id)"
                 ></i>
-              </p>
+                <i
+                  class="home-collapse__controls home-collapse__icons el-icon-setting"
+                  @click="leadToWorkflowPage(item.id)"
+                ></i>
+                <i
+                  class="home-collapse__controls home-collapse__icons home-collapse__icons--danger el-icon-refresh-left"
+                ></i>
+                <i
+                  class="home-collapse__controls home-collapse__icons home-collapse__icons--danger el-icon-delete"
+                  @click="deleteData(item.id)"
+                ></i>
+              </div>
             </div>
-            <div class="home-collapse__right">
-              <i
-                class="home-collapse__controls home-collapse__icons el-icon-video-play"
-                @click="preExecute(item.id)"
-              ></i>
-              <i
-                class="home-collapse__controls home-collapse__icons el-icon-edit-outline"
-                @click="openEditor(item.id)"
-              ></i>
-              <i
-                class="home-collapse__controls home-collapse__icons el-icon-setting"
-                @click="leadToWorkflowPage(item.id)"
-              ></i>
-              <i
-                class="home-collapse__controls home-collapse__icons home-collapse__icons--danger el-icon-refresh-left"
-              ></i>
-              <i
-                class="home-collapse__controls home-collapse__icons home-collapse__icons--danger el-icon-delete"
-                @click="deleteData(item.id)"
-              ></i>
-            </div>
-          </div>
-        </el-collapse-item>
-      </el-collapse>
+          </el-collapse-item>
+        </el-collapse>
+      </section>
     </section>
 
     <ExecuteDialog
@@ -343,8 +345,18 @@ export default {
 
 <style lang="scss" scoped>
 .home {
+  position: relative;
   width: 100%;
   height: 100%;
+
+  .container {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    overflow-y: auto;
+  }
 
   .el-dialog {
     .el-select {

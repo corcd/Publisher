@@ -2,89 +2,91 @@
  * @Author: Whzcorcd
  * @Date: 2021-01-06 12:45:23
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-13 10:50:09
+ * @LastEditTime: 2021-07-23 17:32:50
  * @Description: file content
 -->
 <template>
   <div class="check">
     <Topbar @change="freshData"></Topbar>
-    <Searchbar title="相关邮件"></Searchbar>
-    <section>
-      <div class="check-leftarea">
-        <div class="check-list" v-if="mailList.length > 0">
-          <div
-            :class="[
-              'check-list__item',
-              { 'check-list__item--chosen': item.uid === activeUid },
-              { 'check-list__item--replied': isReplied(item.uid) }
-            ]"
-            v-for="item in mailList"
-            :key="item.uid"
-            @click="chooseMail(item.uid)"
-          >
-            <p class="check-list__item-title">
-              <span
-                :class="[
-                  {
-                    prod: processedTitle(item.subject)[1].includes('生产')
-                  },
-                  {
-                    pre: processedTitle(item.subject)[1].includes('预发')
-                  },
-                  {
-                    test: processedTitle(item.subject)[1].includes('测试')
-                  }
-                ]"
-              >
-                {{ processedTitle(item.subject)[1] }}
-              </span>
-              {{ processedTitle(item.subject)[3] }}
-              <span
-                class="check-list__item-title-status"
-                v-if="isReplied(item.uid)"
-              >
-                <i class="el-icon-check"></i>
-                已确认
-              </span>
-            </p>
-            <p class="check-list__item-subtitle">
-              {{ formatDate(item.date) }}
-              {{ processedTitle(item.subject)[4] }}
-              (via Publisher{{
-                processedTitle(item.subject)[5]
-                  ? `&lt;${processedTitle(item.subject)[5]}&gt;`
-                  : ''
-              }})
-            </p>
+    <section class="container">
+      <Searchbar title="相关邮件"></Searchbar>
+      <section>
+        <div class="check-leftarea">
+          <div class="check-list" v-if="mailList.length > 0">
+            <div
+              :class="[
+                'check-list__item',
+                { 'check-list__item--chosen': item.uid === activeUid },
+                { 'check-list__item--replied': isReplied(item.uid) }
+              ]"
+              v-for="item in mailList"
+              :key="item.uid"
+              @click="chooseMail(item.uid)"
+            >
+              <p class="check-list__item-title">
+                <span
+                  :class="[
+                    {
+                      prod: processedTitle(item.subject)[1].includes('生产')
+                    },
+                    {
+                      pre: processedTitle(item.subject)[1].includes('预发')
+                    },
+                    {
+                      test: processedTitle(item.subject)[1].includes('测试')
+                    }
+                  ]"
+                >
+                  {{ processedTitle(item.subject)[1] }}
+                </span>
+                {{ processedTitle(item.subject)[3] }}
+                <span
+                  class="check-list__item-title-status"
+                  v-if="isReplied(item.uid)"
+                >
+                  <i class="el-icon-check"></i>
+                  已确认
+                </span>
+              </p>
+              <p class="check-list__item-subtitle">
+                {{ formatDate(item.date) }}
+                {{ processedTitle(item.subject)[4] }}
+                (via Publisher{{
+                  processedTitle(item.subject)[5]
+                    ? `&lt;${processedTitle(item.subject)[5]}&gt;`
+                    : ''
+                }})
+              </p>
+            </div>
+          </div>
+          <div class="check-text" v-else>
+            <span v-if="listLoading">邮件数据加载中</span>
+            <span v-else>24 小时内暂无来自 Publisher 的云平台发布邮件</span>
           </div>
         </div>
-        <div class="check-text" v-else>
-          <span v-if="listLoading">邮件数据加载中</span>
-          <span v-else>24 小时内暂无来自 Publisher 的云平台发布邮件</span>
+        <div class="check-rightarea">
+          <h4>{{ currentMailContent.subject }}</h4>
+          <pre>{{ currentMailContent.html }}</pre>
+          <div class="check-rightarea__controls" v-show="activeUid">
+            <el-button
+              type="danger"
+              size="mini"
+              :loading="btnLoading"
+              @click="replyEmail(false)"
+            >
+              驳回更新
+            </el-button>
+            <el-button
+              type="primary"
+              size="mini"
+              :loading="btnLoading"
+              @click="replyEmail(true)"
+            >
+              确认更新
+            </el-button>
+          </div>
         </div>
-      </div>
-      <div class="check-rightarea">
-        <h4>{{ currentMailContent.subject }}</h4>
-        <pre>{{ currentMailContent.html }}</pre>
-        <div class="check-rightarea__controls" v-show="activeUid">
-          <el-button
-            type="danger"
-            size="mini"
-            :loading="btnLoading"
-            @click="replyEmail(false)"
-          >
-            驳回更新
-          </el-button>
-          <el-button
-            type="primary"
-            size="mini"
-            :loading="btnLoading"
-            @click="replyEmail(true)"
-          >
-            确认更新
-          </el-button>
-        </div>
-      </div>
+      </section>
     </section>
   </div>
 </template>
@@ -243,10 +245,21 @@ export default {
 
 <style lang="scss" scoped>
 .check {
+  position: relative;
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
+
+  .container {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: calc(100% - 70px);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
 
   &-leftarea {
     width: 30%;

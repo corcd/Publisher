@@ -2,68 +2,72 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-12 21:37:09
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-01-05 15:54:21
+ * @LastEditTime: 2021-07-23 14:42:14
  * @Description: file content
 -->
 <template>
   <div class="setting">
     <Topbar subtitle="系统设置"></Topbar>
-    <StatusBar content=""></StatusBar>
-    <div class="setting-content">
-      <el-form
-        class="setting-form"
-        label-position="top"
-        label-width="80px"
-        size="mini"
-        :model="settingsData"
-      >
-        <el-form-item><p class="setting-form__topic">个人资料</p></el-form-item>
-        <el-form-item label="姓名">
-          <el-input v-model="settingsData.user.name"></el-input>
-        </el-form-item>
-        <el-form-item label="联系方式">
-          <el-input v-model="settingsData.user.contact"></el-input>
-        </el-form-item>
-        <el-form-item label="工作邮箱">
-          <el-input v-model="settingsData.user.workmail"></el-input>
-        </el-form-item>
-        <el-divider></el-divider>
-        <el-form-item>
-          <p class="setting-form__topic">发件人设置</p>
-        </el-form-item>
-        <el-form-item label="发件邮箱">
-          <el-input
-            type="text"
-            v-model="settingsData.mail.auth.user"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="验证密钥">
-          <el-input
-            type="password"
-            show-password
-            v-model="settingsData.mail.auth.pass"
-          ></el-input>
-        </el-form-item>
-        <el-divider></el-divider>
-        <el-form-item>
-          <p class="setting-form__topic">收件人设置</p>
-        </el-form-item>
-        <el-form-item label="收件邮箱">
-          <el-input v-model="settingsData.mail.addressee"></el-input>
-        </el-form-item>
-        <el-form-item label=" ">
-          <el-button type="primary" size="mini" @click="submit">
-            保 存
-          </el-button>
-          <el-button type="default" size="mini" @click="reset">
-            重 置
-          </el-button>
-          <el-button type="danger" size="mini" @click="quit">
-            退 出
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+    <section class="container">
+      <StatusBar content=""></StatusBar>
+      <div class="setting-content">
+        <el-form
+          class="setting-form"
+          label-position="top"
+          label-width="80px"
+          size="mini"
+          :model="settingsData"
+        >
+          <el-form-item
+            ><p class="setting-form__topic">个人资料</p></el-form-item
+          >
+          <el-form-item label="姓名">
+            <el-input v-model="settingsData.user.name"></el-input>
+          </el-form-item>
+          <el-form-item label="联系方式">
+            <el-input v-model="settingsData.user.contact"></el-input>
+          </el-form-item>
+          <el-form-item label="工作邮箱">
+            <el-input v-model="settingsData.user.workmail"></el-input>
+          </el-form-item>
+          <el-divider></el-divider>
+          <el-form-item>
+            <p class="setting-form__topic">发件人设置</p>
+          </el-form-item>
+          <el-form-item label="发件邮箱">
+            <el-input
+              type="text"
+              v-model="settingsData.mail.auth.user"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="验证密钥">
+            <el-input
+              type="password"
+              show-password
+              v-model="settingsData.mail.auth.pass"
+            ></el-input>
+          </el-form-item>
+          <el-divider></el-divider>
+          <el-form-item>
+            <p class="setting-form__topic">收件人设置</p>
+          </el-form-item>
+          <el-form-item label="收件邮箱">
+            <el-input v-model="settingsData.mail.addressee"></el-input>
+          </el-form-item>
+          <el-form-item label=" ">
+            <el-button type="primary" size="mini" @click="submit">
+              保 存
+            </el-button>
+            <el-button type="default" size="mini" @click="reset">
+              重 置
+            </el-button>
+            <el-button type="danger" size="mini" @click="quit">
+              退 出
+            </el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -147,12 +151,22 @@ export default {
 
 <style lang="scss" scoped>
 .setting {
+  position: relative;
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+
+  .container {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+  }
 
   &-content {
     flex-grow: 1;

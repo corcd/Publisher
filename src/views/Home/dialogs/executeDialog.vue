@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-16 12:33:40
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-07-17 00:04:47
+ * @LastEditTime: 2021-07-21 16:27:06
  * @Description: file content
 -->
 <template>
@@ -70,7 +70,6 @@
           size="mini"
           placeholder="可选提醒产品经理"
           v-model="prevExecuteData['mentionedMobile']"
-          @change="handleSelectChange"
         >
           <el-option
             v-for="item in pmList"

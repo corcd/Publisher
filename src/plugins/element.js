@@ -2,11 +2,12 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:53:51
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-30 15:54:09
+ * @LastEditTime: 2021-07-21 17:18:22
  * @Description: file content
  */
 import Vue from 'vue'
 import {
+  Switch,
   Button,
   Input,
   Collapse,
@@ -22,6 +23,7 @@ import {
   Tooltip
 } from 'element-ui'
 
+Vue.use(Switch)
 Vue.use(Input)
 Vue.use(Button)
 Vue.use(Collapse)

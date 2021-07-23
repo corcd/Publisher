@@ -56,6 +56,7 @@ export const ParametricBuildTask = ({
     { HOSTNAME: 'development', SCRIPT: 'build:dev', BRANCH: '*/test' },
     { HOSTNAME: 'preview', SCRIPT: 'build:pre', BRANCH: '*/dev' },
     { HOSTNAME: 'production', SCRIPT: 'build:prod', BRANCH: '*/master' },
+    { HOSTNAME: 'hgclond/pretest', SCRIPT: 'build:huawei', BRANCH: '*/test' },
     { HOSTNAME: 'hgclond/production', SCRIPT: 'build:huawei', BRANCH: '*/test' }
   ]
 

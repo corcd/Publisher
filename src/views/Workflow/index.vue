@@ -2,31 +2,33 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-13 19:42:43
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-02-03 17:35:29
+ * @LastEditTime: 2021-07-23 17:43:26
  * @Description: file content
 -->
 <template>
   <div class="workflow">
     <Topbar subtitle="工作流设置"></Topbar>
-    <StatusBar content=""></StatusBar>
-    <div class="workflow-recommend">
-      <p>推荐流程：{{ recommend }}</p>
-    </div>
-    <div class="workflow-content">
-      <div class="workflow-content-item" @click="unshiftWorkflowItem">
-        <i class="el-icon-circle-plus-outline"></i>
+    <section class="container">
+      <StatusBar content=""></StatusBar>
+      <div class="workflow-recommend">
+        <p>推荐流程：{{ recommend }}</p>
       </div>
-      <component
-        v-for="element in workflow"
-        :key="element.action"
-        :is="`${element.action}WorkflowItem`"
-        :id="id"
-        :params="element.params"
-        @refresh="refreshData"
-        @set="setWorkflowItemParams"
-        @insert="insertWorkflowItem"
-      ></component>
-    </div>
+      <div class="workflow-content">
+        <div class="workflow-content-item" @click="unshiftWorkflowItem">
+          <i class="el-icon-circle-plus-outline"></i>
+        </div>
+        <component
+          v-for="element in workflow"
+          :key="element.action"
+          :is="`${element.action}WorkflowItem`"
+          :id="id"
+          :params="element.params"
+          @refresh="refreshData"
+          @set="setWorkflowItemParams"
+          @insert="insertWorkflowItem"
+        ></component>
+      </div>
+    </section>
 
     <AddDialog
       ref="adddialog"
@@ -153,12 +155,23 @@ export default {
 
 <style lang="scss" scoped>
 .workflow {
+  position: relative;
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+
+  .container {
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: calc(100% - 70px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+  }
 
   &-form {
     width: 100%;

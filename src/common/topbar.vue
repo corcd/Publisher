@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-10 21:04:23
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-07-14 10:50:10
+ * @LastEditTime: 2021-07-23 14:43:43
  * @Description: file content
 -->
 <template>
@@ -45,13 +45,18 @@ export default {
 
 <style lang="scss" scoped>
 .topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   width: 100%;
   height: 70px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px 0 20px;
-  background-color: transparent;
+  background-color: #fff;
+  z-index: 10;
   -webkit-app-region: drag;
 
   section {

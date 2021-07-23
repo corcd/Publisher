@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:03:31
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-07-14 10:45:30
+ * @LastEditTime: 2021-07-23 14:09:07
  * @Description: file content
  */
 /* global __static */
@@ -21,10 +21,12 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
 ])
 
+let win = null
+
 const createWindow = async () => {
   // Create the browser window.
   // eslint-disable-next-line no-param-reassign
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 1400,
     height: 800,
     resizable: false,
@@ -50,16 +52,16 @@ const createWindow = async () => {
     await win.loadURL('app://./index.html')
     // Auto update
     checkUpdate(win)
-
-    ipcMain.on('checkForUpdate', () => {
-      checkUpdate(win)
-    })
   }
 
   win.once('ready-to-show', () => {
     win.show()
   })
 }
+
+ipcMain.on('checkForUpdate', async () => {
+  checkUpdate(win)
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {

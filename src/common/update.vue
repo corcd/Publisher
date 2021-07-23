@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-18 15:43:07
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2020-12-29 17:07:51
+ * @LastEditTime: 2021-07-23 14:08:08
  * @Description: file content
 -->
 <template>
@@ -42,6 +42,7 @@ export default {
   },
   methods: {
     updateApp() {
+      console.log('checkForUpdate')
       ipcRenderer.send('checkForUpdate')
     }
   }
