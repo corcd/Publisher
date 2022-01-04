@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:03:31
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-07-23 14:09:07
+ * @LastEditTime: 2021-07-25 21:30:10
  * @Description: file content
  */
 /* global __static */
@@ -34,6 +34,7 @@ const createWindow = async () => {
     // frame: false,
     titleBarStyle: 'hidden',
     webPreferences: {
+      contextIsolation: false,
       webSecurity: false,
       enableRemoteModule: true,
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION
@@ -67,9 +68,10 @@ ipcMain.on('checkForUpdate', async () => {
 app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+  // if (process.platform !== 'darwin') {
+  //   app.quit()
+  // }
+  app.quit()
 })
 
 app.on('activate', () => {

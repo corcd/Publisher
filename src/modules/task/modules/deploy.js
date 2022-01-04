@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-24 16:45:40
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-02-05 17:50:05
+ * @LastEditTime: 2021-07-25 22:23:48
  * @Description: file content
  */
 const k8s = require('@kubernetes/client-node')

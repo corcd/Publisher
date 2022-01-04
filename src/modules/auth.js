@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-08 13:15:18
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-02-23 14:29:02
+ * @LastEditTime: 2022-01-04 09:35:56
  * @Description: file content
  */
 import { decrypt } from '#/plugins/encrypt'
@@ -11,7 +11,7 @@ import { auth } from '@/config'
 
 const insideDeveloperUsergroup = [
   'wanghanze',
-  'chenyingjie',
+  'chenbobing',
   'laihuiliang',
   'shijiawei'
 ] // JSON.parse(window.$u)

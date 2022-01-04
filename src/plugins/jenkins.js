@@ -2,15 +2,22 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-04 17:22:13
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-07-21 15:31:48
+ * @LastEditTime: 2021-07-30 00:53:27
  * @Description: file content
  */
+import qs from 'qs'
 import _axios from '@/request'
 import { jenkins } from '@/config'
 
 const { baseUrl, authorization } = jenkins
 
-const request = (actionUrl, method, params = {}, headers = {}) => {
+const request = (
+  actionUrl,
+  method,
+  params = {},
+  headers = {},
+  isStringified = true
+) => {
   return _axios({
     method,
     url: `${baseUrl}/${actionUrl}`,
@@ -19,11 +26,11 @@ const request = (actionUrl, method, params = {}, headers = {}) => {
         Authorization: `Basic ${window.btoa(
           `${authorization.username}:${authorization.password}`
         )}`,
-        'Content-Type': 'application/json; charset=UTF-8' // 指定提交方式为表单提交
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' // 指定提交方式为表单提交
       },
       headers
     ),
-    data: params
+    data: method === 'POST' && isStringified ? qs.stringify(params) : params
   })
 }
 
@@ -69,9 +76,15 @@ export const buildWithParams = (jobName, preload) => {
 
 // 创建任务
 export const createJob = (jobName, preload) => {
-  return request(`createItem?name=${jobName}`, 'POST', preload, {
-    'Content-Type': 'application/xml'
-  })
+  return request(
+    `createItem?name=${jobName}`,
+    'POST',
+    preload,
+    {
+      'Content-Type': 'application/xml'
+    },
+    false
+  )
 }
 
 // 更新任务配置文件

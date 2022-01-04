@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-05 16:19:23
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-02-02 17:30:04
+ * @LastEditTime: 2022-01-04 09:32:44
  * @Description: file content
  */
 /*
@@ -42,7 +42,7 @@ const _config = {
   headers: {
     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
   },
-  timeout: 5 * 1000 // Timeout
+  timeout: 10 * 1000 // Timeout
 }
 
 const _axios = axios.create(_config)

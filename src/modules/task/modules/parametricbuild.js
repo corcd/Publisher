@@ -2,7 +2,7 @@
  * @Author: Whzcorcd
  * @Date: 2020-12-24 16:43:41
  * @LastEditors: Whzcorcd
- * @LastEditTime: 2021-07-14 12:33:24
+ * @LastEditTime: 2021-07-30 00:26:12
  * @Description: file content
  */
 import { Message } from 'element-ui'
@@ -53,11 +53,19 @@ export const ParametricBuildTask = ({
   }
 
   const params = [
-    { HOSTNAME: 'development', SCRIPT: 'build:dev', BRANCH: '*/test' },
-    { HOSTNAME: 'preview', SCRIPT: 'build:pre', BRANCH: '*/dev' },
-    { HOSTNAME: 'production', SCRIPT: 'build:prod', BRANCH: '*/master' },
-    { HOSTNAME: 'hgclond/pretest', SCRIPT: 'build:huawei', BRANCH: '*/test' },
-    { HOSTNAME: 'hgclond/production', SCRIPT: 'build:huawei', BRANCH: '*/test' }
+    { HOSTNAME: 'development', SCRIPT: 'build:dev', BRANCH: 'origin/test' },
+    { HOSTNAME: 'preview', SCRIPT: 'build:pre', BRANCH: 'origin/dev' },
+    { HOSTNAME: 'production', SCRIPT: 'build:prod', BRANCH: 'origin/master' },
+    {
+      HOSTNAME: 'hgcloud/pretest',
+      SCRIPT: 'build:huawei',
+      BRANCH: 'origin/test'
+    },
+    {
+      HOSTNAME: 'hgcloud/production',
+      SCRIPT: 'build:huawei',
+      BRANCH: 'origin/test'
+    }
   ]
 
   return new Promise(async (resolve, reject) => {
@@ -66,7 +74,7 @@ export const ParametricBuildTask = ({
       {},
       params.find(item => item.HOSTNAME === environment) || {},
       { EXTRA: extra },
-      tagName ? { BRANCH: tagName } : {}
+      tagName.trim() ? { BRANCH: tagName.trim() } : {}
     )
 
     try {
